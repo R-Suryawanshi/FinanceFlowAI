@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ThemeToggle } from "./ThemeProvider";
+import { useTheme } from "./ThemeProvider";
 import { Badge } from "@/components/ui/badge";
 import { AuthModal } from "./AuthModal";
 import { 
