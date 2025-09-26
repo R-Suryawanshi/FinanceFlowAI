@@ -15,13 +15,35 @@ import {
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
+interface UserDashboardProps {
+  onNavigateToCalculator: (type: 'emi' | 'gold') => void;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    username: string;
+    role: string;
+    createdAt: string;
+  };
+}
+
+// Function to generate account number from user ID
+const generateAccountNumber = (userId: string) => {
+  const shortId = userId.substring(0, 8).toUpperCase();
+  return `BF2024${shortId}`;
+};
+
+// Function to format join date
+const formatJoinDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'long' 
+  });
+};
+
 // Todo: remove mock data when implementing real backend
 const mockUserData = {
-  user: {
-    name: "Rajesh Kumar",
-    accountNumber: "BF2024001234",
-    joinDate: "January 2024",
-  },
   stats: {
     activeLoan: 250000,
     totalCalculations: 15,
@@ -51,11 +73,7 @@ const mockUserData = {
   ]
 };
 
-interface UserDashboardProps {
-  onNavigateToCalculator: (type: 'emi' | 'gold') => void;
-}
-
-export function UserDashboard({ onNavigateToCalculator }: UserDashboardProps) {
+export function UserDashboard({ onNavigateToCalculator, user }: UserDashboardProps) {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
@@ -95,10 +113,10 @@ export function UserDashboard({ onNavigateToCalculator }: UserDashboardProps) {
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold text-foreground" data-testid="text-welcome">
-              Welcome back, {mockUserData.user.name}!
+              Welcome back, {user?.name || 'User'}!
             </h1>
             <p className="text-muted-foreground mt-1">
-              Account: {mockUserData.user.accountNumber} • Member since {mockUserData.user.joinDate}
+              Account: {user ? generateAccountNumber(user.id) : 'BF2024XXXXXXXX'} • Member since {user ? formatJoinDate(user.createdAt) : 'N/A'}
             </p>
           </div>
           <Badge variant="outline" className="bg-background/50">

@@ -54,7 +54,29 @@ const mockData = {
   },
 };
 
-export function AdminDashboard() {
+interface AdminDashboardProps {
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    username: string;
+    role: string;
+    createdAt: string;
+  };
+}
+
+export function AdminDashboard({ user }: AdminDashboardProps) {
+  // Redirect non-admin users
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="text-center py-12">
+          <h1 className="text-2xl font-bold text-destructive mb-4">Access Denied</h1>
+          <p className="text-muted-foreground">You don't have permission to access this dashboard.</p>
+        </div>
+      </div>
+    );
+  }
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',

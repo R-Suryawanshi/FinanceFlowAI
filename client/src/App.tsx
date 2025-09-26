@@ -50,7 +50,7 @@ function App() {
           'Authorization': `Bearer ${authToken}`
         }
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         setUser(data.user);
@@ -77,7 +77,7 @@ function App() {
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
         setUser(data.user);
         setAuthToken(data.token);
@@ -111,7 +111,7 @@ function App() {
       });
 
       const data = await response.json();
-      
+
       if (data.success) {
         setUser(data.user);
         setAuthToken(data.token);
@@ -193,10 +193,10 @@ function App() {
       case "gold-calculator":
         return <GoldLoanCalculator />;
       case "admin-dashboard":
-        return user?.role === 'admin' ? <AdminDashboard /> : <div>Access Denied</div>;
+        return user?.role === 'admin' ? <AdminDashboard user={user} /> : <div>Access Denied</div>;
       case "user-dashboard":
         return user ? (
-          <UserDashboard onNavigateToCalculator={handleNavigateToCalculator} />
+          <UserDashboard user={user} onNavigateToCalculator={handleNavigateToCalculator} />
         ) : (
           <div>Please login to access dashboard</div>
         );
@@ -224,13 +224,13 @@ function App() {
               onSignup={handleSignup}
               onLogout={handleLogout}
             />
-            
+
             <main className="flex-1">
               {renderCurrentPage()}
             </main>
-            
+
             <Footer onPageChange={handlePageChange} />
-            
+
             <ChatBot
               currentPage={currentPage}
               isOpen={isChatOpen}

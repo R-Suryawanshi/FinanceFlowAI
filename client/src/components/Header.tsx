@@ -96,12 +96,13 @@ export function Header({
                 <Button
                   variant="outline"
                   onClick={() => {
-                    onPageChange(userRole === 'admin' ? 'admin-dashboard' : 'user-dashboard');
+                    const dashboardPage = userRole === 'admin' ? 'admin-dashboard' : 'user-dashboard';
+                    onPageChange(dashboardPage);
                     console.log('Navigated to dashboard:', userRole);
                   }}
                   data-testid="button-dashboard"
                 >
-                  Dashboard
+                  {userRole === 'admin' ? 'Admin Dashboard' : 'Dashboard'}
                 </Button>
                 <Button
                   variant="ghost"
@@ -191,13 +192,14 @@ export function Header({
                     <Button
                       variant="outline"
                       onClick={() => {
-                        onPageChange(userRole === 'admin' ? 'admin-dashboard' : 'user-dashboard');
+                        const dashboardPage = userRole === 'admin' ? 'admin-dashboard' : 'user-dashboard';
+                        onPageChange(dashboardPage);
                         setMobileMenuOpen(false);
                       }}
                       data-testid="mobile-button-dashboard"
                       className="w-full mb-2"
                     >
-                      Dashboard
+                      {userRole === 'admin' ? 'Admin Dashboard' : 'Dashboard'}
                     </Button>
                     <Button
                       variant="ghost"
