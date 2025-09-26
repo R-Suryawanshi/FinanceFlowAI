@@ -77,57 +77,65 @@ export function ChatBot({ currentPage, isOpen, onToggle }: ChatBotProps) {
     scrollToBottom();
   }, [messages]);
 
-  // Todo: replace with real Gemini API call
   const getAIResponse = async (userMessage: string): Promise<string | { content: string; structuredData: any }> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+    try {
+      // Prepare conversation history for API
+      const conversationHistory = messages
+        .filter(msg => !msg.isTyping)
+        .map(msg => ({
+          role: msg.isUser ? 'user' as const : 'model' as const,
+          content: msg.content
+        }));
 
-    const lowerMessage = userMessage.toLowerCase();
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          currentPage,
+          conversationHistory
+        }),
+      });
 
-    // Context-aware responses based on current page
-    if (currentPage === 'services' && lowerMessage.includes('service')) {
-      return "I can see you're on our Services page! We offer EMI calculations, gold loans, personal loans, and investment planning. Which service would you like to know more about?";
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.structuredData) {
+        return {
+          content: data.response,
+          structuredData: data.structuredData
+        };
+      }
+
+      return data.response;
+
+    } catch (error) {
+      console.error('Error calling chat API:', error);
+      
+      // Fallback to context-aware responses if API fails
+      const lowerMessage = userMessage.toLowerCase();
+
+      if (currentPage === 'services' && lowerMessage.includes('service')) {
+        return "I can see you're on our Services page! We offer EMI calculations, gold loans, personal loans, and investment planning. Which service would you like to know more about?";
+      }
+
+      if (lowerMessage.includes('branch') || lowerMessage.includes('office') || lowerMessage.includes('location')) {
+        return {
+          content: "Here are our branch locations where you can visit for personalized service:",
+          structuredData: {
+            type: 'branches',
+            data: mockBankBranches
+          }
+        };
+      }
+
+      return "I'm experiencing some technical difficulties right now, but I'm here to help! Could you please try rephrasing your question, or feel free to contact our customer service at +91 22 1234 5678 for immediate assistance.";
     }
-
-    if (currentPage === 'admin-dashboard' && lowerMessage.includes('dashboard')) {
-      return "I notice you're viewing the admin dashboard. I can help with user management, loan approvals, or generating reports. What would you like assistance with?";
-    }
-
-    // Structured data responses
-    if (lowerMessage.includes('branch') || lowerMessage.includes('office') || lowerMessage.includes('location')) {
-      return {
-        content: "Here are our branch locations where you can visit for personalized service:",
-        structuredData: {
-          type: 'branches',
-          data: mockBankBranches
-        }
-      };
-    }
-
-    // EMI calculation responses
-    if (lowerMessage.includes('emi') || lowerMessage.includes('loan')) {
-      return "I can help you with EMI calculations! Our EMI calculator can compute monthly payments for home loans, car loans, and personal loans. You can access it from the main menu. Would you like me to guide you through a sample calculation?";
-    }
-
-    // Gold loan responses
-    if (lowerMessage.includes('gold')) {
-      return "Our gold loan service offers competitive rates with minimal documentation. You can get up to 75% of your gold's value as a loan. Current interest rates start from 12% annually. Would you like to use our gold loan calculator to see how much you're eligible for?";
-    }
-
-    // Interest rate queries
-    if (lowerMessage.includes('rate') || lowerMessage.includes('interest')) {
-      return "Our current interest rates are:\n• Personal Loans: 10.5% - 18% annually\n• Gold Loans: 12% - 15% annually\n• Home Loans: 8.5% - 12% annually\n• Car Loans: 9% - 14% annually\n\nRates may vary based on your credit profile and loan amount.";
-    }
-
-    // Default responses
-    const responses = [
-      "I'd be happy to help you with that! Could you provide more specific details about what you're looking for?",
-      "That's a great question! Let me provide you with the most relevant information based on your query.",
-      "I can assist you with loan calculations, eligibility checks, and information about our financial services. What specific area interests you?",
-      "For the most accurate and personalized advice, I recommend speaking with one of our financial advisors. Would you like me to help you schedule a consultation?",
-    ];
-
-    return responses[Math.floor(Math.random() * responses.length)];
   };
 
   const handleSendMessage = async () => {
