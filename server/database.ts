@@ -11,10 +11,9 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL environment variable is required");
 }
 
-// Create connection pool
+// Create connection pool for Neon
 const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL,
-  max: 10
+  connectionString: process.env.DATABASE_URL
 });
 
 export const db = drizzle(pool, { schema: { users } });
