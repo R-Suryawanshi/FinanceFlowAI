@@ -11,9 +11,10 @@ if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL environment variable is required");
 }
 
-// Create connection pool for Neon
+// Create connection pool for Neon with proper SSL configuration
 const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 export const db = drizzle(pool, { schema: { users } });
@@ -21,8 +22,12 @@ export const db = drizzle(pool, { schema: { users } });
 // Initialize database tables
 export async function initializeDatabase() {
   try {
+    // Test the connection first
+    const client = await pool.connect();
+    console.log("Database connection established successfully");
+    
     // Create users table if it doesn't exist
-    await pool.query(`
+    await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         username TEXT NOT NULL UNIQUE,
@@ -36,6 +41,7 @@ export async function initializeDatabase() {
       );
     `);
     
+    client.release();
     console.log("Database initialized successfully");
   } catch (error) {
     console.error("Failed to initialize database:", error);

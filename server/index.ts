@@ -38,6 +38,10 @@ app.use((req, res, next) => {
 
 (async () => {
   try {
+    // Validate environment variables
+    const { validateEnvironment } = await import("./env");
+    validateEnvironment();
+    
     // Initialize database
     const { initializeDatabase } = await import("./database");
     await initializeDatabase();
