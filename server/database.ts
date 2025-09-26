@@ -41,6 +41,16 @@ export async function initializeDatabase() {
       );
     `);
     
+    // Create default admin user if it doesn't exist
+    const bcrypt = await import('bcryptjs');
+    const hashedPassword = await bcrypt.hash('Admin@123', 12);
+    
+    await client.query(`
+      INSERT INTO users (username, email, password, name, role, is_active)
+      VALUES ('admin', 'admin@gmail.com', $1, 'Administrator', 'admin', true)
+      ON CONFLICT (email) DO NOTHING;
+    `, [hashedPassword]);
+    
     client.release();
     console.log("Database initialized successfully");
   } catch (error) {

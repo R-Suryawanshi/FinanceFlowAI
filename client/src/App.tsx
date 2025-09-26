@@ -36,6 +36,7 @@ function App() {
   const [authToken, setAuthToken] = useState<string | null>(
     localStorage.getItem('authToken')
   );
+  const [isLoading, setIsLoading] = useState(false); // Added loading state
 
   // Check for existing authentication on app load
   React.useEffect(() => {
@@ -67,23 +68,28 @@ function App() {
     }
   };
 
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      setIsLoading(true);
       const response = await fetch('/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.success && data.user && data.token) {
+        localStorage.setItem('authToken', data.token); // Corrected key to 'authToken'
         setUser(data.user);
-        setAuthToken(data.token);
-        localStorage.setItem('authToken', data.token);
-        setCurrentPage(data.user.role === 'admin' ? 'admin-dashboard' : 'user-dashboard');
+
+        // Redirect based on user role
+        if (data.user.role === 'admin') {
+          setCurrentPage('admin-dashboard');
+        } else {
+          setCurrentPage('user-dashboard'); // Changed from 'dashboard' to 'user-dashboard' for consistency
+        }
+
         console.log('Login successful:', data.user);
         return { success: true };
       } else {
@@ -93,6 +99,8 @@ function App() {
     } catch (error) {
       console.error('Login error:', error);
       return { success: false, error: 'Login failed. Please try again.' };
+    } finally {
+      setIsLoading(false);
     }
   };
 
