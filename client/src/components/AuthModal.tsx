@@ -96,8 +96,9 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup }: AuthModalProps
         </DialogHeader>
         
         <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Login</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="login">User Login</TabsTrigger>
+            <TabsTrigger value="admin-login">Admin Login</TabsTrigger>
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
           
@@ -133,6 +134,47 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup }: AuthModalProps
               
               <Button type="submit" className="w-full" disabled={isLoading}>
                 {isLoading ? 'Logging in...' : 'Login'}
+              </Button>
+            </form>
+          </TabsContent>
+          
+          <TabsContent value="admin-login">
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="admin-email">Admin Email</Label>
+                <Input
+                  id="admin-email"
+                  type="email"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  placeholder="admin@bhalchandrafinance.com"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="admin-password">Admin Password</Label>
+                <Input
+                  id="admin-password"
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  required
+                />
+              </div>
+              
+              <div className="text-xs text-muted-foreground bg-yellow-50 dark:bg-yellow-950/20 p-2 rounded">
+                Admin login is restricted to authorized personnel only
+              </div>
+              
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+              
+              <Button type="submit" className="w-full" disabled={isLoading} variant="destructive">
+                {isLoading ? 'Logging in...' : 'Admin Login'}
               </Button>
             </form>
           </TabsContent>

@@ -15,6 +15,7 @@ import { AboutPage } from "./components/AboutPage";
 import { ContactPage } from "./components/ContactPage";
 import { AdminDashboard } from "./components/AdminDashboard";
 import { UserDashboard } from "./components/UserDashboard";
+import { LoanApplicationForm } from "./components/LoanApplicationForm";
 import { ChatBot } from "./components/ChatBot";
 import { Footer } from "./components/Footer";
 
@@ -182,6 +183,7 @@ function App() {
           <ServicesPage
             onNavigateToCalculator={handleNavigateToCalculator}
             onGetStarted={handleGetStarted}
+            onPageChange={handlePageChange}
           />
         );
       case "about":
@@ -200,6 +202,14 @@ function App() {
         ) : (
           <div>Please login to access dashboard</div>
         );
+      case "loan-application-home":
+        return <LoanApplicationForm loanType="home" />;
+      case "loan-application-car":
+        return <LoanApplicationForm loanType="car" />;
+      case "loan-application-personal":
+        return <LoanApplicationForm loanType="personal" />;
+      case "loan-application-gold":
+        return <LoanApplicationForm loanType="gold" />;
       default:
         return (
           <Hero

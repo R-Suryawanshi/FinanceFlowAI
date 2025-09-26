@@ -17,9 +17,10 @@ import {
 interface ServicesPageProps {
   onNavigateToCalculator: (type: 'emi' | 'gold') => void;
   onGetStarted: () => void;
+  onPageChange?: (page: string) => void; // Added for page changes
 }
 
-export function ServicesPage({ onNavigateToCalculator, onGetStarted }: ServicesPageProps) {
+export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChange }: ServicesPageProps) {
   const services = [
     {
       id: 'emi-calculator',
@@ -60,10 +61,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted }: ServicesP
       description: 'Drive your dream car home with our competitive car loan rates and quick approval process.',
       icon: Car,
       features: ['Up to 85% financing', 'Flexible tenure options', 'New & used cars', 'Quick processing'],
-      rate: 'Starting from 9% p.a.',
+      rate: 'Starting from 9.5% p.a.',
       color: 'primary',
-      cta: 'Get Quote',
-      ctaAction: onGetStarted
+      cta: 'Apply Now',
+      ctaAction: () => onPageChange && onPageChange('loan-application-car')
     },
     {
       id: 'personal-loans',
@@ -71,10 +72,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted }: ServicesP
       description: 'Meet your personal financial needs with our unsecured personal loans with minimal documentation.',
       icon: CreditCard,
       features: ['Up to ₹50 Lakh', 'No collateral required', 'Flexible repayment', 'Digital process'],
-      rate: 'Starting from 10.5% p.a.',
+      rate: 'Starting from 11% p.a.',
       color: 'secondary',
-      cta: 'Check Eligibility',
-      ctaAction: onGetStarted
+      cta: 'Apply Now',
+      ctaAction: () => onPageChange && onPageChange('loan-application-personal')
     },
     {
       id: 'investment-planning',
