@@ -87,10 +87,13 @@ export function ChatBot({ currentPage, isOpen, onToggle }: ChatBotProps) {
           content: msg.content
         }));
 
+      const authToken = localStorage.getItem('authToken');
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...(authToken && { 'Authorization': `Bearer ${authToken}` }),
         },
         body: JSON.stringify({
           message: userMessage,
@@ -116,7 +119,7 @@ export function ChatBot({ currentPage, isOpen, onToggle }: ChatBotProps) {
 
     } catch (error) {
       console.error('Error calling chat API:', error);
-      
+
       // Fallback to context-aware responses if API fails
       const lowerMessage = userMessage.toLowerCase();
 
@@ -154,9 +157,9 @@ export function ChatBot({ currentPage, isOpen, onToggle }: ChatBotProps) {
 
     try {
       const response = await getAIResponse(inputValue);
-      
+
       let botMessage: Message;
-      
+
       if (typeof response === 'string') {
         botMessage = {
           id: (Date.now() + 1).toString(),

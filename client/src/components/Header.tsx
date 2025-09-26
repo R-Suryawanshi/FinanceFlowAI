@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { ThemeToggle } from "./ThemeProvider";
 import { Badge } from "@/components/ui/badge";
-import { useTheme } from "./ThemeProvider";
+import { AuthModal } from "./AuthModal";
 import { 
   Building2, 
   Calculator, 
@@ -35,6 +37,7 @@ export function Header({
   onLogout 
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   const navigation = [
@@ -115,10 +118,7 @@ export function Header({
               <>
                 <Button
                   variant="ghost"
-                  onClick={() => {
-                    onLogin();
-                    console.log('Login clicked');
-                  }}
+                  onClick={() => setIsAuthModalOpen(true)}
                   data-testid="button-login"
                   className="flex items-center gap-2"
                 >
@@ -126,10 +126,7 @@ export function Header({
                   Login
                 </Button>
                 <Button
-                  onClick={() => {
-                    onSignup();
-                    console.log('Signup clicked');
-                  }}
+                  onClick={() => setIsAuthModalOpen(true)}
                   data-testid="button-signup"
                   className="flex items-center gap-2"
                 >
@@ -138,7 +135,7 @@ export function Header({
                 </Button>
               </>
             )}
-            
+
             {/* Theme Toggle */}
             <Button
               variant="ghost"
@@ -186,7 +183,7 @@ export function Header({
                   </Button>
                 );
               })}
-              
+
               {/* Mobile User Actions */}
               <div className="border-t pt-4 mt-4">
                 {isLoggedIn ? (
@@ -218,10 +215,7 @@ export function Header({
                   <>
                     <Button
                       variant="ghost"
-                      onClick={() => {
-                        onLogin();
-                        setMobileMenuOpen(false);
-                      }}
+                      onClick={() => setIsAuthModalOpen(true)}
                       data-testid="mobile-button-login"
                       className="w-full mb-2 justify-start flex items-center gap-2"
                     >
@@ -229,10 +223,7 @@ export function Header({
                       Login
                     </Button>
                     <Button
-                      onClick={() => {
-                        onSignup();
-                        setMobileMenuOpen(false);
-                      }}
+                      onClick={() => setIsAuthModalOpen(true)}
                       data-testid="mobile-button-signup"
                       className="w-full mb-2 justify-start flex items-center gap-2"
                     >
@@ -241,7 +232,7 @@ export function Header({
                     </Button>
                   </>
                 )}
-                
+
                 <Button
                   variant="ghost"
                   onClick={toggleTheme}
@@ -256,6 +247,13 @@ export function Header({
           </div>
         )}
       </div>
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLogin={onLogin}
+        onSignup={onSignup}
+      />
     </header>
   );
 }

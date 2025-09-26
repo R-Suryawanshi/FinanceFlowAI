@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
@@ -18,47 +18,136 @@ import { UserDashboard } from "./components/UserDashboard";
 import { ChatBot } from "./components/ChatBot";
 import { Footer } from "./components/Footer";
 
-// Todo: replace with real authentication system
+// Real authentication system
 interface User {
   id: string;
   name: string;
+  username: string;
+  email: string;
   role: 'user' | 'admin';
+  isActive: boolean;
 }
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [authToken, setAuthToken] = useState<string | null>(
+    localStorage.getItem('authToken')
+  );
 
-  // Todo: implement real authentication
-  const handleLogin = () => {
-    // Mock login - randomly assign user or admin role
-    const mockUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: Math.random() > 0.5 ? "Rajesh Kumar" : "Admin User",
-      role: Math.random() > 0.7 ? "admin" : "user"
-    };
-    setUser(mockUser);
-    setCurrentPage(mockUser.role === 'admin' ? 'admin-dashboard' : 'user-dashboard');
-    console.log('Mock login successful:', mockUser);
+  // Check for existing authentication on app load
+  React.useEffect(() => {
+    if (authToken) {
+      fetchUserProfile();
+    }
+  }, [authToken]);
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setUser(data.user);
+      } else {
+        // Token is invalid, clear it
+        setAuthToken(null);
+        localStorage.removeItem('authToken');
+      }
+    } catch (error) {
+      console.error('Failed to fetch user profile:', error);
+      setAuthToken(null);
+      localStorage.removeItem('authToken');
+    }
   };
 
-  const handleSignup = () => {
-    // Mock signup - always create user role
-    const mockUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      name: "New User",
-      role: "user"
-    };
-    setUser(mockUser);
-    setCurrentPage('user-dashboard');
-    console.log('Mock signup successful:', mockUser);
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setUser(data.user);
+        setAuthToken(data.token);
+        localStorage.setItem('authToken', data.token);
+        setCurrentPage(data.user.role === 'admin' ? 'admin-dashboard' : 'user-dashboard');
+        console.log('Login successful:', data.user);
+        return { success: true };
+      } else {
+        console.error('Login failed:', data.error);
+        return { success: false, error: data.error };
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, error: 'Login failed. Please try again.' };
+    }
   };
 
-  const handleLogout = () => {
-    setUser(null);
-    setCurrentPage("home");
-    console.log('User logged out');
+  const handleSignup = async (userData: {
+    username: string;
+    email: string;
+    password: string;
+    name: string;
+  }) => {
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setUser(data.user);
+        setAuthToken(data.token);
+        localStorage.setItem('authToken', data.token);
+        setCurrentPage('user-dashboard');
+        console.log('Signup successful:', data.user);
+        return { success: true };
+      } else {
+        console.error('Signup failed:', data.error);
+        return { success: false, error: data.error };
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      return { success: false, error: 'Signup failed. Please try again.' };
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      if (authToken) {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      setAuthToken(null);
+      localStorage.removeItem('authToken');
+      setCurrentPage("home");
+      console.log('User logged out');
+    }
   };
 
   const handlePageChange = (page: string) => {
@@ -70,7 +159,8 @@ function App() {
     if (user) {
       setCurrentPage(user.role === 'admin' ? 'admin-dashboard' : 'user-dashboard');
     } else {
-      handleLogin(); // Auto-login for demo purposes
+      // Show auth modal instead of auto-login
+      setCurrentPage('auth');
     }
   };
 
