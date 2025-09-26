@@ -18,6 +18,14 @@ export interface ChatMessage {
 export interface ChatContext {
   currentPage: string;
   conversationHistory: ChatMessage[];
+  user?: {
+    id: string;
+    username: string;
+    email: string;
+    name: string;
+    role: string;
+    isActive: boolean;
+  };
 }
 
 export class GeminiService {
