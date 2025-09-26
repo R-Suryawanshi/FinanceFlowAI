@@ -24,20 +24,42 @@ import {
 } from "lucide-react";
 
 interface UserService {
+  userService: {
+    id: string;
+    userId: string;
+    applicationNumber: string;
+    amount: string;
+    tenure: number;
+    interestRate: string;
+    emi?: string;
+    status: 'pending' | 'approved' | 'rejected' | 'active' | 'completed';
+    purpose?: string;
+    applicationDate: string;
+    approvalDate?: string;
+    notes?: string;
+    outstandingAmount?: string;
+  };
+  serviceType: {
+    id: string;
+    name: string;
+    displayName: string;
+  };
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  };
+}
+
+interface ServiceType {
   id: string;
-  userId: string;
-  userName: string;
-  userEmail: string;
-  serviceType: 'home-loan' | 'car-loan' | 'personal-loan' | 'gold-loan' | 'investment' | 'insurance';
-  amount: number;
-  interestRate: number;
-  tenure: number;
-  status: 'pending' | 'approved' | 'rejected' | 'active' | 'completed';
-  applicationDate: string;
-  approvalDate?: string;
-  emi?: number;
-  notes: string;
-  documents: string[];
+  name: string;
+  displayName: string;
+  baseInterestRate: string;
+  minAmount: string;
+  maxAmount: string;
+  minTenure: number;
+  maxTenure: number;
 }
 
 interface UserServicesManagerProps {
@@ -51,6 +73,7 @@ interface UserServicesManagerProps {
 
 export function UserServicesManager({ user }: UserServicesManagerProps) {
   const [services, setServices] = useState<UserService[]>([]);
+  const [serviceTypes, setServiceTypes] = useState<ServiceType[]>([]);
   const [filteredServices, setFilteredServices] = useState<UserService[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -58,72 +81,25 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterServiceType, setFilterServiceType] = useState<string>('all');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [newService, setNewService] = useState({
     userId: '',
     userName: '',
     userEmail: '',
-    serviceType: 'personal-loan',
+    serviceTypeId: '',
     amount: 0,
     interestRate: 0,
     tenure: 12,
     status: 'pending',
-    notes: '',
-    documents: []
+    purpose: '',
+    notes: ''
   });
 
-  // Mock data - replace with real API calls
+  // Fetch data on component mount
   useEffect(() => {
-    const mockServices: UserService[] = [
-      {
-        id: '1',
-        userId: 'user1',
-        userName: 'Rajesh Kumar',
-        userEmail: 'rajesh@email.com',
-        serviceType: 'home-loan',
-        amount: 2500000,
-        interestRate: 8.5,
-        tenure: 240,
-        status: 'active',
-        applicationDate: '2024-01-15',
-        approvalDate: '2024-01-20',
-        emi: 19308,
-        notes: 'Documents verified, loan sanctioned',
-        documents: ['income-proof.pdf', 'property-docs.pdf']
-      },
-      {
-        id: '2',
-        userId: 'user2',
-        userName: 'Priya Sharma',
-        userEmail: 'priya@email.com',
-        serviceType: 'gold-loan',
-        amount: 150000,
-        interestRate: 12,
-        tenure: 12,
-        status: 'pending',
-        applicationDate: '2024-01-25',
-        notes: 'Gold evaluation pending',
-        documents: ['gold-appraisal.pdf']
-      },
-      {
-        id: '3',
-        userId: 'user3',
-        userName: 'Amit Patel',
-        userEmail: 'amit@email.com',
-        serviceType: 'car-loan',
-        amount: 800000,
-        interestRate: 9.5,
-        tenure: 60,
-        status: 'approved',
-        applicationDate: '2024-02-01',
-        approvalDate: '2024-02-05',
-        emi: 16779,
-        notes: 'Ready for disbursement',
-        documents: ['car-invoice.pdf', 'insurance.pdf']
-      }
-    ];
-    setServices(mockServices);
-    setFilteredServices(mockServices);
+    fetchData();
   }, []);
 
   // Filter services based on search and filters
@@ -132,29 +108,54 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
 
     if (searchTerm) {
       filtered = filtered.filter(service => 
-        service.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.userEmail.toLowerCase().includes(searchTerm.toLowerCase())
+        service.user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        service.user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        service.userService.applicationNumber.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     if (filterStatus !== 'all') {
-      filtered = filtered.filter(service => service.status === filterStatus);
+      filtered = filtered.filter(service => service.userService.status === filterStatus);
     }
 
     if (filterServiceType !== 'all') {
-      filtered = filtered.filter(service => service.serviceType === filterServiceType);
+      filtered = filtered.filter(service => service.serviceType.name === filterServiceType);
     }
 
     setFilteredServices(filtered);
   }, [services, searchTerm, filterStatus, filterServiceType]);
 
-  const serviceTypes = {
-    'home-loan': 'Home Loan',
-    'car-loan': 'Car Loan',
-    'personal-loan': 'Personal Loan',
-    'gold-loan': 'Gold Loan',
-    'investment': 'Investment',
-    'insurance': 'Insurance'
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('authToken');
+      
+      // Fetch user services
+      const servicesResponse = await fetch('/api/admin/user-services', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      // Fetch service types
+      const serviceTypesResponse = await fetch('/api/services', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (servicesResponse.ok && serviceTypesResponse.ok) {
+        const servicesData = await servicesResponse.json();
+        const serviceTypesData = await serviceTypesResponse.json();
+        
+        setServices(servicesData.services || []);
+        setServiceTypes(serviceTypesData.services || []);
+        setFilteredServices(servicesData.services || []);
+      } else {
+        setError('Failed to fetch data');
+      }
+    } catch (error) {
+      console.error('Data fetch error:', error);
+      setError('Failed to fetch data');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const statusColors = {
@@ -165,28 +166,47 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
     'completed': 'bg-gray-100 text-gray-800'
   };
 
-  const handleAddService = () => {
-    const service: UserService = {
-      id: Date.now().toString(),
-      ...newService,
-      applicationDate: new Date().toISOString().split('T')[0],
-      documents: []
-    };
+  const handleAddService = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('/api/user-services', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          serviceTypeId: newService.serviceTypeId,
+          amount: newService.amount,
+          tenure: newService.tenure,
+          interestRate: newService.interestRate,
+          purpose: newService.purpose,
+          notes: newService.notes
+        })
+      });
 
-    setServices([...services, service]);
-    setNewService({
-      userId: '',
-      userName: '',
-      userEmail: '',
-      serviceType: 'personal-loan',
-      amount: 0,
-      interestRate: 0,
-      tenure: 12,
-      status: 'pending',
-      notes: '',
-      documents: []
-    });
-    setIsAddDialogOpen(false);
+      if (response.ok) {
+        await fetchData(); // Refresh the data
+        setNewService({
+          userId: '',
+          userName: '',
+          userEmail: '',
+          serviceTypeId: '',
+          amount: 0,
+          interestRate: 0,
+          tenure: 12,
+          status: 'pending',
+          purpose: '',
+          notes: ''
+        });
+        setIsAddDialogOpen(false);
+      } else {
+        setError('Failed to add service');
+      }
+    } catch (error) {
+      console.error('Add service error:', error);
+      setError('Failed to add service');
+    }
   };
 
   const handleEditService = (service: UserService) => {
@@ -194,24 +214,46 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
     setIsEditDialogOpen(true);
   };
 
-  const handleUpdateService = () => {
-    if (selectedService) {
-      setServices(services.map(s => s.id === selectedService.id ? selectedService : s));
-      setIsEditDialogOpen(false);
-      setSelectedService(null);
+  const handleUpdateService = async () => {
+    if (!selectedService) return;
+
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`/api/admin/user-services/${selectedService.userService.id}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          status: selectedService.userService.status,
+          notes: selectedService.userService.notes,
+          interestRate: selectedService.userService.interestRate,
+          amount: selectedService.userService.amount,
+          generateSchedule: true // Generate EMI schedule if approved
+        })
+      });
+
+      if (response.ok) {
+        await fetchData(); // Refresh the data
+        setIsEditDialogOpen(false);
+        setSelectedService(null);
+      } else {
+        setError('Failed to update service');
+      }
+    } catch (error) {
+      console.error('Update service error:', error);
+      setError('Failed to update service');
     }
   };
 
-  const handleDeleteService = (serviceId: string) => {
-    setServices(services.filter(s => s.id !== serviceId));
-  };
-
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: string | number) => {
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(numAmount);
   };
 
   if (!user || user.role !== 'admin') {
@@ -219,6 +261,26 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
       <div className="text-center py-12">
         <h1 className="text-2xl font-bold text-destructive mb-4">Access Denied</h1>
         <p className="text-muted-foreground">Only administrators can access user services management.</p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="text-center py-12">
+          <div className="text-lg">Loading services...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <Alert>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       </div>
     );
   }
@@ -231,106 +293,13 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
           <h1 className="text-3xl font-bold text-foreground">User Services Management</h1>
           <p className="text-muted-foreground">Manage and track all user financial services</p>
         </div>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add New Service
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Add New User Service</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="user-name">User Name</Label>
-                  <Input
-                    id="user-name"
-                    value={newService.userName}
-                    onChange={(e) => setNewService({...newService, userName: e.target.value})}
-                    placeholder="Enter user name"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="user-email">User Email</Label>
-                  <Input
-                    id="user-email"
-                    type="email"
-                    value={newService.userEmail}
-                    onChange={(e) => setNewService({...newService, userEmail: e.target.value})}
-                    placeholder="user@email.com"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="service-type">Service Type</Label>
-                  <Select value={newService.serviceType} onValueChange={(value) => setNewService({...newService, serviceType: value as any})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.entries(serviceTypes).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>{label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="amount">Amount</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    value={newService.amount}
-                    onChange={(e) => setNewService({...newService, amount: Number(e.target.value)})}
-                    placeholder="0"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="interest-rate">Interest Rate (%)</Label>
-                  <Input
-                    id="interest-rate"
-                    type="number"
-                    step="0.1"
-                    value={newService.interestRate}
-                    onChange={(e) => setNewService({...newService, interestRate: Number(e.target.value)})}
-                    placeholder="0.0"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="tenure">Tenure (months)</Label>
-                  <Input
-                    id="tenure"
-                    type="number"
-                    value={newService.tenure}
-                    onChange={(e) => setNewService({...newService, tenure: Number(e.target.value)})}
-                    placeholder="12"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="notes">Notes</Label>
-                <Textarea
-                  id="notes"
-                  value={newService.notes}
-                  onChange={(e) => setNewService({...newService, notes: e.target.value})}
-                  placeholder="Additional notes..."
-                />
-              </div>
-
-              <Button onClick={handleAddService} className="w-full">
-                Add Service
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <Button 
+          className="flex items-center gap-2"
+          onClick={() => fetchData()}
+        >
+          <Plus className="h-4 w-4" />
+          Refresh Data
+        </Button>
       </div>
 
       {/* Filters and Search */}
@@ -341,7 +310,7 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
               <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by user name or email..."
+                  placeholder="Search by user name, email, or application number..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -370,8 +339,10 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Services</SelectItem>
-                  {Object.entries(serviceTypes).map(([key, label]) => (
-                    <SelectItem key={key} value={key}>{label}</SelectItem>
+                  {serviceTypes.map((serviceType) => (
+                    <SelectItem key={serviceType.id} value={serviceType.name}>
+                      {serviceType.displayName}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -383,12 +354,15 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
       {/* Services Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {filteredServices.map((service) => (
-          <Card key={service.id} className="hover:shadow-lg transition-shadow">
+          <Card key={service.userService.id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle className="text-lg">{service.userName}</CardTitle>
-                  <CardDescription>{service.userEmail}</CardDescription>
+                  <CardTitle className="text-lg">{service.user.name}</CardTitle>
+                  <CardDescription>{service.user.email}</CardDescription>
+                  <div className="text-sm text-muted-foreground mt-1">
+                    App No: {service.userService.applicationNumber}
+                  </div>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -398,68 +372,54 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
                   >
                     <Edit3 className="h-4 w-4" />
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleDeleteService(service.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex justify-between items-center">
-                <Badge variant="outline">{serviceTypes[service.serviceType]}</Badge>
-                <Badge className={statusColors[service.status]}>
-                  {service.status.charAt(0).toUpperCase() + service.status.slice(1)}
+                <Badge variant="outline">{service.serviceType.displayName}</Badge>
+                <Badge className={statusColors[service.userService.status]}>
+                  {service.userService.status.charAt(0).toUpperCase() + service.userService.status.slice(1)}
                 </Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-muted-foreground">Amount</p>
-                  <p className="font-semibold">{formatCurrency(service.amount)}</p>
+                  <p className="font-semibold">{formatCurrency(service.userService.amount)}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Interest Rate</p>
-                  <p className="font-semibold">{service.interestRate}% p.a.</p>
+                  <p className="font-semibold">{service.userService.interestRate}% p.a.</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Tenure</p>
-                  <p className="font-semibold">{service.tenure} months</p>
+                  <p className="font-semibold">{service.userService.tenure} months</p>
                 </div>
-                {service.emi && (
+                {service.userService.emi && (
                   <div>
                     <p className="text-muted-foreground">EMI</p>
-                    <p className="font-semibold">{formatCurrency(service.emi)}</p>
+                    <p className="font-semibold">{formatCurrency(service.userService.emi)}</p>
                   </div>
                 )}
               </div>
 
               <div>
                 <p className="text-muted-foreground text-sm">Application Date</p>
-                <p className="text-sm">{new Date(service.applicationDate).toLocaleDateString()}</p>
+                <p className="text-sm">{new Date(service.userService.applicationDate).toLocaleDateString()}</p>
               </div>
 
-              {service.notes && (
+              {service.userService.purpose && (
                 <div>
-                  <p className="text-muted-foreground text-sm">Notes</p>
-                  <p className="text-sm">{service.notes}</p>
+                  <p className="text-muted-foreground text-sm">Purpose</p>
+                  <p className="text-sm">{service.userService.purpose}</p>
                 </div>
               )}
 
-              {service.documents.length > 0 && (
+              {service.userService.notes && (
                 <div>
-                  <p className="text-muted-foreground text-sm">Documents</p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {service.documents.map((doc, index) => (
-                      <Badge key={index} variant="secondary" className="text-xs">
-                        <FileText className="h-3 w-3 mr-1" />
-                        {doc}
-                      </Badge>
-                    ))}
-                  </div>
+                  <p className="text-muted-foreground text-sm">Notes</p>
+                  <p className="text-sm">{service.userService.notes}</p>
                 </div>
               )}
             </CardContent>
@@ -489,15 +449,18 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
                 <div>
                   <Label>User Name</Label>
                   <Input
-                    value={selectedService.userName}
-                    onChange={(e) => setSelectedService({...selectedService, userName: e.target.value})}
+                    value={selectedService.user.name}
+                    disabled
                   />
                 </div>
                 <div>
                   <Label>Status</Label>
                   <Select 
-                    value={selectedService.status} 
-                    onValueChange={(value) => setSelectedService({...selectedService, status: value as any})}
+                    value={selectedService.userService.status} 
+                    onValueChange={(value) => setSelectedService({
+                      ...selectedService,
+                      userService: { ...selectedService.userService, status: value as any }
+                    })}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -518,8 +481,11 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
                   <Label>Amount</Label>
                   <Input
                     type="number"
-                    value={selectedService.amount}
-                    onChange={(e) => setSelectedService({...selectedService, amount: Number(e.target.value)})}
+                    value={selectedService.userService.amount}
+                    onChange={(e) => setSelectedService({
+                      ...selectedService,
+                      userService: { ...selectedService.userService, amount: e.target.value }
+                    })}
                   />
                 </div>
                 <div>
@@ -527,8 +493,11 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
                   <Input
                     type="number"
                     step="0.1"
-                    value={selectedService.interestRate}
-                    onChange={(e) => setSelectedService({...selectedService, interestRate: Number(e.target.value)})}
+                    value={selectedService.userService.interestRate}
+                    onChange={(e) => setSelectedService({
+                      ...selectedService,
+                      userService: { ...selectedService.userService, interestRate: e.target.value }
+                    })}
                   />
                 </div>
               </div>
@@ -536,8 +505,11 @@ export function UserServicesManager({ user }: UserServicesManagerProps) {
               <div>
                 <Label>Notes</Label>
                 <Textarea
-                  value={selectedService.notes}
-                  onChange={(e) => setSelectedService({...selectedService, notes: e.target.value})}
+                  value={selectedService.userService.notes || ''}
+                  onChange={(e) => setSelectedService({
+                    ...selectedService,
+                    userService: { ...selectedService.userService, notes: e.target.value }
+                  })}
                 />
               </div>
 
