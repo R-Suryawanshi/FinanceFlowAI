@@ -1,19 +1,19 @@
+
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   Calculator, 
-  DollarSign, 
+  CreditCard, 
+  Coins, 
   FileText, 
   Clock, 
-  CheckCircle,
-  AlertTriangle,
   TrendingUp,
-  Coins,
-  CreditCard,
-  BarChart3
+  CheckCircle,
+  AlertCircle,
+  XCircle
 } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface UserDashboardProps {
   onNavigateToCalculator: (type: 'emi' | 'gold') => void;
@@ -25,6 +25,52 @@ interface UserDashboardProps {
     role: string;
     createdAt: string;
   };
+}
+
+interface UserService {
+  userService: {
+    id: string;
+    userId: string;
+    applicationNumber: string;
+    amount: string;
+    tenure: number;
+    interestRate: string;
+    emi?: string;
+    status: 'pending' | 'approved' | 'rejected' | 'active' | 'completed';
+    purpose?: string;
+    applicationDate: string;
+    approvalDate?: string;
+    outstandingAmount?: string;
+    totalPaidAmount?: string;
+  };
+  serviceType: {
+    id: string;
+    name: string;
+    displayName: string;
+  };
+}
+
+interface Payment {
+  payment: {
+    id: string;
+    amount: string;
+    paymentMethod: string;
+    paymentDate: string;
+    status: string;
+    paymentReference: string;
+  };
+  userService: {
+    applicationNumber: string;
+  };
+  serviceType: {
+    displayName: string;
+  };
+}
+
+interface UserProfile {
+  creditScore?: number;
+  monthlyIncome?: string;
+  occupation?: string;
 }
 
 // Function to generate account number from user ID
@@ -42,99 +88,178 @@ const formatJoinDate = (dateString: string) => {
   });
 };
 
-// Todo: remove mock data when implementing real backend
-const mockUserData = {
-  stats: {
-    activeLoan: 250000,
-    totalCalculations: 15,
-    creditScore: 750,
-    savingsGoal: 1000000,
-    currentSavings: 650000,
-  },
-  recentActivity: [
-    { id: 1, type: "emi", description: "EMI Calculation - Home Loan", amount: "₹25,000", date: "2 days ago", status: "completed" },
-    { id: 2, type: "gold", description: "Gold Loan Quote Request", amount: "₹2,50,000", date: "1 week ago", status: "pending" },
-    { id: 3, type: "emi", description: "Car Loan EMI Calculation", amount: "₹18,500", date: "2 weeks ago", status: "completed" },
-    { id: 4, type: "inquiry", description: "Personal Loan Inquiry", amount: "₹5,00,000", date: "1 month ago", status: "completed" },
-  ],
-  loanHistory: [
-    { month: 'Jan', amount: 250000 },
-    { month: 'Feb', amount: 240000 },
-    { month: 'Mar', amount: 230000 },
-    { month: 'Apr', amount: 220000 },
-    { month: 'May', amount: 210000 },
-    { month: 'Jun', amount: 200000 },
-  ],
-  quickActions: [
-    { id: 'emi-calc', title: 'EMI Calculator', icon: Calculator, description: 'Calculate loan EMIs' },
-    { id: 'gold-calc', title: 'Gold Loan Calculator', icon: Coins, description: 'Check gold loan eligibility' },
-    { id: 'loan-apply', title: 'Apply for Loan', icon: FileText, description: 'Start loan application' },
-    { id: 'payment-history', title: 'Payment History', icon: Clock, description: 'View past payments' },
-  ]
-};
-
 export function UserDashboard({ onNavigateToCalculator, user }: UserDashboardProps) {
-  const formatCurrency = (amount: number) => {
+  const [userServices, setUserServices] = useState<UserService[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+    }
+  }, [user]);
+
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('authToken');
+      
+      // Fetch user services
+      const servicesResponse = await fetch('/api/user-services', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      // Fetch user payments
+      const paymentsResponse = await fetch('/api/payments', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      // Fetch user profile
+      const profileResponse = await fetch('/api/profile', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+
+      if (servicesResponse.ok) {
+        const servicesData = await servicesResponse.json();
+        setUserServices(servicesData.services || []);
+      }
+
+      if (paymentsResponse.ok) {
+        const paymentsData = await paymentsResponse.json();
+        setPayments(paymentsData.payments || []);
+      }
+
+      if (profileResponse.ok) {
+        const profileData = await profileResponse.json();
+        setUserProfile(profileData.profile);
+      }
+
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setError('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const formatCurrency = (amount: string | number) => {
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
+    if (isNaN(numAmount)) return '₹0';
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(numAmount);
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="h-4 w-4 text-secondary" />;
+      case 'success':
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'pending':
-        return <Clock className="h-4 w-4 text-amber-500" />;
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      case 'rejected':
+      case 'failed':
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      case 'active':
+      case 'approved':
+        return <CheckCircle className="h-4 w-4 text-blue-500" />;
       default:
-        return <AlertTriangle className="h-4 w-4 text-destructive" />;
+        return <AlertCircle className="h-4 w-4 text-gray-500" />;
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return <Badge variant="secondary">Completed</Badge>;
-      case 'pending':
-        return <Badge variant="outline" className="border-amber-500 text-amber-600">Pending</Badge>;
-      default:
-        return <Badge variant="destructive">Failed</Badge>;
-    }
+  // Calculate statistics from real data
+  const calculateStats = () => {
+    const activeLoans = userServices.filter(s => s.userService.status === 'active');
+    const totalActiveAmount = activeLoans.reduce((sum, service) => {
+      return sum + parseFloat(service.userService.outstandingAmount || service.userService.amount || '0');
+    }, 0);
+
+    const totalPaidAmount = userServices.reduce((sum, service) => {
+      return sum + parseFloat(service.userService.totalPaidAmount || '0');
+    }, 0);
+
+    const recentPayments = payments.filter(p => {
+      const paymentDate = new Date(p.payment.paymentDate);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      return paymentDate >= thirtyDaysAgo;
+    }).length;
+
+    return {
+      activeLoanAmount: totalActiveAmount,
+      totalServices: userServices.length,
+      creditScore: userProfile?.creditScore || 0,
+      recentPayments
+    };
   };
 
-  const savingsProgress = (mockUserData.stats.currentSavings / mockUserData.stats.savingsGoal) * 100;
+  const stats = calculateStats();
+
+  const quickActions = [
+    { id: 'emi-calc', title: 'EMI Calculator', icon: Calculator, description: 'Calculate loan EMIs' },
+    { id: 'gold-calc', title: 'Gold Loan Calculator', icon: Coins, description: 'Check gold loan eligibility' },
+    { id: 'loan-apply', title: 'Apply for Loan', icon: FileText, description: 'Start loan application' },
+    { id: 'payment-history', title: 'Payment History', icon: Clock, description: 'View past payments' }
+  ];
+
+  if (!user) {
+    return (
+      <div className="text-center py-12">
+        <h1 className="text-2xl font-bold text-destructive mb-4">Access Denied</h1>
+        <p className="text-muted-foreground">Please log in to view your dashboard.</p>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="text-center py-12">
+          <div className="text-lg">Loading your dashboard...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-8">
       {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-6 rounded-lg">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground" data-testid="text-welcome">
-              Welcome back, {user?.name || 'User'}!
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Account: {user ? generateAccountNumber(user.id) : 'BF2024XXXXXXXX'} • Member since {user ? formatJoinDate(user.createdAt) : 'N/A'}
-            </p>
-          </div>
-          <Badge variant="outline" className="bg-background/50">
-            Credit Score: {mockUserData.stats.creditScore}
-          </Badge>
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold text-foreground" data-testid="text-welcome">
+          Welcome back, {user.name}!
+        </h1>
+        <div className="text-muted-foreground space-y-1">
+          <p>Account: {generateAccountNumber(user.id)} • Member since {formatJoinDate(user.createdAt)}</p>
+          <p>Credit Score: {stats.creditScore > 0 ? stats.creditScore : '----'}</p>
         </div>
       </div>
+
+      {error && (
+        <Card className="bg-destructive/10 border-destructive/20">
+          <CardContent className="p-4">
+            <p className="text-destructive">{error}</p>
+            <Button onClick={fetchUserData} variant="outline" className="mt-2">
+              Retry
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card data-testid="card-active-loan">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Loan</CardTitle>
+            <CardTitle className="text-sm font-medium">Active Loans</CardTitle>
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold" data-testid="text-active-loan">
-              {formatCurrency(mockUserData.stats.activeLoan)}
+              {formatCurrency(stats.activeLoanAmount)}
             </div>
             <p className="text-xs text-muted-foreground">
               Outstanding amount
@@ -142,17 +267,17 @@ export function UserDashboard({ onNavigateToCalculator, user }: UserDashboardPro
           </CardContent>
         </Card>
 
-        <Card data-testid="card-calculations">
+        <Card data-testid="card-total-services">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Calculations</CardTitle>
-            <Calculator className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Total Services</CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-calculations">
-              {mockUserData.stats.totalCalculations}
+            <div className="text-2xl font-bold" data-testid="text-total-services">
+              {stats.totalServices}
             </div>
             <p className="text-xs text-muted-foreground">
-              This month
+              All time applications
             </p>
           </CardContent>
         </Card>
@@ -163,33 +288,27 @@ export function UserDashboard({ onNavigateToCalculator, user }: UserDashboardPro
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-secondary" data-testid="text-credit-score">
-              {mockUserData.stats.creditScore}
+            <div className="text-2xl font-bold" data-testid="text-credit-score">
+              {stats.creditScore > 0 ? stats.creditScore : '----'}
             </div>
             <p className="text-xs text-muted-foreground">
-              Excellent rating
+              {stats.creditScore >= 750 ? 'Excellent' : stats.creditScore >= 650 ? 'Good' : stats.creditScore > 0 ? 'Fair' : 'Not available'}
             </p>
           </CardContent>
         </Card>
 
-        <Card data-testid="card-savings-goal">
+        <Card data-testid="card-recent-payments">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Savings Goal</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium">Recent Payments</CardTitle>
+            <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-savings-progress">
-              {savingsProgress.toFixed(0)}%
+            <div className="text-2xl font-bold" data-testid="text-recent-payments">
+              {stats.recentPayments}
             </div>
             <p className="text-xs text-muted-foreground">
-              {formatCurrency(mockUserData.stats.currentSavings)} of {formatCurrency(mockUserData.stats.savingsGoal)}
+              Last 30 days
             </p>
-            <div className="w-full bg-muted rounded-full h-2 mt-2">
-              <div
-                className="bg-secondary h-2 rounded-full transition-all duration-300"
-                style={{ width: `${savingsProgress}%` }}
-              />
-            </div>
           </CardContent>
         </Card>
       </div>
@@ -203,7 +322,7 @@ export function UserDashboard({ onNavigateToCalculator, user }: UserDashboardPro
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {mockUserData.quickActions.map((action) => {
+              {quickActions.map((action) => {
                 const Icon = action.icon;
                 return (
                   <Button
@@ -232,111 +351,103 @@ export function UserDashboard({ onNavigateToCalculator, user }: UserDashboardPro
           </CardContent>
         </Card>
 
-        {/* Loan Repayment Progress */}
-        <Card data-testid="card-loan-progress">
+        {/* My Services */}
+        <Card data-testid="card-my-services">
           <CardHeader>
-            <CardTitle>Loan Repayment Progress</CardTitle>
-            <CardDescription>Your outstanding loan amount over time</CardDescription>
+            <CardTitle>My Services</CardTitle>
+            <CardDescription>Your current financial services and applications</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={mockUserData.loanHistory}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis tickFormatter={(value) => `₹${(value / 100000).toFixed(0)}L`} />
-                <Tooltip 
-                  formatter={(value) => [formatCurrency(Number(value)), 'Outstanding']}
-                  labelFormatter={(label) => `Month: ${label}`}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="amount" 
-                  stroke="hsl(var(--primary))" 
-                  strokeWidth={2}
-                  dot={{ fill: 'hsl(var(--primary))' }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Recent Activity */}
-        <Card data-testid="card-user-activity" className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
-            <CardDescription>Your latest financial activities and transactions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {mockUserData.recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-primary/10 rounded-full">
-                      {activity.type === 'emi' ? (
-                        <Calculator className="h-4 w-4 text-primary" />
-                      ) : activity.type === 'gold' ? (
-                        <Coins className="h-4 w-4 text-secondary" />
-                      ) : (
-                        <FileText className="h-4 w-4 text-accent" />
-                      )}
+            <div className="space-y-4 max-h-80 overflow-y-auto">
+              {userServices.length > 0 ? (
+                userServices.map((service) => (
+                  <div key={service.userService.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                    <div className="flex items-center gap-4">
+                      <div className="p-2 bg-primary/10 rounded-full">
+                        <FileText className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">
+                          {service.serviceType.displayName}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          App No: {service.userService.applicationNumber}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(service.userService.applicationDate).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-sm" data-testid={`activity-description-${activity.id}`}>
-                        {activity.description}
+                    <div className="text-right">
+                      <p className="font-semibold text-sm">
+                        {formatCurrency(service.userService.amount)}
                       </p>
-                      <p className="text-sm text-muted-foreground flex items-center gap-1">
-                        {getStatusIcon(activity.status)}
-                        {activity.date}
-                      </p>
+                      <div className="flex items-center gap-1">
+                        {getStatusIcon(service.userService.status)}
+                        <Badge variant="outline" className="text-xs">
+                          {service.userService.status.charAt(0).toUpperCase() + service.userService.status.slice(1)}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right flex items-center gap-3">
-                    <div>
-                      <p className="font-medium text-sm" data-testid={`activity-amount-${activity.id}`}>
-                        {activity.amount}
-                      </p>
-                      {getStatusBadge(activity.status)}
-                    </div>
-                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No services yet</h3>
+                  <p className="text-muted-foreground text-sm">Start by applying for a loan or using our calculators</p>
                 </div>
-              ))}
+              )}
             </div>
-            <Button variant="outline" className="w-full mt-4" data-testid="button-view-all-user-activity">
-              View Complete History
-            </Button>
           </CardContent>
         </Card>
       </div>
 
-      {/* Financial Health Tips */}
-      <Card data-testid="card-financial-tips">
+      {/* Recent Activity */}
+      <Card data-testid="card-user-activity" className="lg:col-span-2">
         <CardHeader>
-          <CardTitle>Financial Health Tips</CardTitle>
-          <CardDescription>Personalized recommendations based on your profile</CardDescription>
+          <CardTitle>Recent Payments</CardTitle>
+          <CardDescription>Your latest payment transactions</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-secondary/10 rounded-lg">
-              <TrendingUp className="h-6 w-6 text-secondary mb-2" />
-              <h4 className="font-medium mb-1">Great Credit Score!</h4>
-              <p className="text-sm text-muted-foreground">
-                Your credit score of {mockUserData.stats.creditScore} qualifies you for premium loan rates.
-              </p>
-            </div>
-            <div className="p-4 bg-primary/10 rounded-lg">
-              <DollarSign className="h-6 w-6 text-primary mb-2" />
-              <h4 className="font-medium mb-1">Savings on Track</h4>
-              <p className="text-sm text-muted-foreground">
-                You're {savingsProgress.toFixed(0)}% towards your savings goal. Keep it up!
-              </p>
-            </div>
-            <div className="p-4 bg-accent/10 rounded-lg">
-              <Calculator className="h-6 w-6 text-accent mb-2" />
-              <h4 className="font-medium mb-1">Consider Refinancing</h4>
-              <p className="text-sm text-muted-foreground">
-                Current market rates might offer savings on your existing loan.
-              </p>
-            </div>
+          <div className="space-y-4">
+            {payments.length > 0 ? (
+              payments.slice(0, 5).map((payment) => (
+                <div key={payment.payment.id} className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 bg-primary/10 rounded-full">
+                      <CreditCard className="h-4 w-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">
+                        Payment for {payment.serviceType.displayName}
+                      </p>
+                      <p className="text-sm text-muted-foreground flex items-center gap-1">
+                        {getStatusIcon(payment.payment.status)}
+                        {new Date(payment.payment.paymentDate).toLocaleDateString()}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Ref: {payment.payment.paymentReference}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-sm">
+                      {formatCurrency(payment.payment.amount)}
+                    </p>
+                    <p className="text-xs text-muted-foreground capitalize">
+                      {payment.payment.paymentMethod}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No payments yet</h3>
+                <p className="text-muted-foreground text-sm">Your payment history will appear here</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
