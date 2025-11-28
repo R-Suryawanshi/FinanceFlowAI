@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-// Components
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
@@ -18,213 +17,150 @@ import { UserDashboard } from "./components/UserDashboard";
 import { LoanApplicationForm } from "./components/LoanApplicationForm";
 import { ChatBot } from "./components/ChatBot";
 import { Footer } from "./components/Footer";
+import { AuthModal } from "./components/AuthModal";
 
-// Real authentication system
 interface User {
   id: string;
   name: string;
   username: string;
   email: string;
-  role: 'user' | 'admin';
+  role: "user" | "admin";
   isActive: boolean;
 }
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [authToken, setAuthToken] = useState<string | null>(
-    localStorage.getItem('authToken')
-  );
-  const [isLoading, setIsLoading] = useState(false); // Added loading state
 
-  // Check for existing authentication on app load
-  React.useEffect(() => {
-    if (authToken) {
-      fetchUserProfile();
-    }
+  const [user, setUser] = useState<User | null>(null);
+  const [authToken, setAuthToken] = useState(localStorage.getItem("authToken"));
+  const [isAuthModalOpen, setAuthModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (authToken) fetchUserProfile();
   }, [authToken]);
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch('/api/auth/me', {
-        headers: {
-          'Authorization': `Bearer ${authToken}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.user);
-      } else {
-        // Token is invalid, clear it
-        setAuthToken(null);
-        localStorage.removeItem('authToken');
-      }
-    } catch (error) {
-      console.error('Failed to fetch user profile:', error);
-      setAuthToken(null);
-      localStorage.removeItem('authToken');
-    }
-  };
-
-  const handleLogin = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    try {
-      setIsLoading(true);
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+      const response = await fetch("/api/auth/me", {
+        headers: { Authorization: `Bearer ${authToken}` }
       });
 
       const data = await response.json();
 
-      if (data.success && data.user && data.token) {
-        localStorage.setItem('authToken', data.token); // Corrected key to 'authToken'
+      if (response.ok) {
         setUser(data.user);
-
-        // Redirect based on user role
-        if (data.user.role === 'admin') {
-          setCurrentPage('admin-dashboard');
-        } else {
-          setCurrentPage('user-dashboard'); // Changed from 'dashboard' to 'user-dashboard' for consistency
-        }
-
-        console.log('Login successful:', data.user);
-        return { success: true };
       } else {
-        console.error('Login failed:', data.error);
-        return { success: false, error: data.error };
+        setUser(null);
+        setAuthToken(null);
+        localStorage.removeItem("authToken");
       }
     } catch (error) {
-      console.error('Login error:', error);
-      return { success: false, error: 'Login failed. Please try again.' };
+      console.error("Profile fetch error:", error);
+    }
+  };
+
+  // SAFE LOGIN (NEVER returns undefined)
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      setIsLoading(true);
+
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      let data: any = {};
+
+      try {
+        data = await response.json();
+      } catch {
+        return { success: false, error: "Invalid server response" };
+      }
+
+      if (data?.success && data?.token) {
+        localStorage.setItem("authToken", data.token);
+        setAuthToken(data.token);
+        setUser(data.user);
+        setAuthModalOpen(false);
+
+        setCurrentPage(data.user.role === "admin" ? "admin-dashboard" : "user-dashboard");
+
+        return { success: true, token: data.token };
+      }
+
+      return { success: false, error: data?.error || "Login failed" };
+    } catch (error) {
+      console.error("Login Error:", error);
+      return { success: false, error: "Network error" };
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSignup = async (userData: {
-    username: string;
-    email: string;
-    password: string;
-    name: string;
-  }) => {
+  // SAFE SIGNUP
+  const handleSignup = async (userData: any) => {
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData)
       });
 
       const data = await response.json();
 
-      if (data.success) {
-        setUser(data.user);
+      if (data?.success) {
+        localStorage.setItem("authToken", data.token);
         setAuthToken(data.token);
-        localStorage.setItem('authToken', data.token);
-        setCurrentPage('user-dashboard');
-        console.log('Signup successful:', data.user);
+        setUser(data.user);
+        setAuthModalOpen(false);
+        setCurrentPage("user-dashboard");
+
         return { success: true };
-      } else {
-        console.error('Signup failed:', data.error);
-        return { success: false, error: data.error };
       }
-    } catch (error) {
-      console.error('Signup error:', error);
-      return { success: false, error: 'Signup failed. Please try again.' };
+
+      return { success: false, error: data?.error || "Signup failed" };
+    } catch {
+      return { success: false, error: "Signup failed" };
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      if (authToken) {
-        await fetch('/api/auth/logout', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${authToken}`
-          }
-        });
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-    } finally {
-      setUser(null);
-      setAuthToken(null);
-      localStorage.removeItem('authToken');
-      setCurrentPage("home");
-      console.log('User logged out');
-    }
-  };
-
-  const handlePageChange = (page: string) => {
-    setCurrentPage(page);
-    console.log('Page changed to:', page);
+  const handleLogout = () => {
+    setUser(null);
+    setAuthToken(null);
+    localStorage.removeItem("authToken");
+    setCurrentPage("home");
   };
 
   const handleGetStarted = () => {
     if (user) {
-      setCurrentPage(user.role === 'admin' ? 'admin-dashboard' : 'user-dashboard');
+      setCurrentPage(user.role === "admin" ? "admin-dashboard" : "user-dashboard");
     } else {
-      // Show auth modal instead of auto-login
-      setCurrentPage('auth');
+      setAuthModalOpen(true);
     }
-  };
-
-  const handleNavigateToCalculator = (type: 'emi' | 'gold') => {
-    setCurrentPage(type === 'emi' ? 'emi-calculator' : 'gold-calculator');
   };
 
   const renderCurrentPage = () => {
     switch (currentPage) {
       case "home":
-        return (
-          <Hero
-            onGetStarted={handleGetStarted}
-            onLearnMore={() => setCurrentPage("about")}
-          />
-        );
+        return <Hero onGetStarted={handleGetStarted} onLearnMore={() => setCurrentPage("about")} />;
       case "services":
-        return (
-          <ServicesPage
-            onNavigateToCalculator={handleNavigateToCalculator}
-            onGetStarted={handleGetStarted}
-            onPageChange={handlePageChange}
-          />
-        );
-      case "about":
-        return <AboutPage />;
-      case "contact":
-        return <ContactPage />;
-      case "emi-calculator":
-        return <EMICalculator />;
-      case "gold-calculator":
-        return <GoldLoanCalculator />;
-      case "admin-dashboard":
-        return user?.role === 'admin' ? <AdminDashboard user={user} /> : <div>Access Denied</div>;
-      case "user-dashboard":
-        return user ? (
-          <UserDashboard user={user} onNavigateToCalculator={handleNavigateToCalculator} />
-        ) : (
-          <div>Please login to access dashboard</div>
-        );
-      case "loan-application-home":
-        return <LoanApplicationForm loanType="home" />;
-      case "loan-application-car":
-        return <LoanApplicationForm loanType="car" />;
-      case "loan-application-personal":
-        return <LoanApplicationForm loanType="personal" />;
-      case "loan-application-gold":
-        return <LoanApplicationForm loanType="gold" />;
-      default:
-        return (
-          <Hero
-            onGetStarted={handleGetStarted}
-            onLearnMore={() => setCurrentPage("about")}
-          />
-        );
+        return <ServicesPage onNavigateToCalculator={(t) =>
+          setCurrentPage(t === "emi" ? "emi-calculator" : "gold-calculator")
+        } />;
+      case "about": return <AboutPage />;
+      case "contact": return <ContactPage />;
+      case "emi-calculator": return <EMICalculator />;
+      case "gold-calculator": return <GoldLoanCalculator />;
+      case "admin-dashboard": return user?.role === "admin" ? <AdminDashboard user={user} /> : <>Access Denied</>;
+      case "user-dashboard": return user ? <UserDashboard user={user} /> : <>Please login</>;
+      case "loan-application-home": return <LoanApplicationForm loanType="home" />;
+      case "loan-application-car": return <LoanApplicationForm loanType="car" />;
+      case "loan-application-personal": return <LoanApplicationForm loanType="personal" />;
+      case "loan-application-gold": return <LoanApplicationForm loanType="gold" />;
+      default: return <Hero onGetStarted={handleGetStarted} onLearnMore={() => setCurrentPage("about")} />;
     }
   };
 
@@ -235,26 +171,32 @@ function App() {
           <div className="min-h-screen flex flex-col bg-background text-foreground">
             <Header
               currentPage={currentPage}
-              onPageChange={handlePageChange}
+              onPageChange={setCurrentPage}
               isLoggedIn={!!user}
               userRole={user?.role}
-              onLogin={handleLogin}
-              onSignup={handleSignup}
+              onLogin={() => setAuthModalOpen(true)}
+              onSignup={() => setAuthModalOpen(true)}
               onLogout={handleLogout}
             />
 
-            <main className="flex-1">
-              {renderCurrentPage()}
-            </main>
+            <main className="flex-1">{renderCurrentPage()}</main>
 
-            <Footer onPageChange={handlePageChange} />
+            <Footer onPageChange={setCurrentPage} />
 
             <ChatBot
               currentPage={currentPage}
               isOpen={isChatOpen}
               onToggle={() => setIsChatOpen(!isChatOpen)}
             />
+
+            <AuthModal
+              isOpen={isAuthModalOpen}
+              onClose={() => setAuthModalOpen(false)}
+              onLogin={handleLogin}
+              onSignup={handleSignup}
+            />
           </div>
+
           <Toaster />
         </ThemeProvider>
       </TooltipProvider>

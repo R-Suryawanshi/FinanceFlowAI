@@ -1,4 +1,14 @@
-import { Building2, Phone, Mail, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import {
+  Building2,
+  Phone,
+  Mail,
+  MapPin,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  FileText,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface FooterProps {
@@ -8,10 +18,39 @@ interface FooterProps {
 export function Footer({ onPageChange }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
+  // List of RBI guideline links
+  const rbiGuidelines = [
+    {
+      title: "Master Direction – Know Your Customer (KYC)",
+      url: "https://rbi.org.in/Scripts/BS_ViewMasCirculardetails.aspx?id=12070",
+    },
+    {
+      title: "Digital Lending Guidelines (2023 Update)",
+      url: "https://rbi.org.in/Scripts/NotificationUser.aspx?Id=12113",
+    },
+    {
+      title: "NBFC – Fair Practices Code",
+      url: "https://rbi.org.in/Scripts/BS_ViewMasDirections.aspx?id=11566",
+    },
+    {
+      title: "Customer Grievance Redressal Framework",
+      url: "https://rbi.org.in/Scripts/NotificationUser.aspx?Id=12411",
+    },
+    {
+      title: "Fair Lending & Customer Rights",
+      // This may reuse the same NBFC or another RBI circular
+      url: "https://rbi.org.in/Scripts/BS_ViewMasDirections.aspx?id=11566",
+    },
+    {
+      title: "Banking Supervision & Compliance",
+      url: "https://rbi.org.in/Scripts/BS_ViewMasDirections.aspx?id=11566",
+    },
+  ];
+
   return (
     <footer className="bg-muted/30 border-t mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -19,20 +58,20 @@ export function Footer({ onPageChange }: FooterProps) {
               <span className="text-lg font-bold">Bhalchandra Finance</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Your trusted partner for comprehensive financial services. 
+              Your trusted partner for comprehensive financial services.
               Expert guidance, competitive rates, and personalized solutions for all your financial needs.
             </p>
             <div className="flex space-x-2">
-              <Button variant="ghost" size="icon" data-testid="social-facebook">
+              <Button variant="ghost" size="icon">
                 <Facebook className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" data-testid="social-twitter">
+              <Button variant="ghost" size="icon">
                 <Twitter className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" data-testid="social-linkedin">
+              <Button variant="ghost" size="icon">
                 <Linkedin className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" data-testid="social-instagram">
+              <Button variant="ghost" size="icon">
                 <Instagram className="h-4 w-4" />
               </Button>
             </div>
@@ -51,11 +90,7 @@ export function Footer({ onPageChange }: FooterProps) {
                 <Button
                   key={link.id}
                   variant="ghost"
-                  onClick={() => {
-                    onPageChange(link.id);
-                    console.log('Footer navigation to:', link.name);
-                  }}
-                  data-testid={`footer-nav-${link.id}`}
+                  onClick={() => onPageChange(link.id)}
                   className="w-full justify-start p-0 h-auto text-sm text-muted-foreground hover:text-foreground"
                 >
                   {link.name}
@@ -79,11 +114,7 @@ export function Footer({ onPageChange }: FooterProps) {
                 <Button
                   key={service}
                   variant="ghost"
-                  onClick={() => {
-                    onPageChange("services");
-                    console.log('Footer service clicked:', service);
-                  }}
-                  data-testid={`footer-service-${service.toLowerCase().replace(/\s+/g, '-')}`}
+                  onClick={() => onPageChange("services")}
                   className="w-full justify-start p-0 h-auto text-sm text-muted-foreground hover:text-foreground"
                 >
                   {service}
@@ -95,25 +126,18 @@ export function Footer({ onPageChange }: FooterProps) {
           {/* Contact Info */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Contact Us</h3>
-            <div className="space-y-3">
-              <div className="flex items-center gap-2 text-sm">
-                <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
-                <span className="text-muted-foreground">
-                  123 Financial Street<br />
-                  Mumbai, Maharashtra 400001
-                </span>
+            <div className="space-y-3 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-primary" />
+                Kasba Peth Jintur, Parbhani, Maharashtra 431402
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Phone className="h-4 w-4 text-primary" />
-                <span className="text-muted-foreground">+91 22 1234 5678</span>
+              <div className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-primary" /> +91 22 1234 5678
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-primary" />
-                <span className="text-muted-foreground">info@bhalchandrafinance.com</span>
+              <div className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-primary" /> info@bhalchandrafinance.com
               </div>
             </div>
-            
-            {/* Business Hours */}
             <div className="space-y-2">
               <h4 className="font-medium text-sm">Business Hours</h4>
               <div className="text-sm text-muted-foreground">
@@ -122,6 +146,24 @@ export function Footer({ onPageChange }: FooterProps) {
                 <div>Sunday: Closed</div>
               </div>
             </div>
+          </div>
+
+          {/* RBI Guidelines Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">RBI Guidelines</h3>
+            <nav className="space-y-2 text-sm">
+              {rbiGuidelines.map((item) => (
+                <a
+                  key={item.url}
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block hover:underline text-muted-foreground"
+                >
+                  {item.title}
+                </a>
+              ))}
+            </nav>
           </div>
         </div>
 
@@ -134,24 +176,21 @@ export function Footer({ onPageChange }: FooterProps) {
             <div className="flex space-x-6">
               <Button
                 variant="ghost"
-                onClick={() => console.log('Privacy Policy clicked')}
-                data-testid="footer-privacy-policy"
+                onClick={() => console.log("Privacy Policy clicked")}
                 className="p-0 h-auto text-sm text-muted-foreground hover:text-foreground"
               >
                 Privacy Policy
               </Button>
               <Button
                 variant="ghost"
-                onClick={() => console.log('Terms of Service clicked')}
-                data-testid="footer-terms-service"
+                onClick={() => console.log("Terms of Service clicked")}
                 className="p-0 h-auto text-sm text-muted-foreground hover:text-foreground"
               >
                 Terms of Service
               </Button>
               <Button
                 variant="ghost"
-                onClick={() => console.log('Cookie Policy clicked')}
-                data-testid="footer-cookie-policy"
+                onClick={() => console.log("Cookie Policy clicked")}
                 className="p-0 h-auto text-sm text-muted-foreground hover:text-foreground"
               >
                 Cookie Policy

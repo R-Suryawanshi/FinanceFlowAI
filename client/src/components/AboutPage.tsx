@@ -15,10 +15,10 @@ import {
 
 export function AboutPage() {
   const stats = [
-    { label: 'Years of Experience', value: '15+', icon: Calendar },
-    { label: 'Happy Customers', value: '10,000+', icon: Users },
-    { label: 'Loans Processed', value: '₹500+ Cr', icon: TrendingUp },
-    { label: 'Branch Locations', value: '25+', icon: MapPin },
+    { label: 'Years of Experience', value: '11+', icon: Calendar },
+    { label: 'Happy Customers', value: '2,000+', icon: Users },
+    { label: 'Loans Processed', value: '₹2+ Cr', icon: TrendingUp },
+    { label: 'Main Branch Location', value: '1', icon: MapPin },
   ];
 
   const values = [
@@ -46,38 +46,34 @@ export function AboutPage() {
 
   const team = [
     {
-      name: 'Rajesh Bhalchandra',
-      position: 'Founder & CEO',
-      experience: '20+ years in banking',
-      specialization: 'Corporate Finance & Strategy'
+      name: 'Mr.Mukund Bhalchandra Kherdekar',
+      position: 'Honourable General President'
+      
     },
     {
-      name: 'Priya Sharma',
-      position: 'Head of Operations',
-      experience: '15+ years in finance',
-      specialization: 'Loan Processing & Risk Management'
+      name: 'Mr.Prasad M. Kherdekar',
+      position: 'Founder & General Director',
+      experience: '10+ years in banking',
+      specialization: 'Economist'
     },
     {
-      name: 'Amit Kumar',
-      position: 'Technology Director',
-      experience: '12+ years in fintech',
-      specialization: 'Digital Innovation & AI'
+      name: 'Mr.Vaibhav Deshpande',
+      position: 'Financial Advisor',
+      experience: '10+ years in finance',
+      specialization: 'Financial Recovery Head'
     },
     {
-      name: 'Sunita Mehta',
-      position: 'Customer Relations Head',
-      experience: '18+ years in banking',
-      specialization: 'Customer Experience & Support'
+      name: 'Shruti P. Kherdekar ',
+      position: 'Co-Founder',
+      
     }
   ];
 
   const milestones = [
-    { year: '2009', event: 'Founded Bhalchandra Finance with a vision to democratize financial services' },
-    { year: '2012', event: 'Reached ₹10 Crore in loan disbursements, expanded to 5 branches' },
-    { year: '2016', event: 'Launched digital platform, introduced online EMI calculator' },
-    { year: '2019', event: 'Crossed 5,000 satisfied customers, introduced gold loan services' },
-    { year: '2022', event: 'Implemented AI-powered financial advisory, reached ₹500 Cr milestone' },
-    { year: '2024', event: 'Launched comprehensive fintech platform with advanced analytics' }
+    { year: '2013', event: 'Founded Bhalchandra Finance with a vision to democratize financial services' },
+    { year: '2022', event: 'Crossed 1,500 satisfied customers, introduced gold loan services' },
+    { year: '2023', event: 'Reached ₹2 Crore in loan disbursements' },
+    { year: '2026', event: 'Launched digital platform, introduced online EMI calculator' }
   ];
 
   return (
@@ -243,7 +239,7 @@ export function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             <div className="space-y-2">
               <Award className="h-12 w-12 text-primary mx-auto" />
-              <h3 className="font-semibold">Best Fintech Innovation 2023</h3>
+              <h3 className="font-semibold">Best Financial Supporter 2023</h3>
               <p className="text-sm text-muted-foreground">FinTech Awards India</p>
             </div>
             <div className="space-y-2">

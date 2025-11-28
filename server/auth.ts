@@ -1,4 +1,3 @@
-
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { eq } from "drizzle-orm";
@@ -10,9 +9,10 @@ const JWT_EXPIRES_IN = "7d";
 
 export interface AuthResponse {
   success: boolean;
-  user?: Omit<User, 'password'>;
+  user?: Omit<User, "password">;
   token?: string;
   message?: string;
+  error?: string; // added so frontend can read `result.error`
 }
 
 export class AuthService {
@@ -37,92 +37,101 @@ export class AuthService {
     }
   }
 
-  static async register(userData: Omit<InsertUser, 'id' | 'createdAt' | 'updatedAt'>): Promise<AuthResponse> {
+  static async register(userData: Omit<InsertUser, "id" | "createdAt" | "updatedAt">): Promise<AuthResponse> {
     try {
       // Check if user already exists
-      const existingUser = await db.select()
+      const existing = await db.select()
         .from(users)
         .where(eq(users.email, userData.email))
         .limit(1);
 
-      if (existingUser.length > 0) {
-        return { success: false, message: "User already exists" };
+      if (existing && existing.length > 0) {
+        return { success: false, error: "User already exists" };
       }
 
       // Hash password
       const hashedPassword = await this.hashPassword(userData.password);
 
       // Create user
-      const [newUser] = await db.insert(users)
+      const inserted = await db.insert(users)
         .values({
           ...userData,
           password: hashedPassword,
         })
         .returning();
 
-      // Remove password from response
-      const { password, ...userWithoutPassword } = newUser;
-      const token = this.generateToken(newUser.id);
+      const newUser = Array.isArray(inserted) ? inserted[0] : inserted;
+
+      if (!newUser) {
+        return { success: false, error: "Failed to create user" };
+      }
+
+      const { password, ...userWithoutPassword } = newUser as User;
+      const token = this.generateToken((newUser as User).id);
 
       return {
         success: true,
         user: userWithoutPassword,
-        token
+        token,
       };
     } catch (error) {
       console.error("Registration error:", error);
-      return { success: false, message: "Registration failed" };
+      return { success: false, error: "Registration failed" };
     }
   }
 
   static async login(email: string, password: string): Promise<AuthResponse> {
     try {
       // Find user by email
-      const [user] = await db.select()
+      const found = await db.select()
         .from(users)
         .where(eq(users.email, email))
         .limit(1);
 
+      const user = Array.isArray(found) ? found[0] : found;
+
       if (!user) {
-        return { success: false, message: "Invalid credentials" };
+        return { success: false, error: "Invalid credentials" };
       }
 
       // Check password
       const isValidPassword = await this.comparePassword(password, user.password);
       if (!isValidPassword) {
-        return { success: false, message: "Invalid credentials" };
+        return { success: false, error: "Invalid credentials" };
       }
 
       // Check if user is active
       if (!user.isActive) {
-        return { success: false, message: "Account is deactivated" };
+        return { success: false, error: "Account is deactivated" };
       }
 
       // Remove password from response
-      const { password: _, ...userWithoutPassword } = user;
-      const token = this.generateToken(user.id);
+      const { password: _, ...userWithoutPassword } = user as User;
+      const token = this.generateToken((user as User).id);
 
       return {
         success: true,
         user: userWithoutPassword,
-        token
+        token,
       };
     } catch (error) {
       console.error("Login error:", error);
-      return { success: false, message: "Login failed" };
+      return { success: false, error: "Login failed" };
     }
   }
 
-  static async getUserById(id: string): Promise<Omit<User, 'password'> | null> {
+  static async getUserById(id: string): Promise<Omit<User, "password"> | null> {
     try {
-      const [user] = await db.select()
+      const found = await db.select()
         .from(users)
         .where(eq(users.id, id))
         .limit(1);
 
+      const user = Array.isArray(found) ? found[0] : found;
+
       if (!user) return null;
 
-      const { password, ...userWithoutPassword } = user;
+      const { password, ...userWithoutPassword } = user as User;
       return userWithoutPassword;
     } catch (error) {
       console.error("Get user error:", error);

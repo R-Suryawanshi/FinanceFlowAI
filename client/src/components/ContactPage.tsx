@@ -87,18 +87,17 @@ export function ContactPage() {
       icon: MapPin,
       title: 'Head Office',
       details: [
-        '123 Financial Street',
-        'Business District, Mumbai',
-        'Maharashtra 400001, India'
+        'KasbaPeth Jintoor,',
+        'Business District, Parbhani',
+        'Maharashtra 431402, India'
       ]
     },
     {
       icon: Phone,
       title: 'Phone Numbers',
       details: [
-        'Main: +91 22 1234 5678',
-        'Customer Care: +91 22 8765 4321',
-        'Toll Free: 1800-123-4567'
+        'Main: +91 9422547906 ',
+        'Customer Care: +91 9422547906'
       ]
     },
     {
@@ -114,31 +113,19 @@ export function ContactPage() {
       icon: Clock,
       title: 'Business Hours',
       details: [
-        'Monday - Friday: 9:00 AM - 6:00 PM',
-        'Saturday: 9:00 AM - 2:00 PM',
-        'Sunday: Closed'
+        'Monday - Friday: 11:00 AM - 7:00 PM',
+        'Saturday: 2:00 PM - 4:00 PM',
+        'Sunday: 2:00 PM - 4:00 PM'
       ]
     }
   ];
 
   const branches = [
     {
-      name: 'Mumbai Central Branch',
-      address: '123 Main Street, Mumbai Central, Mumbai - 400008',
-      phone: '+91 22 1234 5678',
-      manager: 'Rajesh Kumar'
-    },
-    {
-      name: 'Andheri Branch',
-      address: '456 Business Park, Andheri East, Mumbai - 400069',
-      phone: '+91 22 8765 4321',
-      manager: 'Priya Sharma'
-    },
-    {
-      name: 'Pune Branch',
-      address: '789 Commercial Complex, Pune - 411001',
-      phone: '+91 20 1111 2222',
-      manager: 'Amit Patel'
+      name: 'Jintoor Central Branch',
+      address: 'KasbaPeth Jintoor,Parbhani',
+      phone: '+91 9422547906',
+      manager: 'Mr.Prasad Kherdekar'
     }
   ];
 

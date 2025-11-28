@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useTheme } from "./ThemeProvider";
 import { Badge } from "@/components/ui/badge";
-import { AuthModal } from "./AuthModal";
 import { 
   Building2, 
   Calculator, 
@@ -37,7 +35,6 @@ export function Header({
   onLogout 
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   const navigation = [
@@ -119,7 +116,7 @@ export function Header({
               <>
                 <Button
                   variant="ghost"
-                  onClick={() => setIsAuthModalOpen(true)}
+                  onClick={onLogin}
                   data-testid="button-login"
                   className="flex items-center gap-2"
                 >
@@ -127,7 +124,7 @@ export function Header({
                   Login
                 </Button>
                 <Button
-                  onClick={() => setIsAuthModalOpen(true)}
+                  onClick={onSignup}
                   data-testid="button-signup"
                   className="flex items-center gap-2"
                 >
@@ -217,7 +214,7 @@ export function Header({
                   <>
                     <Button
                       variant="ghost"
-                      onClick={() => setIsAuthModalOpen(true)}
+                      onClick={onLogin}
                       data-testid="mobile-button-login"
                       className="w-full mb-2 justify-start flex items-center gap-2"
                     >
@@ -225,7 +222,7 @@ export function Header({
                       Login
                     </Button>
                     <Button
-                      onClick={() => setIsAuthModalOpen(true)}
+                      onClick={onSignup}
                       data-testid="mobile-button-signup"
                       className="w-full mb-2 justify-start flex items-center gap-2"
                     >
@@ -249,13 +246,6 @@ export function Header({
           </div>
         )}
       </div>
-
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        onLogin={onLogin}
-        onSignup={onSignup}
-      />
     </header>
   );
 }
