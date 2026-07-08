@@ -38,7 +38,7 @@ interface UserDashboardProps {
     email: string;
     username: string;
     role: string;
-    createdAt: string;
+    createdAt?: string;
   };
 }
 
@@ -93,7 +93,8 @@ const generateAccountNumber = (userId: string) => {
   return `BF2024${shortId}`;
 };
 
-const formatJoinDate = (dateString: string) => {
+const formatJoinDate = (dateString?: string) => {
+  if (!dateString) return new Date().toLocaleDateString("en-US", { year: "numeric", month: "long" });
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
 };
@@ -109,6 +110,7 @@ export function UserDashboard({ onNavigateToCalculator, user }: UserDashboardPro
   const [paymentMethod, setPaymentMethod] = useState("UPI");
   const [isPaying, setIsPaying] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [emiSchedule, setEmiSchedule] = useState<any[]>([]);
 
   useEffect(() => {
     if (user) {
@@ -147,6 +149,23 @@ export function UserDashboard({ onNavigateToCalculator, user }: UserDashboardPro
       setUserServices(servicesData.services || []);
       setPayments(paymentsData.payments || []);
       setUserProfile(profileData.profile || null);
+
+      const active = (servicesData.services || []).find(
+        (s: any) => s.userService.status === "active" || s.userService.status === "approved"
+      );
+      if (active) {
+        const schedRes = await fetch(`/api/user-services/${active.userService.id}/emi-schedule`, {
+          headers: authHeaders
+        });
+        if (schedRes.ok) {
+          const schedData = await schedRes.json();
+          if (schedData.success) {
+            setEmiSchedule(schedData.schedule || []);
+          }
+        }
+      } else {
+        setEmiSchedule([]);
+      }
     } catch (error) {
       console.error("Error fetching user data:", error);
       setError("Failed to load dashboard data");
@@ -210,12 +229,72 @@ export function UserDashboard({ onNavigateToCalculator, user }: UserDashboardPro
 
   const stats = calculateStats();
 
+  const activeLoans = userServices.filter(
+    (s) => s.userService.status === "active" || s.userService.status === "approved"
+  );
+  
+  const totalEmiDue = activeLoans.reduce(
+    (sum, s) => sum + parseFloat(s.userService.emi || "0"),
+    0
+  );
+
+  const getNextEmiDueDate = () => {
+    const now = new Date();
+    const dueDate = new Date(now.getFullYear(), now.getMonth(), 10);
+    if (now.getDate() > 10) {
+      dueDate.setMonth(dueDate.getMonth() + 1);
+    }
+    return dueDate;
+  };
+  
+  const nextEmiDueDate = getNextEmiDueDate();
+
   const handlePayment = async () => {
+    if (activeLoans.length === 0) return;
+    
     setIsPaying(true);
-    setTimeout(() => {
-      setIsPaying(false);
+    setError(null);
+    setPaymentSuccess(false);
+
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("Missing auth token. Please log in again.");
+      }
+
+      const firstActiveLoan = activeLoans[0];
+
+      const response = await fetch("/api/payments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          userServiceId: firstActiveLoan.userService.id,
+          amount: paymentAmount,
+          paymentMethod: paymentMethod
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Payment transaction failed.");
+      }
+
       setPaymentSuccess(true);
-    }, 2000);
+      setTimeout(() => {
+        setShowPaymentUI(false);
+        setPaymentSuccess(false);
+        fetchUserData();
+      }, 1500);
+    } catch (err: any) {
+      console.error("Repayment submission error:", err);
+      setError(err.message || "An unexpected error occurred during payment.");
+    } finally {
+      setIsPaying(false);
+    }
   };
 
   if (!user) {
@@ -320,17 +399,83 @@ export function UserDashboard({ onNavigateToCalculator, user }: UserDashboardPro
           <CardDescription>Manage your loan repayments</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between items-center">
-            <div>
-              <p className="text-sm text-muted-foreground">Next EMI Due: {new Date().toLocaleDateString()}</p>
-              <p className="text-xl font-bold mt-1">{formatCurrency(paymentAmount)}</p>
+          {activeLoans.length === 0 ? (
+            <div className="text-center py-4">
+              <p className="text-muted-foreground">You have no active loans or pending repayments.</p>
             </div>
-            <Button onClick={() => setShowPaymentUI(true)}>
-              <CreditCard className="mr-2 h-4 w-4" /> Pay Now
-            </Button>
-          </div>
+          ) : (
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  Next EMI Due: {nextEmiDueDate.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                </p>
+                <p className="text-xl font-bold mt-1">{formatCurrency(totalEmiDue)}</p>
+              </div>
+              <Button onClick={() => {
+                setPaymentAmount(totalEmiDue.toString());
+                setShowPaymentUI(true);
+              }}>
+                <CreditCard className="mr-2 h-4 w-4" /> Pay Now
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      {/* EMI Repayment Schedule Timeline */}
+      {activeLoans.length > 0 && emiSchedule.length > 0 && (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>Repayment Schedule & Amortization Timeline</CardTitle>
+            <CardDescription>Track your monthly payments and upcoming EMIs</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="relative border-l border-gray-200 ml-4 pl-6 space-y-8">
+              {emiSchedule.map((item) => {
+                const emiNum = item.emiNumber;
+                const emiAmt = parseFloat(item.emiAmount || "0");
+                const isPaid = (activeLoans[0].userService.totalPaidAmount ? parseFloat(activeLoans[0].userService.totalPaidAmount) : 0) >= (emiNum * emiAmt);
+
+                return (
+                  <div key={item.id} className="relative">
+                    <div className={`absolute -left-[31px] top-1 h-[14px] w-[14px] rounded-full border-2 bg-white flex items-center justify-center ${
+                      isPaid ? "border-green-500 bg-green-50" : "border-amber-400 bg-amber-50"
+                    }`}>
+                      {isPaid ? (
+                        <CheckCircle className="h-2.5 w-2.5 text-green-500" />
+                      ) : (
+                        <div className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                      )}
+                    </div>
+                    
+                    <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          Installment #{emiNum} — {isPaid ? (
+                            <span className="text-xs text-green-600 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-full font-medium">Paid</span>
+                          ) : (
+                            <span className="text-xs text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full font-medium">Upcoming</span>
+                          )}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Due Date: {new Date(item.dueDate).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Breakdown: Principal {formatCurrency(item.principalAmount)} | Interest {formatCurrency(item.interestAmount)}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-bold text-foreground">{formatCurrency(emiAmt)}</p>
+                        <p className="text-[11px] text-muted-foreground">Outstanding: {formatCurrency(item.outstandingBalance)}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Payment Modal */}
       <Dialog open={showPaymentUI} onOpenChange={setShowPaymentUI}>

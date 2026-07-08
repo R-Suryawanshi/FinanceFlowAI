@@ -59,6 +59,85 @@ export function AdminDashboard({ user }: any) {
   const [dailyRevenue, setDailyRevenue] = useState<any[]>([]);
   const dashboardRef = useRef<HTMLDivElement>(null);
 
+  const [liveStats, setLiveStats] = useState({ totalUsers: 0, activeLoans: 0, totalRevenue: 0 });
+  const [liveApplications, setLiveApplications] = useState<any[]>([]);
+  const [liveUsers, setLiveUsers] = useState<any[]>([]);
+  const [livePayments, setLivePayments] = useState<any[]>([]);
+  const [liveLoading, setLiveLoading] = useState(false);
+
+  const fetchLiveAdminData = async () => {
+    setLiveLoading(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+
+      const headers = { Authorization: `Bearer ${token}` };
+
+      const [statsRes, servicesRes, usersRes, paymentsRes] = await Promise.all([
+        fetch("/api/admin/stats", { headers }),
+        fetch("/api/admin/user-services", { headers }),
+        fetch("/api/admin/users", { headers }),
+        fetch("/api/admin/payments", { headers })
+      ]);
+
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        if (statsData.success && statsData.stats) {
+          setLiveStats(statsData.stats);
+        }
+      }
+      if (servicesRes.ok) {
+        const servicesData = await servicesRes.json();
+        if (servicesData.success && Array.isArray(servicesData.services)) {
+          setLiveApplications(servicesData.services);
+        }
+      }
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        if (usersData.success && Array.isArray(usersData.users)) {
+          setLiveUsers(usersData.users);
+        }
+      }
+      if (paymentsRes.ok) {
+        const paymentsData = await paymentsRes.json();
+        if (paymentsData.success && Array.isArray(paymentsData.payments)) {
+          setLivePayments(paymentsData.payments);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to load live admin data", err);
+    } finally {
+      setLiveLoading(false);
+    }
+  };
+
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch(`/api/admin/user-services/${id}/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      const data = await response.json();
+      if (data.success) {
+        fetchLiveAdminData();
+        logActivity(`🟢 Loan application ${data.service.applicationNumber} updated to ${newStatus}.`);
+      } else {
+        alert(data.error || "Failed to update status");
+      }
+    } catch (err) {
+      console.error("Error updating loan status:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchLiveAdminData();
+  }, []);
+
   // ✅ Load Excel File
   useEffect(() => {
     async function loadExcel() {
@@ -415,12 +494,13 @@ useEffect(() => {
       </div>
 
       {/* TABS */}
-      <Tabs defaultValue="analytics">
+      <Tabs defaultValue="live-console">
         <TabsList>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="live-console">Live Console</TabsTrigger>
+          <TabsTrigger value="analytics">Analytics (Sheet)</TabsTrigger>
           <TabsTrigger value="forecast">AI Forecast</TabsTrigger>
           <TabsTrigger value="insights">AI Insights</TabsTrigger>
-          <TabsTrigger value="users">User Data</TabsTrigger>
+          <TabsTrigger value="users">User Data (Sheet)</TabsTrigger>
         </TabsList>
 
         {/* ANALYTICS */}
@@ -586,6 +666,224 @@ useEffect(() => {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* LIVE ADMIN CONSOLE */}
+        <TabsContent value="live-console">
+          <div className="space-y-6">
+            {/* Live Stats Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader className="flex justify-between">
+                  <CardTitle className="text-sm font-medium">Live Active Users</CardTitle>
+                  <Users className="h-4 w-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{liveStats.totalUsers}</div>
+                  <p className="text-xs text-muted-foreground">Registered in database</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex justify-between">
+                  <CardTitle className="text-sm font-medium">Live Active Loans</CardTitle>
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{liveStats.activeLoans}</div>
+                  <p className="text-xs text-muted-foreground">Approved and currently active</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex justify-between">
+                  <CardTitle className="text-sm font-medium">Live Paid Revenue</CardTitle>
+                  <DollarSign className="h-4 w-4 text-amber-500" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{formatCurrency(liveStats.totalRevenue)}</div>
+                  <p className="text-xs text-muted-foreground">Total payments received</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Pending Approvals */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Pending Loan Applications</CardTitle>
+                <CardDescription>Review and approve/reject user submitted loan forms</CardDescription>
+              </CardHeader>
+              <CardContent className="overflow-auto max-h-[300px]">
+                {liveApplications.filter(app => app.userService.status === "pending").length === 0 ? (
+                  <div className="text-center text-gray-400 py-6 text-sm">No pending applications at this time.</div>
+                ) : (
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        {["App #", "Customer", "Email", "Loan Name", "Requested", "Tenure", "Action"].map((h) => (
+                          <th key={h} className="px-6 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-100">
+                      {liveApplications.filter(app => app.userService.status === "pending").map((app) => (
+                        <tr key={app.userService.id} className="hover:bg-gray-50 text-sm">
+                          <td className="px-6 py-3 font-semibold text-primary">{app.userService.applicationNumber}</td>
+                          <td className="px-6 py-3 font-medium text-gray-800">{app.user.name}</td>
+                          <td className="px-6 py-3 text-gray-600">{app.user.email}</td>
+                          <td className="px-6 py-3 font-medium text-gray-700 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
+                          <td className="px-6 py-3 font-bold text-gray-900">{formatCurrency(Number(app.userService.amount))}</td>
+                          <td className="px-6 py-3 text-gray-600">{app.userService.tenureMonths} Months</td>
+                          <td className="px-6 py-3 flex gap-2">
+                            <Button 
+                              size="sm" 
+                              className="bg-green-600 hover:bg-green-700 text-white font-medium"
+                              onClick={() => handleUpdateStatus(app.userService.id, "active")}
+                            >
+                              Approve
+                            </Button>
+                            <Button 
+                              size="sm" 
+                              variant="destructive"
+                              className="font-medium"
+                              onClick={() => handleUpdateStatus(app.userService.id, "rejected")}
+                            >
+                              Reject
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Active & Closed Loans */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Active & Closed Loans Ledger</CardTitle>
+                <CardDescription>Track outstanding balances and EMI repayment progress</CardDescription>
+              </CardHeader>
+              <CardContent className="overflow-auto max-h-[300px]">
+                {liveApplications.filter(app => app.userService.status !== "pending").length === 0 ? (
+                  <div className="text-center text-gray-400 py-6 text-sm">No active or closed loans recorded.</div>
+                ) : (
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        {["App #", "Customer", "Loan Name", "Approved Amount", "Monthly EMI", "Outstanding", "Paid", "Status"].map((h) => (
+                          <th key={h} className="px-6 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-100">
+                      {liveApplications.filter(app => app.userService.status !== "pending").map((app) => (
+                        <tr key={app.userService.id} className="hover:bg-gray-50 text-sm">
+                          <td className="px-6 py-3 font-semibold text-primary">{app.userService.applicationNumber}</td>
+                          <td className="px-6 py-3 font-medium text-gray-800">{app.user.name}</td>
+                          <td className="px-6 py-3 font-medium text-gray-700 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
+                          <td className="px-6 py-3 font-bold text-gray-900">{formatCurrency(Number(app.userService.amount))}</td>
+                          <td className="px-6 py-3 text-gray-600">{formatCurrency(Number(app.userService.emi || "0"))}</td>
+                          <td className="px-6 py-3 font-semibold text-amber-600">{formatCurrency(Number(app.userService.outstandingAmount || "0"))}</td>
+                          <td className="px-6 py-3 font-semibold text-green-600">{formatCurrency(Number(app.userService.totalPaidAmount || "0"))}</td>
+                          <td className="px-6 py-3">
+                            <Badge variant={app.userService.status === "completed" ? "success" : app.userService.status === "active" ? "success" : "destructive"}>
+                              {app.userService.status}
+                            </Badge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Live Registered Users */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Registered User Accounts</CardTitle>
+                <CardDescription>Live users registered in the Bhalchandra Finance portal</CardDescription>
+              </CardHeader>
+              <CardContent className="overflow-auto max-h-[300px]">
+                {liveUsers.length === 0 ? (
+                  <div className="text-center text-gray-400 py-6 text-sm">No registered user accounts found.</div>
+                ) : (
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        {["Name", "Username", "Email", "Role", "Status"].map((h) => (
+                          <th key={h} className="px-6 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-100">
+                      {liveUsers.map((u) => (
+                        <tr key={u.id} className="hover:bg-gray-50 text-sm">
+                          <td className="px-6 py-3 font-semibold text-gray-800">{u.name}</td>
+                          <td className="px-6 py-3 text-gray-600">{u.username}</td>
+                          <td className="px-6 py-3 text-gray-600">{u.email}</td>
+                          <td className="px-6 py-3 font-semibold capitalize text-primary">{u.role}</td>
+                          <td className="px-6 py-3">
+                            <Badge variant={u.isActive ? "success" : "destructive"}>
+                              {u.isActive ? "Active" : "Deactivated"}
+                            </Badge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Live Payments Ledger */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Live Repayment Transactions Ledger</CardTitle>
+                <CardDescription>Real-time log of customer EMI payments received</CardDescription>
+              </CardHeader>
+              <CardContent className="overflow-auto max-h-[300px]">
+                {livePayments.length === 0 ? (
+                  <div className="text-center text-gray-400 py-6 text-sm">No payment transactions recorded.</div>
+                ) : (
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        {["TXN ID", "Customer", "Loan Name", "Paid Amount", "Method", "Date", "Status"].map((h) => (
+                          <th key={h} className="px-6 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase">
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-100">
+                      {livePayments.map((p) => (
+                        <tr key={p.payment.id} className="hover:bg-gray-50 text-sm">
+                          <td className="px-6 py-3 font-semibold text-primary">{p.payment.transactionId || p.payment.paymentReference}</td>
+                          <td className="px-6 py-3 font-medium text-gray-800">{p.user.name}</td>
+                          <td className="px-6 py-3 text-gray-700 capitalize">{p.serviceType.displayName || p.serviceType.name}</td>
+                          <td className="px-6 py-3 font-bold text-green-600">{formatCurrency(Number(p.payment.amount))}</td>
+                          <td className="px-6 py-3 font-semibold text-gray-600 uppercase">{p.payment.paymentMethod}</td>
+                          <td className="px-6 py-3 text-gray-600">{new Date(p.payment.paymentDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</td>
+                          <td className="px-6 py-3">
+                            <Badge variant={p.payment.status === "success" ? "success" : "destructive"}>
+                              {p.payment.status}
+                            </Badge>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
 

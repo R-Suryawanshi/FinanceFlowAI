@@ -1,4 +1,4 @@
-import { GoldLoanCalculator } from '../GoldLoanCalculator';
+import { GoldLoanCalculator } from '../../pages/GoldLoanCalculator';
 
 export default function GoldLoanCalculatorExample() {
   return <GoldLoanCalculator />;

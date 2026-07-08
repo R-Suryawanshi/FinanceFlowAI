@@ -1,4 +1,4 @@
-import { UserDashboard } from '../UserDashboard';
+import { UserDashboard } from '../../pages/UserDashboard';
 
 export default function UserDashboardExample() {
   return (

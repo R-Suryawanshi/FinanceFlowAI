@@ -53,7 +53,7 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       rate: 'Starting from 8.5% p.a.',
       color: 'accent',
       cta: 'Apply Now',
-      ctaAction: onGetStarted
+      ctaAction: () => onPageChange && onPageChange('loan-application-home')
     },
     {
       id: 'car-loans',
@@ -86,7 +86,7 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       rate: 'Expert advisory',
       color: 'accent',
       cta: 'Start Planning',
-      ctaAction: onGetStarted
+      ctaAction: () => onGetStarted && onGetStarted()
     }
   ];
 
@@ -173,7 +173,9 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
                 {/* CTA Button */}
                 <Button
                   onClick={() => {
-                    service.ctaAction();
+                    if (typeof service.ctaAction === 'function') {
+                      service.ctaAction();
+                    }
                     console.log('Service CTA clicked:', service.title);
                   }}
                   className="w-full flex items-center gap-2"

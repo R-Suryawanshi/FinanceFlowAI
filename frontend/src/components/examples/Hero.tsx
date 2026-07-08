@@ -1,4 +1,4 @@
-import { Hero } from '../Hero';
+import { Hero } from '../../pages/Hero';
 
 export default function HeroExample() {
   return (

@@ -119,6 +119,11 @@ export class Storage {
     return service;
   }
 
+  async getUserService(id: string) {
+    const [service] = await db.select().from(userServices).where(eq(userServices.id, id)).limit(1);
+    return service || null;
+  }
+
   async updateUserService(id: string, updates: Partial<UserService>) {
     const [service] = await db.update(userServices)
       .set({ ...updates, updatedAt: new Date() })
@@ -178,7 +183,7 @@ export class Storage {
     .orderBy(desc(payments.createdAt));
   }
 
-  async createPayment(paymentData: Omit<Payment, 'id' | 'createdAt' | 'updatedAt'>) {
+  async createPayment(paymentData: Omit<Payment, 'id' | 'paymentReference' | 'createdAt' | 'updatedAt'>) {
     const paymentReference = `PAY${Date.now()}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
     
     const [payment] = await db.insert(payments).values({
@@ -223,19 +228,19 @@ export class Storage {
 
   // Interest Rates methods
   async getInterestRates(serviceTypeId?: string) {
-    const query = db.select({
+    const conditions = [eq(interestRates.isActive, true)];
+    if (serviceTypeId) {
+      conditions.push(eq(interestRates.serviceTypeId, serviceTypeId));
+    }
+
+    return await db.select({
       interestRate: interestRates,
       serviceType: serviceTypes
     })
     .from(interestRates)
     .innerJoin(serviceTypes, eq(interestRates.serviceTypeId, serviceTypes.id))
-    .where(eq(interestRates.isActive, true));
-
-    if (serviceTypeId) {
-      query.where(and(eq(interestRates.isActive, true), eq(interestRates.serviceTypeId, serviceTypeId)));
-    }
-
-    return await query.orderBy(desc(interestRates.effectiveDate));
+    .where(and(...conditions))
+    .orderBy(desc(interestRates.effectiveDate));
   }
 
   // Notifications methods
@@ -286,7 +291,6 @@ export class Storage {
     return Math.round(emi);
   }
 
-  // Generate EMI Schedule
   generateEmiSchedule(userServiceId: string, principal: number, rate: number, tenure: number, startDate: Date) {
     const monthlyRate = rate / (12 * 100);
     const emi = this.calculateEMI(principal, rate, tenure);
@@ -305,14 +309,44 @@ export class Storage {
         userServiceId,
         emiNumber: i,
         dueDate,
-        emiAmount: emi,
-        principalAmount,
-        interestAmount,
-        outstandingBalance: Math.max(0, outstandingBalance)
+        emiAmount: emi.toString(),
+        principalAmount: principalAmount.toString(),
+        interestAmount: interestAmount.toString(),
+        outstandingBalance: Math.max(0, outstandingBalance).toString(),
+        status: "pending",
+        paidDate: null,
+        paidAmount: null,
+        lateFee: "0"
       });
     }
 
     return schedule;
+  }
+
+  async getAllUsers() {
+    return await db.select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+      email: users.email,
+      role: users.role,
+      isActive: users.isActive,
+      createdAt: users.createdAt
+    }).from(users);
+  }
+
+  async getAllPayments() {
+    return await db.select({
+      payment: payments,
+      userService: userServices,
+      serviceType: serviceTypes,
+      user: users
+    })
+    .from(payments)
+    .innerJoin(userServices, eq(payments.userServiceId, userServices.id))
+    .innerJoin(serviceTypes, eq(userServices.serviceTypeId, serviceTypes.id))
+    .innerJoin(users, eq(userServices.userId, users.id))
+    .orderBy(desc(payments.createdAt));
   }
 }
 

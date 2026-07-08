@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,10 +24,41 @@ import {
 interface LoanApplicationProps {
   loanType: 'home' | 'car' | 'personal' | 'gold';
   onSubmit?: (applicationData: any) => void;
+  onPageChange?: (page: string) => void;
 }
 
-export function LoanApplicationForm({ loanType, onSubmit }: LoanApplicationProps) {
+export function LoanApplicationForm({ loanType, onSubmit, onPageChange }: LoanApplicationProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [submitting, setSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [applicationNumber, setApplicationNumber] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [serviceTypeId, setServiceTypeId] = useState<string | null>(null);
+  const [baseInterestRate, setBaseInterestRate] = useState<number>(10.0);
+
+  useEffect(() => {
+    async function fetchServiceTypes() {
+      try {
+        const res = await fetch("/api/services");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.services)) {
+            const matchingName = `${loanType}-loan`;
+            const matched = data.services.find((s: any) => s.name === matchingName);
+            if (matched) {
+              setServiceTypeId(matched.id);
+              if (matched.baseInterestRate) {
+                setBaseInterestRate(parseFloat(matched.baseInterestRate));
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching service types:", err);
+      }
+    }
+    fetchServiceTypes();
+  }, [loanType]);
   const [applicationData, setApplicationData] = useState({
     // Personal Information
     fullName: '',
@@ -114,12 +144,98 @@ export function LoanApplicationForm({ loanType, onSubmit }: LoanApplicationProps
     }
   };
 
-  const submitApplication = () => {
-    if (onSubmit) {
-      onSubmit(applicationData);
+  const submitApplication = async () => {
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        throw new Error("You must be logged in to submit a loan application.");
+      }
+
+      // 1. Update/Save user profile first
+      const profileResponse = await fetch("/api/profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          phoneNumber: applicationData.phone,
+          dateOfBirth: applicationData.dateOfBirth ? new Date(applicationData.dateOfBirth).toISOString() : null,
+          address: applicationData.address,
+          city: applicationData.city,
+          state: applicationData.state,
+          pincode: applicationData.pincode,
+          occupation: applicationData.employmentType,
+          companyName: applicationData.companyName,
+          monthlyIncome: applicationData.monthlyIncome || "0",
+          creditScore: 720
+        })
+      });
+
+      if (!profileResponse.ok) {
+        throw new Error("Failed to update user profile.");
+      }
+
+      // 2. Prepare document metadata to store in database as jsonb
+      const documentsMetadata: Record<string, any> = {};
+      for (const [key, val] of Object.entries(applicationData.documents)) {
+        if (val) {
+          const file = val as File;
+          documentsMetadata[key] = {
+            name: file.name,
+            size: file.size,
+            type: file.type,
+            uploadedAt: new Date().toISOString()
+          };
+        }
+      }
+
+      // 3. Check if serviceTypeId was resolved
+      if (!serviceTypeId) {
+        throw new Error("Unable to resolve loan service type. Please try again.");
+      }
+
+      // 4. Submit loan application
+      const loanResponse = await fetch("/api/user-services", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          serviceTypeId,
+          amount: applicationData.loanAmount,
+          tenure: parseInt(applicationData.tenure) || 12,
+          interestRate: baseInterestRate.toString(),
+          purpose: applicationData.purpose,
+          documents: documentsMetadata,
+          collateral: applicationData.hasExistingLoan ? applicationData.existingLoanDetails : null,
+          guarantor: applicationData.hasCoApplicant ? applicationData.coApplicantDetails : null
+        })
+      });
+
+      const loanData = await loanResponse.json();
+
+      if (!loanResponse.ok || !loanData.success) {
+        throw new Error(loanData.error || "Failed to submit loan application.");
+      }
+
+      // Successful submission
+      setApplicationNumber(loanData.service.applicationNumber || "N/A");
+      setIsSubmitted(true);
+
+      if (onSubmit) {
+        onSubmit(applicationData);
+      }
+    } catch (err: any) {
+      console.error("Submission error:", err);
+      setError(err.message || "An unexpected error occurred during submission.");
+    } finally {
+      setSubmitting(false);
     }
-    // Handle form submission
-    console.log('Application submitted:', applicationData);
   };
 
   const renderPersonalInfo = () => (
@@ -613,12 +729,79 @@ export function LoanApplicationForm({ loanType, onSubmit }: LoanApplicationProps
     renderReview
   ];
 
+  if (isSubmitted) {
+    return (
+      <div className="max-w-md mx-auto p-6 text-center space-y-8 my-12">
+        <Card className="border-green-200 bg-green-50/50">
+          <CardHeader className="space-y-4">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle className="h-10 w-10 text-green-600" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-green-800">
+              Application Submitted!
+            </CardTitle>
+            <CardDescription className="text-green-700">
+              Your {loanTypes[loanType]} application has been successfully received and is under review.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 text-left border-t border-green-100 pt-6">
+            <div>
+              <span className="text-xs text-muted-foreground block uppercase font-semibold">
+                Application Number
+              </span>
+              <span className="text-lg font-bold font-mono text-foreground text-green-700">
+                {applicationNumber}
+              </span>
+            </div>
+            <div>
+              <span className="text-xs text-muted-foreground block uppercase font-semibold">
+                Loan Amount Request
+              </span>
+              <span className="text-lg font-bold text-foreground">
+                ₹{parseInt(applicationData.loanAmount || "0").toLocaleString("en-IN")}
+              </span>
+            </div>
+            <div>
+              <span className="text-xs text-muted-foreground block uppercase font-semibold">
+                Interest Rate (Base)
+              </span>
+              <span className="text-lg font-bold text-foreground">
+                {baseInterestRate}% p.a.
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="flex flex-col gap-2">
+          {onPageChange && (
+            <Button onClick={() => onPageChange("user-dashboard")} className="w-full">
+              Go to Dashboard
+            </Button>
+          )}
+          <Button 
+            variant="outline" 
+            onClick={() => onPageChange ? onPageChange("home") : window.location.reload()} 
+            className="w-full"
+          >
+            Back to Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <div>
         <h1 className="text-3xl font-bold text-foreground">{loanTypes[loanType]} Application</h1>
         <p className="text-muted-foreground">Complete your loan application in simple steps</p>
       </div>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
       {/* Progress Bar */}
       <div className="space-y-2">
@@ -685,10 +868,10 @@ export function LoanApplicationForm({ loanType, onSubmit }: LoanApplicationProps
           ) : (
             <Button 
               onClick={submitApplication}
-              disabled={!applicationData.agreeToTerms || !applicationData.agreeToCredit}
+              disabled={!applicationData.agreeToTerms || !applicationData.agreeToCredit || submitting}
               className="bg-green-600 hover:bg-green-700"
             >
-              Submit Application
+              {submitting ? 'Submitting...' : 'Submit Application'}
             </Button>
           )}
         </div>

@@ -39,14 +39,34 @@ export class AuthService {
 
   static async register(userData: Omit<InsertUser, "id" | "createdAt" | "updatedAt">): Promise<AuthResponse> {
     try {
-      // Check if user already exists
-      const existing = await db.select()
+      // Validate password strength
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+      if (!passwordRegex.test(userData.password)) {
+        return { 
+          success: false, 
+          error: "Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, and one number." 
+        };
+      }
+
+      // Check if email already exists
+      const emailLower = userData.email.toLowerCase();
+      const existingEmail = await db.select()
         .from(users)
-        .where(eq(users.email, userData.email))
+        .where(eq(users.email, emailLower))
         .limit(1);
 
-      if (existing && existing.length > 0) {
-        return { success: false, error: "User already exists" };
+      if (existingEmail && existingEmail.length > 0) {
+        return { success: false, error: "Email is already registered" };
+      }
+
+      // Check if username already exists
+      const existingUsername = await db.select()
+        .from(users)
+        .where(eq(users.username, userData.username))
+        .limit(1);
+
+      if (existingUsername && existingUsername.length > 0) {
+        return { success: false, error: "Username is already taken" };
       }
 
       // Hash password
@@ -56,6 +76,7 @@ export class AuthService {
       const inserted = await db.insert(users)
         .values({
           ...userData,
+          email: emailLower,
           password: hashedPassword,
         })
         .returning();
@@ -82,10 +103,11 @@ export class AuthService {
 
   static async login(email: string, password: string): Promise<AuthResponse> {
     try {
+      const emailLower = email.toLowerCase();
       // Find user by email
       const found = await db.select()
         .from(users)
-        .where(eq(users.email, email))
+        .where(eq(users.email, emailLower))
         .limit(1);
 
       const user = Array.isArray(found) ? found[0] : found;

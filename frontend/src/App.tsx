@@ -6,15 +6,15 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 
 import { ThemeProvider } from "./components/ThemeProvider";
 import { Header } from "./components/Header";
-import { Hero } from "./components/Hero";
-import { EMICalculator } from "./components/EMICalculator";
-import { GoldLoanCalculator } from "./components/GoldLoanCalculator";
-import { ServicesPage } from "./components/ServicesPage";
-import { AboutPage } from "./components/AboutPage";
-import { ContactPage } from "./components/ContactPage";
-import { AdminDashboard } from "./components/AdminDashboard";
-import { UserDashboard } from "./components/UserDashboard";
-import { LoanApplicationForm } from "./components/LoanApplicationForm";
+import { Hero } from "./pages/Hero";
+import { EMICalculator } from "./pages/EMICalculator";
+import { GoldLoanCalculator } from "./pages/GoldLoanCalculator";
+import { ServicesPage } from "./pages/ServicesPage";
+import { AboutPage } from "./pages/AboutPage";
+import { ContactPage } from "./pages/ContactPage";
+import { AdminDashboard } from "./pages/AdminDashboard";
+import { UserDashboard } from "./pages/UserDashboard";
+import { LoanApplicationForm } from "./pages/LoanApplicationForm";
 import { ChatBot } from "./components/ChatBot";
 import { Footer } from "./components/Footer";
 import { AuthModal } from "./components/AuthModal";
@@ -147,19 +147,32 @@ function App() {
       case "home":
         return <Hero onGetStarted={handleGetStarted} onLearnMore={() => setCurrentPage("about")} />;
       case "services":
-        return <ServicesPage onNavigateToCalculator={(t) =>
-          setCurrentPage(t === "emi" ? "emi-calculator" : "gold-calculator")
-        } />;
+        return (
+          <ServicesPage
+            onNavigateToCalculator={(t) =>
+              setCurrentPage(t === "emi" ? "emi-calculator" : "gold-calculator")
+            }
+            onGetStarted={handleGetStarted}
+            onPageChange={setCurrentPage}
+          />
+        );
       case "about": return <AboutPage />;
       case "contact": return <ContactPage />;
       case "emi-calculator": return <EMICalculator />;
       case "gold-calculator": return <GoldLoanCalculator />;
       case "admin-dashboard": return user?.role === "admin" ? <AdminDashboard user={user} /> : <>Access Denied</>;
-      case "user-dashboard": return user ? <UserDashboard user={user} /> : <>Please login</>;
-      case "loan-application-home": return <LoanApplicationForm loanType="home" />;
-      case "loan-application-car": return <LoanApplicationForm loanType="car" />;
-      case "loan-application-personal": return <LoanApplicationForm loanType="personal" />;
-      case "loan-application-gold": return <LoanApplicationForm loanType="gold" />;
+      case "user-dashboard": return user ? (
+        <UserDashboard
+          user={user}
+          onNavigateToCalculator={(t) =>
+            setCurrentPage(t === "emi" ? "emi-calculator" : "gold-calculator")
+          }
+        />
+      ) : <>Please login</>;
+      case "loan-application-home": return <LoanApplicationForm loanType="home" onPageChange={setCurrentPage} />;
+      case "loan-application-car": return <LoanApplicationForm loanType="car" onPageChange={setCurrentPage} />;
+      case "loan-application-personal": return <LoanApplicationForm loanType="personal" onPageChange={setCurrentPage} />;
+      case "loan-application-gold": return <LoanApplicationForm loanType="gold" onPageChange={setCurrentPage} />;
       default: return <Hero onGetStarted={handleGetStarted} onLearnMore={() => setCurrentPage("about")} />;
     }
   };
