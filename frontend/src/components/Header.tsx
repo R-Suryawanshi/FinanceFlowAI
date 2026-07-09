@@ -197,7 +197,7 @@ export function Header({
                     >
                       <Bell className="h-4 w-4" />
                       {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-md">
+                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white shadow-md">
                           {unreadCount}
                         </span>
                       )}
@@ -289,8 +289,8 @@ export function Header({
                       }}
                       className="cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800 focus:bg-blue-50 dark:focus:bg-slate-800"
                     >
-                      <LayoutDashboard className="mr-2 h-4 w-4" />
-                      <span>Dashboard</span>
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
                     <DropdownMenuItem
