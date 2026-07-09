@@ -20,6 +20,7 @@ import { ChatBot } from "./components/ChatBot";
 import ProfilePage from "./pages/ProfilePage";
 import { Footer } from "./components/Footer";
 import { AuthModal } from "./components/AuthModal";
+import { useToast } from "@/hooks/use-toast";
 
 interface User {
   id: string;
@@ -31,6 +32,7 @@ interface User {
 }
 
 function App() {
+  const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState("home");
   const [isChatOpen, setIsChatOpen] = useState(false);
 
@@ -91,7 +93,33 @@ function App() {
         setUser(data.user);
         setAuthModalOpen(false);
 
-        setCurrentPage(data.user.role === "admin" ? "admin-dashboard" : "user-dashboard");
+        let hasIncompleteProfile = true;
+        try {
+          const profileResponse = await fetch("/api/profile", {
+            headers: { Authorization: `Bearer ${data.token}` }
+          });
+          if (profileResponse.ok) {
+            const profileData = await profileResponse.json();
+            if (profileData.success && profileData.profile) {
+              const p = profileData.profile;
+              if (p.phone_number && p.address && p.occupation) {
+                hasIncompleteProfile = false;
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Error checking profile on login:", e);
+        }
+
+        if (hasIncompleteProfile && data.user.role !== "admin") {
+          setCurrentPage("profile");
+          toast({
+            title: "Welcome back!",
+            description: "Please complete your basic profile details to access bank services.",
+          });
+        } else {
+          setCurrentPage(data.user.role === "admin" ? "admin-dashboard" : "user-dashboard");
+        }
 
         return { success: true, token: data.token };
       }
@@ -121,7 +149,11 @@ function App() {
         setAuthToken(data.token);
         setUser(data.user);
         setAuthModalOpen(false);
-        setCurrentPage("user-dashboard");
+        setCurrentPage("profile");
+        toast({
+          title: "Registration Successful!",
+          description: "Please fill out your basic profile details to get started.",
+        });
 
         return { success: true };
       }
