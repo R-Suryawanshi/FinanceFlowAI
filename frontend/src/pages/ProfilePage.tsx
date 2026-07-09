@@ -63,7 +63,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("authToken");
         if (!token) return;
         
         const response = await fetch("/api/profile", {
@@ -121,7 +121,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
     setSaving(true);
     
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       if (!token) return;
 
       const submitData = {
