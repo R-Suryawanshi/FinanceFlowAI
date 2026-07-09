@@ -284,8 +284,7 @@ export function Header({
                     <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
                     <DropdownMenuItem
                       onClick={() => {
-                        const dashboardPage = userRole === 'admin' ? 'admin-dashboard' : 'user-dashboard';
-                        onPageChange(dashboardPage);
+                        onPageChange("profile");
                       }}
                       className="cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800 focus:bg-blue-50 dark:focus:bg-slate-800"
                     >
@@ -380,6 +379,17 @@ export function Header({
                       <p className="text-sm font-semibold text-slate-900 dark:text-white">{user?.name || "Member"}</p>
                       <p className="text-xs text-slate-500">{user?.email || ""}</p>
                     </div>
+                    <Button
+                      variant="ghost"
+                      onClick={() => {
+                        onPageChange("profile");
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 flex items-center justify-center gap-2 rounded-lg mb-2"
+                    >
+                      <User className="h-4 w-4" />
+                      View Profile
+                    </Button>
                     <Button
                       variant="ghost"
                       onClick={() => {

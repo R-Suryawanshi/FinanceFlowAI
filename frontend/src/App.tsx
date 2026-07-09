@@ -17,6 +17,7 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 import { UserDashboard } from "./pages/UserDashboard";
 import { LoanApplicationForm } from "./pages/LoanApplicationForm";
 import { ChatBot } from "./components/ChatBot";
+import ProfilePage from "./pages/ProfilePage";
 import { Footer } from "./components/Footer";
 import { AuthModal } from "./components/AuthModal";
 
@@ -200,6 +201,12 @@ function App() {
             setCurrentPage(t === "emi" ? "emi-calculator" : t === "gold" ? "gold-calculator" : "fd-calculator")
           }
           onNavigateToPage={setCurrentPage}
+        />
+      ) : <>Please login</>;
+      case "profile": return user ? (
+        <ProfilePage
+          user={user}
+          onBack={() => setCurrentPage(user.role === "admin" ? "admin-dashboard" : "user-dashboard")}
         />
       ) : <>Please login</>;
       case "loan-application-home": return <LoanApplicationForm loanType="home" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} />;
