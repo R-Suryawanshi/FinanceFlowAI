@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   User, Mail, Phone, MapPin, Briefcase, Calendar, 
-  CreditCard, ArrowLeft, Save, ShieldCheck, DollarSign, Loader2, Sparkles
+  CreditCard, ArrowLeft, Save, ShieldCheck, DollarSign, Loader2, Sparkles, Building2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
