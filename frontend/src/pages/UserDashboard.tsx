@@ -49,6 +49,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { User, Save } from "lucide-react";
 
 interface UserDashboardProps {
   onNavigateToCalculator: (type: "emi" | "gold" | "fd") => void;
@@ -122,11 +124,31 @@ const formatJoinDate = (dateString?: string) => {
 };
 
 export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }: UserDashboardProps) {
+  const { toast } = useToast();
   const [userServices, setUserServices] = useState<UserService[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Profile popup state
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isProfileSaving, setIsProfileSaving] = useState(false);
+  
+  // Profile popup form states
+  const [modalPhone, setModalPhone] = useState("");
+  const [modalDOB, setModalDOB] = useState("");
+  const [modalGender, setModalGender] = useState("");
+  const [modalMarital, setModalMarital] = useState("");
+  const [modalOccupation, setModalOccupation] = useState("");
+  const [modalCompany, setModalCompany] = useState("");
+  const [modalIncome, setModalIncome] = useState("");
+  const [modalAddress, setModalAddress] = useState("");
+  const [modalCity, setModalCity] = useState("");
+  const [modalState, setModalState] = useState("");
+  const [modalPincode, setModalPincode] = useState("");
+  const [modalPAN, setModalPAN] = useState("");
+  const [modalAadhar, setModalAadhar] = useState("");
   const [showPaymentUI, setShowPaymentUI] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("UPI");
@@ -219,7 +241,30 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
       setUserServices(servicesData.services || []);
       setPayments(paymentsData.payments || []);
-      setUserProfile(profileData.profile || null);
+      
+      const p = profileData.profile || null;
+      setUserProfile(p);
+      
+      if (p) {
+        setModalPhone(p.phone_number || "");
+        setModalDOB(p.date_of_birth ? new Date(p.date_of_birth).toISOString().split("T")[0] : "");
+        setModalGender(p.gender || "");
+        setModalMarital(p.marital_status || "");
+        setModalOccupation(p.occupation || "");
+        setModalCompany(p.company_name || "");
+        setModalIncome(p.monthly_income ? String(p.monthly_income) : "");
+        setModalAddress(p.address || "");
+        setModalCity(p.city || "");
+        setModalState(p.state || "");
+        setModalPincode(p.pincode || "");
+        setModalPAN(p.pan_number || "");
+        setModalAadhar(p.aadhar_number || "");
+      }
+      
+      // If basic details are missing, show the popup modal
+      if (!p || !p.phone_number || !p.address || !p.occupation) {
+        setIsProfileModalOpen(true);
+      }
 
       const active = (servicesData.services || []).find(
         (s: any) => s.userService.status === "active" || s.userService.status === "approved"
@@ -242,6 +287,59 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       setError("Failed to load dashboard data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsProfileSaving(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      const submitData = {
+        phone_number: modalPhone,
+        dateOfBirth: modalDOB || null,
+        gender: modalGender,
+        marital_status: modalMarital,
+        occupation: modalOccupation,
+        company_name: modalCompany,
+        monthlyIncome: modalIncome ? parseFloat(modalIncome) : null,
+        address: modalAddress,
+        city: modalCity,
+        state: modalState,
+        pincode: modalPincode,
+        pan_number: modalPAN,
+        aadhar_number: modalAadhar,
+      };
+
+      const response = await fetch("/api/profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(submitData)
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setUserProfile(data.profile);
+          setIsProfileModalOpen(false);
+          toast({
+            title: "Profile Saved",
+            description: "Your basic profile details have been saved successfully.",
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Error saving profile modal:", err);
+      toast({
+        title: "Save Failed",
+        description: "Failed to save profile details. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsProfileSaving(false);
     }
   };
 
@@ -1374,6 +1472,211 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
         </div>
       </TabsContent>
       </Tabs>
+
+      {/* Dialog for Profile Details Pop-up */}
+      <Dialog open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+              <User className="h-5 w-5 text-blue-700" />
+              Complete Profile Details
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Please fill out your basic profile information to verify your account and help us customize your financial experience.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleProfileSubmit} className="space-y-4 pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="modalPhone" className="text-xs font-bold">Phone Number</Label>
+                <Input
+                  id="modalPhone"
+                  placeholder="+91 XXXXX XXXXX"
+                  value={modalPhone}
+                  onChange={(e) => setModalPhone(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="modalDOB" className="text-xs font-bold">Date of Birth</Label>
+                <Input
+                  id="modalDOB"
+                  type="date"
+                  value={modalDOB}
+                  onChange={(e) => setModalDOB(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="modalGender" className="text-xs font-bold">Gender</Label>
+                <select
+                  id="modalGender"
+                  value={modalGender}
+                  onChange={(e) => setModalGender(e.target.value)}
+                  className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                  required
+                >
+                  <option value="" disabled>Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="modalMarital" className="text-xs font-bold">Marital Status</Label>
+                <select
+                  id="modalMarital"
+                  value={modalMarital}
+                  onChange={(e) => setModalMarital(e.target.value)}
+                  className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                  required
+                >
+                  <option value="" disabled>Select Marital Status</option>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Divorced">Divorced</option>
+                  <option value="Widowed">Widowed</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="modalOccupation" className="text-xs font-bold">Occupation</Label>
+                <Input
+                  id="modalOccupation"
+                  placeholder="e.g. Developer"
+                  value={modalOccupation}
+                  onChange={(e) => setModalOccupation(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="modalCompany" className="text-xs font-bold">Company Name</Label>
+                <Input
+                  id="modalCompany"
+                  placeholder="e.g. TCS"
+                  value={modalCompany}
+                  onChange={(e) => setModalCompany(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="modalIncome" className="text-xs font-bold">Monthly Income (₹)</Label>
+                <Input
+                  id="modalIncome"
+                  type="number"
+                  placeholder="e.g. 75000"
+                  value={modalIncome}
+                  onChange={(e) => setModalIncome(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="modalPAN" className="text-xs font-bold">PAN Card Number</Label>
+                <Input
+                  id="modalPAN"
+                  placeholder="e.g. ABCDE1234F"
+                  value={modalPAN}
+                  onChange={(e) => setModalPAN(e.target.value)}
+                  className="uppercase"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="modalAadhar" className="text-xs font-bold">Aadhaar Card Number</Label>
+                <Input
+                  id="modalAadhar"
+                  placeholder="e.g. 1234 5678 9012"
+                  value={modalAadhar}
+                  onChange={(e) => setModalAadhar(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="modalAddress" className="text-xs font-bold">Street Address</Label>
+              <Input
+                id="modalAddress"
+                placeholder="Flat, Building name, Street address"
+                value={modalAddress}
+                onChange={(e) => setModalAddress(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="modalCity" className="text-xs font-bold">City</Label>
+                <Input
+                  id="modalCity"
+                  placeholder="e.g. Parbhani"
+                  value={modalCity}
+                  onChange={(e) => setModalCity(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="modalState" className="text-xs font-bold">State</Label>
+                <Input
+                  id="modalState"
+                  placeholder="e.g. Maharashtra"
+                  value={modalState}
+                  onChange={(e) => setModalState(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="modalPincode" className="text-xs font-bold">Pincode</Label>
+                <Input
+                  id="modalPincode"
+                  placeholder="e.g. 431402"
+                  value={modalPincode}
+                  onChange={(e) => setModalPincode(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="pt-4 flex gap-2 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsProfileModalOpen(false)}
+                disabled={isProfileSaving}
+                className="rounded-full bg-transparent font-semibold"
+              >
+                Skip
+              </Button>
+              <Button
+                type="submit"
+                disabled={isProfileSaving}
+                className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-6 flex items-center gap-2 border border-transparent shadow-sm"
+              >
+                {isProfileSaving ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="h-4 w-4" />
+                    Save details
+                  </>
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
