@@ -261,7 +261,8 @@ export async function initializeDatabase() {
         ('personal-loan', 'Personal Loan', 'Unsecured loans for personal needs', 11.00, 25000, 5000000, 6, 60, 2.00),
         ('gold-loan', 'Gold Loan', 'Loans against gold jewelry and ornaments', 12.00, 10000, 2000000, 6, 36, 0.50),
         ('business-loan', 'Business Loan', 'Loans for business expansion and working capital', 10.50, 100000, 10000000, 12, 120, 1.50),
-        ('education-loan', 'Education Loan', 'Loans for higher education and skill development', 9.00, 50000, 2000000, 12, 180, 0.00)
+        ('education-loan', 'Education Loan', 'Loans for higher education and skill development', 9.00, 50000, 2000000, 12, 180, 0.00),
+        ('fixed-deposit', 'Fixed Deposit', 'Fixed Deposit accounts for investment yield returns', 7.50, 5000, 1500000, 12, 60, 0.00)
       ON CONFLICT (name) DO NOTHING;
     `);
 

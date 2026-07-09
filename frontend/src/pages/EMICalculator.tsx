@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Calculator, DollarSign, Calendar, Percent, PieChart } from "lucide-react";
+import { Calculator, DollarSign, Calendar, Percent } from "lucide-react";
 
 interface EMIResult {
   emi: number;
@@ -13,10 +13,15 @@ interface EMIResult {
   principalAmount: number;
 }
 
-export function EMICalculator() {
+interface EMICalculatorProps {
+  onApply?: (loanType: 'home' | 'car' | 'personal' | 'gold', amount: number, tenure: number) => void;
+}
+
+export function EMICalculator({ onApply }: EMICalculatorProps) {
+  const [selectedType, setSelectedType] = useState<'home' | 'car' | 'personal' | 'gold'>('personal');
   const [principal, setPrincipal] = useState(500000);
-  const [rate, setRate] = useState(8.5);
-  const [tenure, setTenure] = useState(120); // months
+  const [rate, setRate] = useState(11.5);
+  const [tenure, setTenure] = useState(60); // months
   const [result, setResult] = useState<EMIResult | null>(null);
 
   const calculateEMI = () => {
@@ -78,12 +83,52 @@ export function EMICalculator() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Loan Type Selector */}
+            <div className="space-y-3">
+              <Label className="text-sm font-semibold">Select Loan Type</Label>
+              <div className="flex gap-2.5">
+                {(['personal', 'home', 'car', 'gold'] as const).map((type) => (
+                  <Button
+                    key={type}
+                    type="button"
+                    variant={selectedType === type ? "default" : "outline"}
+                    onClick={() => {
+                      setSelectedType(type);
+                      if (type === 'personal') {
+                        setRate(11.5);
+                        setPrincipal(300000);
+                        setTenure(36);
+                      } else if (type === 'home') {
+                        setRate(8.5);
+                        setPrincipal(2500000);
+                        setTenure(180);
+                      } else if (type === 'car') {
+                        setRate(9.5);
+                        setPrincipal(800000);
+                        setTenure(60);
+                      } else if (type === 'gold') {
+                        setRate(10.0);
+                        setPrincipal(200000);
+                        setTenure(24);
+                      }
+                    }}
+                    className="flex-1 capitalize py-1 text-xs font-semibold"
+                  >
+                    {type}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
             {/* Principal Amount */}
             <div className="space-y-3">
-              <Label htmlFor="principal" className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4" />
-                Loan Amount
-              </Label>
+              <div className="flex justify-between items-center">
+                <Label htmlFor="principal" className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4" />
+                  Loan Amount
+                </Label>
+                <span className="text-base font-bold text-secondary">{formatCurrency(principal)}</span>
+              </div>
               <Input
                 id="principal"
                 type="number"
@@ -95,25 +140,27 @@ export function EMICalculator() {
               <Slider
                 value={[principal]}
                 onValueChange={(value) => setPrincipal(value[0])}
-                max={10000000}
-                min={100000}
-                step={50000}
+                max={selectedType === 'home' ? 15000000 : 2500000}
+                min={20000}
+                step={10000}
                 className="w-full"
                 data-testid="slider-principal"
               />
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>₹1L</span>
-                <span className="font-medium">{formatCurrency(principal)}</span>
-                <span>₹1Cr</span>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>₹20,000</span>
+                <span>Max {formatCurrency(selectedType === 'home' ? 15000000 : 2500000)}</span>
               </div>
             </div>
 
             {/* Interest Rate */}
             <div className="space-y-3">
-              <Label htmlFor="rate" className="flex items-center gap-2">
-                <Percent className="h-4 w-4" />
-                Interest Rate (Annual %)
-              </Label>
+              <div className="flex justify-between items-center">
+                <Label htmlFor="rate" className="flex items-center gap-2">
+                  <Percent className="h-4 w-4" />
+                  Interest Rate (Annual %)
+                </Label>
+                <span className="text-base font-bold text-secondary">{rate}%</span>
+              </div>
               <Input
                 id="rate"
                 type="number"
@@ -132,19 +179,17 @@ export function EMICalculator() {
                 className="w-full"
                 data-testid="slider-rate"
               />
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>5%</span>
-                <span className="font-medium">{rate}%</span>
-                <span>20%</span>
-              </div>
             </div>
 
             {/* Tenure */}
             <div className="space-y-3">
-              <Label htmlFor="tenure" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Loan Tenure
-              </Label>
+              <div className="flex justify-between items-center">
+                <Label htmlFor="tenure" className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  Tenure (Months)
+                </Label>
+                <span className="text-base font-bold text-secondary">{tenure} Months</span>
+              </div>
               <Input
                 id="tenure"
                 type="number"
@@ -156,47 +201,31 @@ export function EMICalculator() {
               <Slider
                 value={[tenure]}
                 onValueChange={(value) => setTenure(value[0])}
-                max={360}
-                min={12}
-                step={12}
+                max={selectedType === 'home' ? 360 : 84}
+                min={6}
+                step={6}
                 className="w-full"
                 data-testid="slider-tenure"
               />
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>1 Year</span>
-                <span className="font-medium">
-                  {years > 0 && `${years} years`} {months > 0 && `${months} months`}
-                </span>
-                <span>30 Years</span>
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>6 Months</span>
+                <span>Max {selectedType === 'home' ? 30 : 7} Years</span>
               </div>
             </div>
-
-            <Button
-              onClick={calculateEMI}
-              className="w-full"
-              size="lg"
-              data-testid="button-calculate-emi"
-            >
-              Recalculate EMI
-            </Button>
           </CardContent>
         </Card>
 
-        {/* Results */}
+        {/* Results Card */}
         <Card data-testid="card-emi-results">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <PieChart className="h-5 w-5 text-secondary" />
-              EMI Breakdown
-            </CardTitle>
+            <CardTitle>Calculation Summary</CardTitle>
             <CardDescription>
-              Your calculated monthly installment and payment breakdown
+              Detailed breakdown of your estimated loan schedule
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {result && (
               <>
-                {/* EMI Amount */}
                 <div className="text-center p-6 bg-primary/5 rounded-lg border">
                   <div className="text-sm text-muted-foreground mb-1">Monthly EMI</div>
                   <div className="text-4xl font-bold text-primary" data-testid="text-emi-amount">
@@ -266,6 +295,16 @@ export function EMICalculator() {
                     </div>
                   </div>
                 </div>
+
+                {/* Action CTA Button */}
+                {onApply && (
+                  <Button
+                    className="w-full bg-primary text-primary-foreground font-bold py-3 text-base shadow hover:opacity-90 mt-4"
+                    onClick={() => onApply(selectedType, principal, tenure)}
+                  >
+                    Apply for this {selectedType} Loan Now
+                  </Button>
+                )}
               </>
             )}
           </CardContent>

@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 interface ServicesPageProps {
-  onNavigateToCalculator: (type: 'emi' | 'gold') => void;
+  onNavigateToCalculator: (type: 'emi' | 'gold' | 'fd') => void;
   onGetStarted: () => void;
   onPageChange?: (page: string) => void; // Added for page changes
 }
@@ -78,13 +78,24 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       ctaAction: () => onPageChange && onPageChange('loan-application-personal')
     },
     {
+      id: 'fixed-deposit',
+      title: 'Fixed Deposits (FD)',
+      description: 'Invest and earn high returns with our secure Fixed Deposit schemes, offering quarterly compounding interest.',
+      icon: TrendingUp,
+      features: ['Up to 8.50% p.a. returns', 'Compounded quarterly', '0.50% extra for seniors', 'Flexible tenure 12-60 mo'],
+      rate: 'Interest up to 9.0% p.a.',
+      color: 'accent',
+      cta: 'Calculate Returns',
+      ctaAction: () => onNavigateToCalculator('fd')
+    },
+    {
       id: 'investment-planning',
       title: 'Investment Planning',
       description: 'Grow your wealth with our expert investment advisory and personalized portfolio management.',
       icon: TrendingUp,
       features: ['Mutual funds', 'SIP planning', 'Tax-saving investments', 'Goal-based planning'],
       rate: 'Expert advisory',
-      color: 'accent',
+      color: 'primary',
       cta: 'Start Planning',
       ctaAction: () => onGetStarted && onGetStarted()
     }

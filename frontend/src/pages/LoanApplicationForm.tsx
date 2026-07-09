@@ -25,40 +25,11 @@ interface LoanApplicationProps {
   loanType: 'home' | 'car' | 'personal' | 'gold';
   onSubmit?: (applicationData: any) => void;
   onPageChange?: (page: string) => void;
+  defaultAmount?: string | number;
+  defaultTenure?: string | number;
 }
 
-export function LoanApplicationForm({ loanType, onSubmit, onPageChange }: LoanApplicationProps) {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [submitting, setSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [applicationNumber, setApplicationNumber] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [serviceTypeId, setServiceTypeId] = useState<string | null>(null);
-  const [baseInterestRate, setBaseInterestRate] = useState<number>(10.0);
-
-  useEffect(() => {
-    async function fetchServiceTypes() {
-      try {
-        const res = await fetch("/api/services");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success && Array.isArray(data.services)) {
-            const matchingName = `${loanType}-loan`;
-            const matched = data.services.find((s: any) => s.name === matchingName);
-            if (matched) {
-              setServiceTypeId(matched.id);
-              if (matched.baseInterestRate) {
-                setBaseInterestRate(parseFloat(matched.baseInterestRate));
-              }
-            }
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching service types:", err);
-      }
-    }
-    fetchServiceTypes();
-  }, [loanType]);
+export function LoanApplicationForm({ loanType, onSubmit, onPageChange, defaultAmount, defaultTenure }: LoanApplicationProps) {
   const [applicationData, setApplicationData] = useState({
     // Personal Information
     fullName: '',
@@ -104,6 +75,48 @@ export function LoanApplicationForm({ loanType, onSubmit, onPageChange }: LoanAp
     agreeToTerms: false,
     agreeToCredit: false
   });
+
+  const [currentStep, setCurrentStep] = useState(1);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (defaultAmount) {
+      setApplicationData(prev => ({ ...prev, loanAmount: defaultAmount.toString() }));
+    }
+    if (defaultTenure) {
+      setApplicationData(prev => ({ ...prev, tenure: defaultTenure.toString() }));
+    }
+  }, [defaultAmount, defaultTenure]);
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [applicationNumber, setApplicationNumber] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [serviceTypeId, setServiceTypeId] = useState<string | null>(null);
+  const [baseInterestRate, setBaseInterestRate] = useState<number>(10.0);
+
+  useEffect(() => {
+    async function fetchServiceTypes() {
+      try {
+        const res = await fetch("/api/services");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.services)) {
+            const matchingName = `${loanType}-loan`;
+            const matched = data.services.find((s: any) => s.name === matchingName);
+            if (matched) {
+              setServiceTypeId(matched.id);
+              if (matched.baseInterestRate) {
+                setBaseInterestRate(parseFloat(matched.baseInterestRate));
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching service types:", err);
+      }
+    }
+    fetchServiceTypes();
+  }, [loanType]);
 
   const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;

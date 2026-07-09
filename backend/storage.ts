@@ -1,5 +1,5 @@
 
-import { eq, and, desc, asc, sql } from "drizzle-orm";
+import { eq, and, desc, asc, sql, ne } from "drizzle-orm";
 import { db } from "./database";
 import { 
   users, 
@@ -136,11 +136,13 @@ export class Storage {
     return await db.select({
       userService: userServices,
       serviceType: serviceTypes,
-      user: users
+      user: users,
+      profile: userProfiles
     })
     .from(userServices)
     .innerJoin(serviceTypes, eq(userServices.serviceTypeId, serviceTypes.id))
     .innerJoin(users, eq(userServices.userId, users.id))
+    .leftJoin(userProfiles, eq(userServices.userId, userProfiles.userId))
     .orderBy(desc(userServices.createdAt));
   }
 
@@ -268,7 +270,9 @@ export class Storage {
 
   // Analytics methods
   async getDashboardStats() {
-    const totalUsers = await db.select({ count: sql<number>`count(*)` }).from(users);
+    const totalUsers = await db.select({ count: sql<number>`count(*)` })
+      .from(users)
+      .where(ne(users.role, 'admin'));
     const activeLoans = await db.select({ count: sql<number>`count(*)` })
       .from(userServices)
       .where(eq(userServices.status, 'active'));
@@ -332,7 +336,7 @@ export class Storage {
       role: users.role,
       isActive: users.isActive,
       createdAt: users.createdAt
-    }).from(users);
+    }).from(users).where(ne(users.role, 'admin'));
   }
 
   async getAllPayments() {

@@ -173,22 +173,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/user-services', authenticateToken, async (req: AuthenticatedRequest, res) => {
     try {
+      const status = req.body.status || "pending";
       const serviceData = {
         ...req.body,
         userId: req.user!.id,
-        outstandingAmount: req.body.amount,
-        status: "pending",
+        outstandingAmount: req.body.outstandingAmount || (status === "active" ? "0" : req.body.amount),
+        status: status,
       };
 
       const service = await storage.createUserService(serviceData);
 
       await storage.createNotification({
         userId: req.user!.id,
-        title: "Loan Application Submitted",
-        message: `Your ${req.body.serviceType} application for ₹${req.body.amount} has been submitted.`,
-        type: "info",
+        title: status === "active" ? "Fixed Deposit Opened" : "Loan Application Submitted",
+        message: status === "active" 
+          ? `Your Fixed Deposit of ₹${parseFloat(req.body.amount).toLocaleString("en-IN")} has been successfully opened.` 
+          : `Your application has been submitted successfully.`,
+        type: "success",
         isRead: false,
-        actionUrl: null,
+        actionUrl: "/dashboard",
       });
 
       return res.json({ success: true, service });
@@ -278,6 +281,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Payment submission error:", error);
       return res.status(500).json({ success: false, error: "Failed to submit payment" });
+    }
+  });
+
+  // -------------------------
+  // NOTIFICATIONS
+  // -------------------------
+  app.get('/api/notifications', authenticateToken, async (req: AuthenticatedRequest, res) => {
+    try {
+      const list = await storage.getUserNotifications(req.user!.id);
+      return res.json({ success: true, notifications: list });
+    } catch (error) {
+      console.error("Notifications fetch error:", error);
+      return res.status(500).json({ success: false, error: "Failed to fetch notifications" });
+    }
+  });
+
+  app.post('/api/notifications/:id/read', authenticateToken, async (req: AuthenticatedRequest, res) => {
+    try {
+      const { id } = req.params;
+      const updated = await storage.markNotificationAsRead(id);
+      return res.json({ success: true, notification: updated });
+    } catch (error) {
+      console.error("Notification read error:", error);
+      return res.status(500).json({ success: false, error: "Failed to update notification status" });
+    }
+  });
+
+  app.post('/api/notifications/read-all', authenticateToken, async (req: AuthenticatedRequest, res) => {
+    try {
+      const list = await storage.getUserNotifications(req.user!.id);
+      const promises = list.map(n => {
+        if (!n.isRead) {
+          return storage.markNotificationAsRead(n.id);
+        }
+        return Promise.resolve();
+      });
+      await Promise.all(promises);
+      return res.json({ success: true, message: "All notifications marked as read" });
+    } catch (error) {
+      console.error("Notifications clear-all error:", error);
+      return res.status(500).json({ success: false, error: "Failed to mark all notifications as read" });
     }
   });
 
