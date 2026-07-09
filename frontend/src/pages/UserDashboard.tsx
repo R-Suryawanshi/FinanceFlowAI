@@ -262,7 +262,8 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       }
       
       // If basic details are missing, show the popup modal
-      if (!p || !p.phone_number || !p.address || !p.occupation) {
+      const hasSeenPopup = localStorage.getItem(`profile_popup_seen_${user?.id}`) === "true";
+      if (!hasSeenPopup && (!p || !p.phone_number || !p.address || !p.occupation)) {
         setIsProfileModalOpen(true);
       }
 
@@ -325,6 +326,9 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
         if (data.success) {
           setUserProfile(data.profile);
           setIsProfileModalOpen(false);
+          if (user) {
+            localStorage.setItem(`profile_popup_seen_${user.id}`, "true");
+          }
           toast({
             title: "Profile Saved",
             description: "Your basic profile details have been saved successfully.",
@@ -1650,7 +1654,12 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => setIsProfileModalOpen(false)}
+                onClick={() => {
+                  setIsProfileModalOpen(false);
+                  if (user) {
+                    localStorage.setItem(`profile_popup_seen_${user.id}`, "true");
+                  }
+                }}
                 disabled={isProfileSaving}
                 className="rounded-full bg-transparent font-semibold"
               >
