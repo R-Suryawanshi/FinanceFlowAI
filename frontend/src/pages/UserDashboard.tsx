@@ -292,7 +292,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
     return {
       activeLoanAmount: totalActiveAmount,
+      activeLoanCount: activeLoans.length,
       totalServices: userServices.length,
+      approvedServices: userServices.filter((s) => ["approved", "active", "completed"].includes(s.userService.status)).length,
+      pendingServices: userServices.filter((s) => s.userService.status === "pending").length,
+      totalPaidAmount,
       creditScore: userProfile?.creditScore || 0,
       recentPayments,
     };
@@ -308,6 +312,22 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
     (sum, s) => sum + parseFloat(s.userService.emi || "0"),
     0
   );
+
+  const creditScoreLabel =
+    stats.creditScore >= 750
+      ? "Excellent"
+      : stats.creditScore >= 650
+      ? "Good"
+      : stats.creditScore > 0
+      ? "Fair"
+      : "Not available";
+  const creditScoreProgress = stats.creditScore > 0 ? Math.min(Math.round((stats.creditScore / 900) * 100), 100) : 0;
+  const repaymentProgress =
+    stats.activeLoanAmount + stats.totalPaidAmount > 0
+      ? Math.min(Math.round((stats.totalPaidAmount / (stats.activeLoanAmount + stats.totalPaidAmount)) * 100), 100)
+      : 0;
+  const approvalProgress = stats.totalServices > 0 ? Math.round((stats.approvedServices / stats.totalServices) * 100) : 0;
+  const paymentActivityProgress = Math.min(stats.recentPayments * 25, 100);
 
   const getNextEmiDueDate = () => {
     const now = new Date();
@@ -507,56 +527,152 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Loans</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{formatCurrency(stats.activeLoanAmount)}</div>
-            <p className="text-xs text-muted-foreground">Outstanding amount</p>
-          </CardContent>
+        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Active Loans</span>
+              <div className="text-2xl font-bold text-gray-900">{formatCurrency(stats.activeLoanAmount)}</div>
+              <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+                {stats.activeLoanCount} Active
+              </Badge>
+            </div>
+            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100">
+              <CreditCard className="h-5 w-5" />
+            </div>
+          </div>
+
+          <div className="flex justify-between items-start pt-4 pb-4">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Monthly EMI Due</span>
+              <div className="text-xl font-bold text-gray-800">{formatCurrency(totalEmiDue)}</div>
+              <span className="text-[10px] text-gray-500 font-medium">Next billing cycle</span>
+            </div>
+            <div className="h-10 w-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-100">
+              <Clock className="h-5 w-5" />
+            </div>
+          </div>
+
+          <div className="space-y-1.5 mt-auto">
+            <div className="flex justify-between text-xs font-semibold text-gray-600">
+              <span>Repayment Progress</span>
+              <span className="text-blue-600 font-bold">{repaymentProgress}%</span>
+            </div>
+            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" style={{ width: `${repaymentProgress}%` }} />
+            </div>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500" />
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Services</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.totalServices}</div>
-            <p className="text-xs text-muted-foreground">All time applications</p>
-          </CardContent>
+        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Total Services</span>
+              <div className="text-2xl font-bold text-gray-900">{stats.totalServices}</div>
+              <Badge className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+                All Time
+              </Badge>
+            </div>
+            <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100">
+              <FileText className="h-5 w-5" />
+            </div>
+          </div>
+
+          <div className="flex justify-between items-start pt-4 pb-4">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Pending Reviews</span>
+              <div className="text-xl font-bold text-amber-600">{stats.pendingServices}</div>
+              <span className="text-[10px] text-gray-500 font-medium">Awaiting approval updates</span>
+            </div>
+            <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100">
+              <LayoutDashboard className="h-5 w-5" />
+            </div>
+          </div>
+
+          <div className="space-y-1.5 mt-auto">
+            <div className="flex justify-between text-xs font-semibold text-gray-600">
+              <span>Approval Completion</span>
+              <span className="text-indigo-600 font-bold">{approvalProgress}%</span>
+            </div>
+            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style={{ width: `${approvalProgress}%` }} />
+            </div>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500" />
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Credit Score</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.creditScore > 0 ? stats.creditScore : "----"}</div>
-            <p className="text-xs text-muted-foreground">
-              {stats.creditScore >= 750
-                ? "Excellent"
-                : stats.creditScore >= 650
-                ? "Good"
-                : stats.creditScore > 0
-                ? "Fair"
-                : "Not available"}
-            </p>
-          </CardContent>
+        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Credit Score</span>
+              <div className="text-2xl font-bold text-gray-900">{stats.creditScore > 0 ? stats.creditScore : "----"}</div>
+              <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+                {creditScoreLabel}
+              </Badge>
+            </div>
+            <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100">
+              <TrendingUp className="h-5 w-5" />
+            </div>
+          </div>
+
+          <div className="flex justify-between items-start pt-4 pb-4">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Monthly Income</span>
+              <div className="text-xl font-bold text-gray-800">{userProfile?.monthlyIncome ? formatCurrency(userProfile.monthlyIncome) : "----"}</div>
+              <span className="text-[10px] text-gray-500 font-medium">{userProfile?.occupation || "Profile details"}</span>
+            </div>
+            <div className="h-10 w-10 rounded-xl bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-100">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+          </div>
+
+          <div className="space-y-1.5 mt-auto">
+            <div className="flex justify-between text-xs font-semibold text-gray-600">
+              <span>Score Strength</span>
+              <span className="text-emerald-600 font-bold">{creditScoreProgress}%</span>
+            </div>
+            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full" style={{ width: `${creditScoreProgress}%` }} />
+            </div>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-cyan-500" />
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Payments</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{stats.recentPayments}</div>
-            <p className="text-xs text-muted-foreground">Last 30 days</p>
-          </CardContent>
+        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Recent Payments</span>
+              <div className="text-2xl font-bold text-gray-900">{stats.recentPayments}</div>
+              <Badge className="bg-rose-50 text-rose-700 hover:bg-rose-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+                Last 30 Days
+              </Badge>
+            </div>
+            <div className="h-10 w-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-md shadow-rose-100">
+              <Clock className="h-5 w-5" />
+            </div>
+          </div>
+
+          <div className="flex justify-between items-start pt-4 pb-4">
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Total Paid</span>
+              <div className="text-xl font-bold text-gray-800">{formatCurrency(stats.totalPaidAmount)}</div>
+              <span className="text-[10px] text-gray-500 font-medium">Completed repayments</span>
+            </div>
+            <div className="h-10 w-10 rounded-xl bg-pink-500 text-white flex items-center justify-center shadow-md shadow-pink-100">
+              <CheckCircle className="h-5 w-5" />
+            </div>
+          </div>
+
+          <div className="space-y-1.5 mt-auto">
+            <div className="flex justify-between text-xs font-semibold text-gray-600">
+              <span>Payment Activity</span>
+              <span className="text-rose-600 font-bold">{paymentActivityProgress}%</span>
+            </div>
+            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-full" style={{ width: `${paymentActivityProgress}%` }} />
+            </div>
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 to-pink-500" />
         </Card>
       </div>
 
