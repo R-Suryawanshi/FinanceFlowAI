@@ -141,17 +141,19 @@ export function Header({
   ];
 
   return (
-    <header className="bg-secondary text-secondary-foreground border-b border-secondary/15 sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <header 
+      className="sticky top-4 mt-4 z-50 transition-all duration-300 w-[calc(100%-2rem)] max-w-7xl mx-auto bg-white/80 dark:bg-slate-950/85 backdrop-blur-lg border border-slate-200/50 dark:border-slate-800/60 rounded-full shadow-lg"
+    >
+      <div className="max-w-7xl mx-auto px-2">
+        <div className="flex justify-between items-center h-14 px-4">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Building2 className="h-8 w-8 text-primary mr-2" />
-            <span className="text-xl font-bold text-secondary-foreground">Bhalchandra Finance</span>
+            <Building2 className="h-8 w-8 mr-2 text-blue-700" />
+            <span className="text-xl font-bold text-slate-950 dark:text-white">Bhalchandra Finance</span>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-2">
             {navigation.map((item) => {
               const Icon = item.icon;
               return (
@@ -163,10 +165,10 @@ export function Header({
                     console.log('Navigated to:', item.name);
                   }}
                   data-testid={`nav-${item.id}`}
-                  className={`flex items-center gap-2 transition-all duration-205 ${
+                  className={`flex items-center gap-2 transition-all duration-205 rounded-full px-4 ${
                     currentPage === item.id
-                      ? "bg-primary text-primary-foreground font-bold shadow-sm"
-                      : "text-secondary-foreground/80 hover:text-secondary-foreground hover:bg-white/10"
+                      ? "bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-sm"
+                      : "text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -177,11 +179,11 @@ export function Header({
           </nav>
 
           {/* User Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
             {isLoggedIn ? (
               <>
                 {userRole === 'admin' && (
-                  <Badge variant="secondary" data-testid="admin-badge" className="bg-primary text-primary-foreground font-semibold border-none">
+                  <Badge variant="secondary" data-testid="admin-badge" className="font-semibold border-none bg-blue-105 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200">
                     Admin
                   </Badge>
                 )}
@@ -191,9 +193,9 @@ export function Header({
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="relative h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-secondary-foreground border border-white/10 flex items-center justify-center focus-visible:ring-0"
+                      className="relative h-9 w-9 rounded-full flex items-center justify-center border focus-visible:ring-0 bg-slate-100/80 dark:bg-slate-900/80 border-slate-250/30 dark:border-slate-850 text-slate-700 dark:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/80"
                     >
-                      <Bell className="h-5 w-5" />
+                      <Bell className="h-4 w-4" />
                       {unreadCount > 0 && (
                         <span className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-md">
                           {unreadCount}
@@ -201,22 +203,22 @@ export function Header({
                       )}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-80 bg-secondary text-secondary-foreground border-white/15 p-2" align="end" forceMount>
-                    <div className="flex items-center justify-between px-2 py-1.5 border-b border-white/10">
+                  <DropdownMenuContent className="w-80 border p-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-slate-200/60 dark:border-slate-800" align="end" forceMount>
+                    <div className="flex items-center justify-between px-2 py-1.5 border-b border-slate-100 dark:border-slate-800">
                       <span className="text-sm font-bold">Notifications</span>
                       {unreadCount > 0 && (
                         <button
                           onClick={markAllAsRead}
-                          className="text-[10px] font-semibold text-primary hover:underline"
+                          className="text-[10px] font-semibold hover:underline text-blue-700 dark:text-blue-400"
                         >
                           Mark all as read
                         </button>
                       )}
                     </div>
-                    <DropdownMenuSeparator className="bg-white/10" />
+                    <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
                     <div className="max-h-[300px] overflow-y-auto space-y-1 py-1">
                       {notifications.length === 0 ? (
-                        <div className="py-6 text-center text-xs text-secondary-foreground/60 font-medium">
+                        <div className="py-6 text-center text-xs font-medium text-slate-500">
                           No notifications at this time.
                         </div>
                       ) : (
@@ -247,9 +249,9 @@ export function Header({
                               )}
                             </div>
                             <div className="space-y-0.5 pr-4 flex-1">
-                              <p className="font-bold text-secondary-foreground leading-tight">{n.title}</p>
-                              <p className="text-[11px] text-secondary-foreground/75 leading-snug break-words">{n.message}</p>
-                              <span className="text-[9px] text-secondary-foreground/50 block font-semibold pt-0.5">
+                              <p className="font-bold leading-tight text-slate-900 dark:text-white">{n.title}</p>
+                              <p className="text-[11px] leading-snug break-words text-slate-600 dark:text-slate-350">{n.message}</p>
+                              <span className="text-[9px] block font-semibold pt-0.5 text-slate-400">
                                 {formatTimeAgo(n.createdAt)}
                               </span>
                             </div>
@@ -267,36 +269,36 @@ export function Header({
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="relative h-10 w-10 rounded-full bg-white/10 hover:bg-white/20 text-secondary-foreground border border-white/10 flex items-center justify-center focus-visible:ring-0"
+                      className="relative h-9 w-9 rounded-full flex items-center justify-center border focus-visible:ring-0 bg-slate-100/80 dark:bg-slate-900/80 border-slate-250/30 dark:border-slate-850 text-slate-700 dark:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/80"
                     >
-                      <User className="h-5 w-5" />
+                      <User className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 bg-secondary text-secondary-foreground border-white/15" align="end" forceMount>
-                    <DropdownMenuLabel className="font-normal border-b border-white/10">
+                  <DropdownMenuContent className="w-56 border bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-slate-200/60 dark:border-slate-800" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal border-b border-slate-105 dark:border-slate-800">
                       <div className="flex flex-col space-y-1">
                         <p className="text-sm font-semibold leading-none">{user?.name || "Member"}</p>
-                        <p className="text-xs leading-none text-secondary-foreground/60">{user?.email || ""}</p>
+                        <p className="text-xs leading-none opacity-60">{user?.email || ""}</p>
                       </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-white/10" />
+                    <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
                     <DropdownMenuItem
                       onClick={() => {
                         const dashboardPage = userRole === 'admin' ? 'admin-dashboard' : 'user-dashboard';
                         onPageChange(dashboardPage);
                       }}
-                      className="cursor-pointer hover:bg-white/10 focus:bg-white/10 focus:text-secondary-foreground"
+                      className="cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800 focus:bg-blue-50 dark:focus:bg-slate-800"
                     >
                       <LayoutDashboard className="mr-2 h-4 w-4" />
                       <span>Dashboard</span>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-white/10" />
+                    <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
                     <DropdownMenuItem
                       onClick={() => {
                         onLogout();
                         console.log('User logged out');
                       }}
-                      className="text-red-400 focus:text-red-400 hover:bg-white/10 focus:bg-white/10 cursor-pointer"
+                      className="text-red-550 focus:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 cursor-pointer"
                       data-testid="button-logout"
                     >
                       <LogOut className="mr-2 h-4 w-4" />
@@ -311,7 +313,7 @@ export function Header({
                   variant="ghost"
                   onClick={onLogin}
                   data-testid="button-login"
-                  className="flex items-center gap-2 text-secondary-foreground/80 hover:text-secondary-foreground hover:bg-white/10"
+                  className="flex items-center gap-2 rounded-full text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
                 >
                   <LogIn className="h-4 w-4" />
                   Login
@@ -319,14 +321,13 @@ export function Header({
                 <Button
                   onClick={onSignup}
                   data-testid="button-signup"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 rounded-full bg-blue-700 hover:bg-blue-800 text-white font-semibold shadow-sm"
                 >
                   <UserPlus className="h-4 w-4" />
                   Sign Up
                 </Button>
               </>
             )}
-
           </div>
 
           {/* Mobile menu button */}
@@ -336,6 +337,7 @@ export function Header({
               size="icon"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               data-testid="button-mobile-menu"
+              className="text-slate-800 dark:text-white"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -344,8 +346,8 @@ export function Header({
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-secondary-foreground/10 bg-secondary">
-            <div className="px-2 pt-2 pb-3 space-y-1">
+          <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 rounded-2xl shadow-xl mt-2 space-y-1 border border-slate-200/50 dark:border-slate-800/60 w-[calc(100%-1rem)] mx-auto absolute left-2 right-2 z-50">
+            <div className="space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -358,10 +360,10 @@ export function Header({
                       console.log('Mobile nav to:', item.name);
                     }}
                     data-testid={`mobile-nav-${item.id}`}
-                    className={`w-full justify-start flex items-center gap-2 ${
+                    className={`w-full justify-start flex items-center gap-2 rounded-lg ${
                       currentPage === item.id 
-                        ? "bg-primary text-primary-foreground font-bold shadow-sm" 
-                        : "text-secondary-foreground/80 hover:text-secondary-foreground hover:bg-white/10"
+                        ? "bg-blue-700 text-white font-bold shadow-sm" 
+                        : "text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -371,12 +373,12 @@ export function Header({
               })}
 
               {/* Mobile User Actions */}
-              <div className="border-t border-secondary-foreground/10 pt-4 mt-4">
+              <div className="border-t border-slate-100 dark:border-slate-800 pt-3 mt-3">
                 {isLoggedIn ? (
                   <>
-                    <div className="px-4 py-2 mb-3 border-b border-white/10">
-                      <p className="text-sm font-semibold text-secondary-foreground">{user?.name || "Member"}</p>
-                      <p className="text-xs text-secondary-foreground/60">{user?.email || ""}</p>
+                    <div className="px-3 py-2 mb-2 border-b border-slate-100 dark:border-slate-800">
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">{user?.name || "Member"}</p>
+                      <p className="text-xs text-slate-500">{user?.email || ""}</p>
                     </div>
                     <Button
                       variant="ghost"
@@ -385,7 +387,7 @@ export function Header({
                         setMobileMenuOpen(false);
                       }}
                       data-testid="mobile-button-logout"
-                      className="w-full text-red-400 hover:text-red-300 hover:bg-white/10 flex items-center justify-center gap-2"
+                      className="w-full text-red-500 hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 flex items-center justify-center gap-2 rounded-lg"
                     >
                       <LogOut className="h-4 w-4" />
                       Logout
@@ -397,7 +399,7 @@ export function Header({
                       variant="ghost"
                       onClick={onLogin}
                       data-testid="mobile-button-login"
-                      className="w-full mb-2 justify-start flex items-center gap-2 text-secondary-foreground/80 hover:text-secondary-foreground hover:bg-white/10"
+                      className="w-full mb-2 justify-start flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 rounded-lg"
                     >
                       <LogIn className="h-4 w-4" />
                       Login
@@ -405,14 +407,13 @@ export function Header({
                     <Button
                       onClick={onSignup}
                       data-testid="mobile-button-signup"
-                      className="w-full mb-2 justify-start flex items-center gap-2"
+                      className="w-full mb-2 justify-start flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-lg"
                     >
                       <UserPlus className="h-4 w-4" />
                       Sign Up
                     </Button>
                   </>
                 )}
-
               </div>
             </div>
           </div>
