@@ -48,6 +48,11 @@ export const userProfiles = pgTable("user_profiles", {
   creditScore: integer("credit_score"),
   panNumber: text("pan_number"),
   aadharNumber: text("aadhar_number"),
+  bankName: text("bank_name"),
+  accountNumber: text("account_number"),
+  ifscCode: text("ifsc_code"),
+  accountHolderName: text("account_holder_name"),
+  accountType: text("account_type"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

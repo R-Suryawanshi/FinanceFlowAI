@@ -36,6 +36,11 @@ interface ProfileData {
   credit_score: number;
   pan_number: string;
   aadhar_number: string;
+  bank_name: string;
+  account_number: string;
+  ifsc_code: string;
+  account_holder_name: string;
+  account_type: string;
 }
 
 export default function ProfilePage({ user, onBack }: ProfilePageProps) {
@@ -58,6 +63,11 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
     credit_score: 750,
     pan_number: "",
     aadhar_number: "",
+    bank_name: "",
+    account_number: "",
+    ifsc_code: "",
+    account_holder_name: "",
+    account_type: "",
   });
 
   useEffect(() => {
@@ -95,6 +105,11 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
               credit_score: p.credit_score || 750,
               pan_number: p.pan_number || "",
               aadhar_number: p.aadhar_number || "",
+              bank_name: p.bank_name || "",
+              account_number: p.account_number || "",
+              ifsc_code: p.ifsc_code || "",
+              account_holder_name: p.account_holder_name || "",
+              account_type: p.account_type || "",
             });
           }
         }
@@ -542,6 +557,94 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                       value={profile.pincode} 
                       onChange={handleChange}
                     />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Bank Account Details */}
+            <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
+              <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
+                <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                  <Building2 className="h-5 w-5 text-blue-700" />
+                  Bank Account Details
+                </CardTitle>
+                <CardDescription className="text-xs">Configure your payout bank account for loan disbursements and auto-repayments.</CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="bank_name" className="text-xs font-bold">Bank Name</Label>
+                    <div className="relative">
+                      <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                      <Input 
+                        id="bank_name" 
+                        name="bank_name"
+                        placeholder="e.g. State Bank of India" 
+                        value={profile.bank_name} 
+                        onChange={handleChange}
+                        className="pl-9" 
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="account_holder_name" className="text-xs font-bold">Account Holder Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                      <Input 
+                        id="account_holder_name" 
+                        name="account_holder_name"
+                        placeholder="e.g. Ritesh Suryawanshi" 
+                        value={profile.account_holder_name} 
+                        onChange={handleChange}
+                        className="pl-9" 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="account_number" className="text-xs font-bold">Account Number</Label>
+                    <div className="relative">
+                      <CreditCard className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                      <Input 
+                        id="account_number" 
+                        name="account_number"
+                        placeholder="e.g. 30123456789" 
+                        value={profile.account_number} 
+                        onChange={handleChange}
+                        className="pl-9" 
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="ifsc_code" className="text-xs font-bold">IFSC Code</Label>
+                    <div className="relative">
+                      <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                      <Input 
+                        id="ifsc_code" 
+                        name="ifsc_code"
+                        placeholder="e.g. SBIN0001234" 
+                        value={profile.ifsc_code} 
+                        onChange={handleChange}
+                        className="pl-9 uppercase" 
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="account_type" className="text-xs font-bold">Account Type</Label>
+                    <select
+                      id="account_type"
+                      name="account_type"
+                      value={profile.account_type}
+                      onChange={handleChange}
+                      className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                    >
+                      <option value="" disabled>Select Account Type</option>
+                      <option value="Savings">Savings Account</option>
+                      <option value="Current">Current Account</option>
+                    </select>
                   </div>
                 </div>
               </CardContent>

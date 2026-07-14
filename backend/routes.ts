@@ -106,6 +106,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         credit_score: profile.creditScore,
         pan_number: profile.panNumber,
         aadhar_number: profile.aadharNumber,
+        bank_name: profile.bankName,
+        account_number: profile.accountNumber,
+        ifsc_code: profile.ifscCode,
+        account_holder_name: profile.accountHolderName,
+        account_type: profile.accountType,
       };
 
       return res.json({ success: true, profile: responseProfile });
@@ -134,6 +139,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         creditScore: incoming.credit_score !== undefined ? incoming.credit_score : (incoming.creditScore !== undefined ? incoming.creditScore : 720),
         panNumber: incoming.pan_number !== undefined ? incoming.pan_number : incoming.panNumber,
         aadharNumber: incoming.aadhar_number !== undefined ? incoming.aadhar_number : incoming.aadharNumber,
+        bankName: incoming.bank_name !== undefined ? incoming.bank_name : incoming.bankName,
+        accountNumber: incoming.account_number !== undefined ? incoming.account_number : incoming.accountNumber,
+        ifscCode: incoming.ifsc_code !== undefined ? incoming.ifsc_code : incoming.ifscCode,
+        accountHolderName: incoming.account_holder_name !== undefined ? incoming.account_holder_name : incoming.accountHolderName,
+        accountType: incoming.account_type !== undefined ? incoming.account_type : incoming.accountType,
       };
 
       // Safely parse dateOfBirth/date_of_birth
@@ -175,6 +185,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         credit_score: profile.creditScore,
         pan_number: profile.panNumber,
         aadhar_number: profile.aadharNumber,
+        bank_name: profile.bankName,
+        account_number: profile.accountNumber,
+        ifsc_code: profile.ifscCode,
+        account_holder_name: profile.accountHolderName,
+        account_type: profile.accountType,
       };
 
       return res.json({ success: true, profile: responseProfile });
