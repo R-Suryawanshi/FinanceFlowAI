@@ -14,6 +14,10 @@ import { ServicesPage } from "./pages/ServicesPage";
 import { AboutPage } from "./pages/AboutPage";
 import { ContactPage } from "./pages/ContactPage";
 import { AdminDashboard } from "./pages/AdminDashboard";
+import { AdminApplicationsPage } from "./pages/AdminApplicationsPage";
+import { AdminPaymentsPage } from "./pages/AdminPaymentsPage";
+import { AdminUsersPage } from "./pages/AdminUsersPage";
+import { AdminSidebar } from "./pages/AdminSidebar";
 import { UserDashboard } from "./pages/UserDashboard";
 import { LoanApplicationForm } from "./pages/LoanApplicationForm";
 import { ChatBot } from "./components/ChatBot";
@@ -35,6 +39,7 @@ function App() {
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState("home");
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const [user, setUser] = useState<User | null>(null);
   const [authToken, setAuthToken] = useState(localStorage.getItem("authToken"));
@@ -195,7 +200,10 @@ function App() {
         );
       case "fd-calculator":
         return <FDCalculator />;
-      case "admin-dashboard": return user?.role === "admin" ? <AdminDashboard user={user} /> : <>Access Denied</>;
+      case "admin-dashboard": return user?.role === "admin" ? <AdminDashboard user={user} onPageChange={setCurrentPage} /> : <>Access Denied</>;
+      case "admin-applications": return user?.role === "admin" ? <AdminApplicationsPage user={user} /> : <>Access Denied</>;
+      case "admin-payments": return user?.role === "admin" ? <AdminPaymentsPage user={user} /> : <>Access Denied</>;
+      case "admin-users": return user?.role === "admin" ? <AdminUsersPage user={user} /> : <>Access Denied</>;
       case "user-dashboard": return user ? (
         <UserDashboard
           user={user}
@@ -219,31 +227,47 @@ function App() {
     }
   };
 
+  const isAdminPage = !!(user?.role === "admin" && currentPage.startsWith("admin-"));
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <ThemeProvider>
-          <div className="min-h-screen flex flex-col bg-background text-foreground">
-            <Header
-              currentPage={currentPage}
-              onPageChange={setCurrentPage}
-              isLoggedIn={!!user}
-              userRole={user?.role}
-              user={user}
-              onLogin={() => setAuthModalOpen(true)}
-              onSignup={() => setAuthModalOpen(true)}
-              onLogout={handleLogout}
-            />
+          <div className="min-h-screen flex bg-background text-foreground">
+            {isAdminPage && (
+              <AdminSidebar
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                isCollapsed={isSidebarCollapsed}
+                onToggle={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              />
+            )}
+            
+            <div className={`flex-1 flex flex-col min-w-0 ${isAdminPage ? "bg-slate-50/70 dark:bg-slate-905/40" : ""}`}>
+              <Header
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                isLoggedIn={!!user}
+                userRole={user?.role}
+                user={user}
+                onLogin={() => setAuthModalOpen(true)}
+                onSignup={() => setAuthModalOpen(true)}
+                onLogout={handleLogout}
+                isAdminPage={isAdminPage}
+              />
 
-            <main className="flex-1">{renderCurrentPage()}</main>
+              <main className="flex-1">{renderCurrentPage()}</main>
 
-            <Footer onPageChange={setCurrentPage} />
+              {!isAdminPage && <Footer onPageChange={setCurrentPage} />}
 
-            <ChatBot
-              currentPage={currentPage}
-              isOpen={isChatOpen}
-              onToggle={() => setIsChatOpen(!isChatOpen)}
-            />
+              <ChatBot
+                currentPage={currentPage}
+                isOpen={isChatOpen}
+                onToggle={() => setIsChatOpen(!isChatOpen)}
+              />
+              
+              <Toaster />
+            </div>
 
             <AuthModal
               isOpen={isAuthModalOpen}
@@ -252,8 +276,6 @@ function App() {
               onSignup={handleSignup}
             />
           </div>
-
-          <Toaster />
         </ThemeProvider>
       </TooltipProvider>
     </QueryClientProvider>

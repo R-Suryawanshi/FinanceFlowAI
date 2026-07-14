@@ -91,7 +91,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/profile', authenticateToken, async (req: AuthenticatedRequest, res) => {
     try {
       const profile = await storage.getUserProfile(req.user!.id);
-      return res.json({ success: true, profile });
+      if (!profile) {
+        return res.json({ success: true, profile: null });
+      }
+
+      // Return both snake_case and camelCase keys for frontend/Drizzle compatibility
+      const responseProfile = {
+        ...profile,
+        phone_number: profile.phoneNumber,
+        date_of_birth: profile.dateOfBirth,
+        marital_status: profile.maritalStatus,
+        company_name: profile.companyName,
+        monthly_income: profile.monthlyIncome,
+        credit_score: profile.creditScore,
+        pan_number: profile.panNumber,
+        aadhar_number: profile.aadharNumber,
+        bank_name: profile.bankName,
+        account_number: profile.accountNumber,
+        ifsc_code: profile.ifscCode,
+        account_holder_name: profile.accountHolderName,
+        account_type: profile.accountType,
+      };
+
+      return res.json({ success: true, profile: responseProfile });
     } catch (error) {
       console.error("Profile fetch error:", error);
       return res.status(500).json({ success: false, error: "Failed to fetch profile" });
@@ -100,35 +122,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/profile', authenticateToken, async (req: AuthenticatedRequest, res) => {
     try {
-      const profileData = { ...req.body, userId: req.user!.id };
+      const incoming = req.body;
 
-      // Parse dateOfBirth safely
-      if (profileData.dateOfBirth) {
-        const parsedDate = new Date(profileData.dateOfBirth);
+      // Unify input formats (supporting both snake_case and camelCase inputs)
+      const profileData: any = {
+        userId: req.user!.id,
+        phoneNumber: incoming.phone_number !== undefined ? incoming.phone_number : incoming.phoneNumber,
+        gender: incoming.gender,
+        maritalStatus: incoming.marital_status !== undefined ? incoming.marital_status : incoming.maritalStatus,
+        address: incoming.address,
+        city: incoming.city,
+        state: incoming.state,
+        pincode: incoming.pincode,
+        occupation: incoming.occupation,
+        companyName: incoming.company_name !== undefined ? incoming.company_name : incoming.companyName,
+        creditScore: incoming.credit_score !== undefined ? incoming.credit_score : (incoming.creditScore !== undefined ? incoming.creditScore : 720),
+        panNumber: incoming.pan_number !== undefined ? incoming.pan_number : incoming.panNumber,
+        aadharNumber: incoming.aadhar_number !== undefined ? incoming.aadhar_number : incoming.aadharNumber,
+        bankName: incoming.bank_name !== undefined ? incoming.bank_name : incoming.bankName,
+        accountNumber: incoming.account_number !== undefined ? incoming.account_number : incoming.accountNumber,
+        ifscCode: incoming.ifsc_code !== undefined ? incoming.ifsc_code : incoming.ifscCode,
+        accountHolderName: incoming.account_holder_name !== undefined ? incoming.account_holder_name : incoming.accountHolderName,
+        accountType: incoming.account_type !== undefined ? incoming.account_type : incoming.accountType,
+      };
+
+      // Safely parse dateOfBirth/date_of_birth
+      const rawDOB = incoming.date_of_birth !== undefined ? incoming.date_of_birth : incoming.dateOfBirth;
+      if (rawDOB) {
+        const parsedDate = new Date(rawDOB);
         if (!isNaN(parsedDate.getTime())) {
           profileData.dateOfBirth = parsedDate;
         } else {
           profileData.dateOfBirth = null;
         }
+      } else {
+        profileData.dateOfBirth = null;
+      }
+
+      // Safely parse monthlyIncome/monthly_income
+      const rawIncome = incoming.monthly_income !== undefined ? incoming.monthly_income : incoming.monthlyIncome;
+      if (rawIncome !== undefined && rawIncome !== null && rawIncome !== "") {
+        profileData.monthlyIncome = String(rawIncome);
+      } else {
+        profileData.monthlyIncome = null;
       }
 
       let profile = await storage.getUserProfile(req.user!.id);
       if (profile) {
-        const updateData = { ...req.body };
-        if (updateData.dateOfBirth) {
-          const parsedDate = new Date(updateData.dateOfBirth);
-          if (!isNaN(parsedDate.getTime())) {
-            updateData.dateOfBirth = parsedDate;
-          } else {
-            updateData.dateOfBirth = null;
-          }
-        }
-        profile = await storage.updateUserProfile(req.user!.id, updateData);
+        profile = await storage.updateUserProfile(req.user!.id, profileData);
       } else {
         profile = await storage.createUserProfile(profileData);
       }
 
-      return res.json({ success: true, profile });
+      // Return both snake_case and camelCase keys for maximum compatibility
+      const responseProfile = {
+        ...profile,
+        phone_number: profile.phoneNumber,
+        date_of_birth: profile.dateOfBirth,
+        marital_status: profile.maritalStatus,
+        company_name: profile.companyName,
+        monthly_income: profile.monthlyIncome,
+        credit_score: profile.creditScore,
+        pan_number: profile.panNumber,
+        aadhar_number: profile.aadharNumber,
+        bank_name: profile.bankName,
+        account_number: profile.accountNumber,
+        ifsc_code: profile.ifscCode,
+        account_holder_name: profile.accountHolderName,
+        account_type: profile.accountType,
+      };
+
+      return res.json({ success: true, profile: responseProfile });
     } catch (error) {
       console.error("Profile update error:", error);
       return res.status(500).json({ success: false, error: "Failed to update profile" });

@@ -16,8 +16,12 @@ import {
   Bell,
   Check,
   Info,
-  AlertTriangle
+  AlertTriangle,
+  FileText,
+  DollarSign,
+  Search
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +40,7 @@ interface HeaderProps {
   onLogin: () => void;
   onSignup: () => void;
   onLogout: () => void;
+  isAdminPage?: boolean;
 }
 
 export function Header({ 
@@ -46,7 +51,8 @@ export function Header({
   user,
   onLogin, 
   onSignup, 
-  onLogout 
+  onLogout,
+  isAdminPage = false
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
@@ -140,9 +146,15 @@ export function Header({
     { name: "Contact", id: "contact", icon: Phone },
   ];
 
+
+
   return (
     <header 
-      className="sticky top-4 mt-4 z-50 transition-all duration-300 w-[calc(100%-2rem)] max-w-7xl mx-auto bg-white/80 dark:bg-slate-950/85 backdrop-blur-lg border border-slate-200/50 dark:border-slate-800/60 rounded-full shadow-lg"
+      className={`sticky z-50 transition-all duration-300 bg-white/80 dark:bg-slate-950/85 backdrop-blur-lg border border-slate-200/50 dark:border-slate-800/60 ${
+        isAdminPage 
+          ? "w-full rounded-none border-b border-t-0 border-x-0 top-0 shadow-sm" 
+          : "rounded-full shadow-lg w-[calc(100%-2rem)] max-w-7xl mx-auto top-4 mt-4"
+      }`}
     >
       <div className="max-w-7xl mx-auto px-2">
         <div className="flex justify-between items-center h-14 px-4">
@@ -153,30 +165,32 @@ export function Header({
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-2">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Button
-                  key={item.id}
-                  variant={currentPage === item.id ? "default" : "ghost"}
-                  onClick={() => {
-                    onPageChange(item.id);
-                    console.log('Navigated to:', item.name);
-                  }}
-                  data-testid={`nav-${item.id}`}
-                  className={`flex items-center gap-2 transition-all duration-205 rounded-full px-4 ${
-                    currentPage === item.id
-                      ? "bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-sm"
-                      : "text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
-                  }`}
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.name}
-                </Button>
-              );
-            })}
-          </nav>
+          {!isAdminPage && (
+            <nav className="hidden md:flex space-x-2">
+              {navigation.map((item) => {
+                 const Icon = item.icon;
+                 return (
+                   <Button
+                     key={item.id}
+                     variant={currentPage === item.id ? "default" : "ghost"}
+                     onClick={() => {
+                       onPageChange(item.id);
+                       console.log('Navigated to:', item.name);
+                     }}
+                     data-testid={`nav-${item.id}`}
+                     className={`flex items-center gap-2 transition-all duration-205 rounded-full px-4 ${
+                       currentPage === item.id
+                         ? "bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-sm"
+                         : "text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
+                     }`}
+                   >
+                     <Icon className="h-4 w-4" />
+                     {item.name}
+                   </Button>
+                 );
+               })}
+             </nav>
+          )}
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-3">
@@ -291,6 +305,17 @@ export function Header({
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
                     </DropdownMenuItem>
+                    {userRole === 'admin' && isAdminPage && (
+                      <DropdownMenuItem
+                        onClick={() => {
+                          onPageChange("home");
+                        }}
+                        className="cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800 focus:bg-blue-50 dark:focus:bg-slate-800"
+                      >
+                        <Building2 className="mr-2 h-4 w-4" />
+                        <span>View Public Website</span>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
                     <DropdownMenuItem
                       onClick={() => {

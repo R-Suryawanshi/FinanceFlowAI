@@ -55,9 +55,7 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
-export function AdminDashboard({ user }: any) {
-  const [filter, setFilter] = useState("All");
-  const [search, setSearch] = useState("");
+export function AdminDashboard({ user, onPageChange }: any) {
   const [monthlyRevenue, setMonthlyRevenue] = useState<any[]>([]);
   const [forecastData, setForecastData] = useState<any[]>([]);
   const [loanTypes, setLoanTypes] = useState<any[]>([]);
@@ -75,7 +73,6 @@ export function AdminDashboard({ user }: any) {
   const [liveApplications, setLiveApplications] = useState<any[]>([]);
   const [liveUsers, setLiveUsers] = useState<any[]>([]);
   const [livePayments, setLivePayments] = useState<any[]>([]);
-  const [selectedApp, setSelectedApp] = useState<any | null>(null);
   const [liveLoading, setLiveLoading] = useState(false);
 
   const fetchLiveAdminData = async () => {
@@ -124,29 +121,6 @@ export function AdminDashboard({ user }: any) {
     }
   };
 
-  const handleUpdateStatus = async (id: string, newStatus: string) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      const response = await fetch(`/api/admin/user-services/${id}/status`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ status: newStatus })
-      });
-      const data = await response.json();
-      if (data.success) {
-        fetchLiveAdminData();
-        logActivity(`🟢 Loan application ${data.service.applicationNumber} updated to ${newStatus}.`);
-      } else {
-        alert(data.error || "Failed to update status");
-      }
-    } catch (err) {
-      console.error("Error updating loan status:", err);
-    }
-  };
-
   useEffect(() => {
     fetchLiveAdminData();
   }, []);
@@ -188,9 +162,7 @@ export function AdminDashboard({ user }: any) {
 
     // 2. Loan Type Distribution from liveApplications
     const loanDist: Record<string, number> = {};
-    const filteredApps = liveApplications.filter(
-      (app: any) => filter === "All" || app.userService.status.toLowerCase() === filter.toLowerCase()
-    );
+    const filteredApps = liveApplications;
 
     filteredApps.forEach((app: any) => {
       const name = app.serviceType.displayName || app.serviceType.name;
@@ -205,7 +177,7 @@ export function AdminDashboard({ user }: any) {
     }));
 
     setLoanTypes(formattedDist);
-  }, [liveApplications, livePayments, filter]);
+  }, [liveApplications, livePayments]);
 
   // ✅ AI Revenue Forecast
   useEffect(() => {
@@ -419,42 +391,7 @@ export function AdminDashboard({ user }: any) {
     ? ((liveUsers.filter(u => u.isActive).length / liveUsers.length) * 100).toFixed(1) 
     : "100.0";
 
-  // Filtered pending and processed applications based on admin search and filter inputs
-  const filteredPending = liveApplications.filter(app => {
-    if (app.userService.status !== "pending") return false;
-    if (filter !== "All" && filter !== "Pending") return false;
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      const nameMatch = app.user.name?.toLowerCase().includes(q);
-      const emailMatch = app.user.email?.toLowerCase().includes(q);
-      const appNumMatch = app.userService.applicationNumber?.toLowerCase().includes(q);
-      const serviceMatch = (app.serviceType.displayName || app.serviceType.name)?.toLowerCase().includes(q);
-      if (!nameMatch && !emailMatch && !appNumMatch && !serviceMatch) return false;
-    }
-    return true;
-  });
 
-  const filteredProcessed = liveApplications.filter(app => {
-    if (app.userService.status === "pending") return false;
-    if (filter !== "All") {
-      const option = filter.toLowerCase();
-      const status = app.userService.status.toLowerCase();
-      if (option === "approved") {
-        if (status !== "approved" && status !== "active") return false;
-      } else if (status !== option) {
-        return false;
-      }
-    }
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      const nameMatch = app.user.name?.toLowerCase().includes(q);
-      const emailMatch = app.user.email?.toLowerCase().includes(q);
-      const appNumMatch = app.userService.applicationNumber?.toLowerCase().includes(q);
-      const serviceMatch = (app.serviceType.displayName || app.serviceType.name)?.toLowerCase().includes(q);
-      if (!nameMatch && !emailMatch && !appNumMatch && !serviceMatch) return false;
-    }
-    return true;
-  });
 
   // Exclude fixed deposits from outstanding loan portfolio since FDs are user assets, not debts
   const totalOutstanding = liveApplications
@@ -477,7 +414,7 @@ export function AdminDashboard({ user }: any) {
   const fdProgress = Math.min(100, Number(((fdVolume / fdTarget) * 100).toFixed(1)));
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-8" ref={dashboardRef}>
+    <div className="p-6 sm:p-8 space-y-8" ref={dashboardRef}>
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
@@ -502,21 +439,7 @@ export function AdminDashboard({ user }: any) {
         </div>
       </div>
 
-      {/* Filter & Search */}
-      <div className="flex justify-end gap-3" data-html2canvas-ignore="true">
-        <select className="border p-2 rounded-md text-sm" value={filter} onChange={(e) => setFilter(e.target.value)}>
-          <option>All</option>
-          <option>Approved</option>
-          <option>Pending</option>
-          <option>Rejected</option>
-        </select>
-        <input
-          type="text"
-          placeholder="Search user or service..."
-          className="border p-2 rounded-md text-sm"
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
+
 
       {/* PREMIUM KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -555,6 +478,16 @@ export function AdminDashboard({ user }: any) {
           
           {/* Progress footer */}
           <div className="space-y-1.5 mt-auto">
+            <div className="my-2" data-html2canvas-ignore="true">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onPageChange && onPageChange("admin-users")}
+                className="text-xs text-blue-700 hover:text-blue-800 hover:bg-blue-50 p-0 h-auto font-bold flex items-center gap-1"
+              >
+                Manage Users Directory &rarr;
+              </Button>
+            </div>
             <div className="flex justify-between text-xs font-semibold text-gray-600">
               <span>Verification Rate</span>
               <span className="text-primary font-bold">{verificationRate}%</span>
@@ -597,6 +530,16 @@ export function AdminDashboard({ user }: any) {
           
           {/* Progress footer */}
           <div className="space-y-1.5 mt-auto">
+            <div className="my-2" data-html2canvas-ignore="true">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onPageChange && onPageChange("admin-payments")}
+                className="text-xs text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 p-0 h-auto font-bold flex items-center gap-1"
+              >
+                View Repayments Ledger &rarr;
+              </Button>
+            </div>
             <div className="flex justify-between text-xs font-semibold text-gray-600">
               <span>Collection Recovery Rate</span>
               <span className="text-cyan-600 font-bold">86.8%</span>
@@ -641,6 +584,16 @@ export function AdminDashboard({ user }: any) {
           
           {/* Progress footer */}
           <div className="space-y-1.5 mt-auto">
+            <div className="my-2" data-html2canvas-ignore="true">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => onPageChange && onPageChange("admin-applications")}
+                className="text-xs text-indigo-700 hover:text-indigo-800 hover:bg-indigo-50 p-0 h-auto font-bold flex items-center gap-1"
+              >
+                Review Loan Applications &rarr;
+              </Button>
+            </div>
             <div className="flex justify-between text-xs font-semibold text-gray-600">
               <span>Approval Success Rate</span>
               <span className="text-indigo-600 font-bold">{approvalSuccessRate}%</span>
@@ -698,9 +651,8 @@ export function AdminDashboard({ user }: any) {
       </div>
 
       {/* TABS */}
-      <Tabs defaultValue="live-console">
+      <Tabs defaultValue="analytics">
         <TabsList>
-          <TabsTrigger value="live-console">Live Console</TabsTrigger>
           <TabsTrigger value="analytics">Live Analytics</TabsTrigger>
           <TabsTrigger value="forecast">AI Forecast</TabsTrigger>
           <TabsTrigger value="insights">AI Insights</TabsTrigger>
@@ -820,408 +772,7 @@ export function AdminDashboard({ user }: any) {
             </Card>
           </div>
         </TabsContent>
-
-
-
-        {/* LIVE ADMIN CONSOLE */}
-        <TabsContent value="live-console">
-          <div className="space-y-6">
-
-
-            {/* Pending Approvals */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Pending Loan Applications</CardTitle>
-                <CardDescription>Review and approve/reject user submitted loan forms</CardDescription>
-              </CardHeader>
-              <CardContent className="overflow-auto max-h-[300px]">
-                {filteredPending.length === 0 ? (
-                  <div className="text-center text-gray-400 py-6 text-sm">No pending applications found matching search criteria.</div>
-                ) : (
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        {["App #", "Customer", "Email", "Loan Name", "Requested", "Tenure", "Details", "Action"].map((h) => (
-                          <th key={h} className="px-6 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase">
-                            {h}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-100">
-                      {filteredPending.map((app) => (
-                        <tr key={app.userService.id} className="hover:bg-gray-50 text-sm">
-                          <td className="px-6 py-3 font-semibold text-primary">{app.userService.applicationNumber}</td>
-                          <td className="px-6 py-3 font-medium text-gray-800">{app.user.name}</td>
-                          <td className="px-6 py-3 text-gray-600">{app.user.email}</td>
-                          <td className="px-6 py-3 font-medium text-gray-700 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
-                          <td className="px-6 py-3 font-bold text-gray-900">{formatCurrency(Number(app.userService.amount))}</td>
-                          <td className="px-6 py-3 text-gray-600">{app.userService.tenureMonths} Months</td>
-                          <td className="px-6 py-3">
-                            <Button 
-                              variant="outline" 
-                              size="sm" 
-                              className="border-primary/20 text-primary hover:bg-primary/5 flex items-center gap-1 font-medium text-xs"
-                              onClick={() => setSelectedApp(app)}
-                            >
-                              <FileText className="h-3.5 w-3.5" />
-                              Review KYC
-                            </Button>
-                          </td>
-                          <td className="px-6 py-3 flex gap-2">
-                            <Button 
-                              size="sm" 
-                              className="bg-green-600 hover:bg-green-700 text-white font-medium"
-                              onClick={() => handleUpdateStatus(app.userService.id, "active")}
-                            >
-                              Approve
-                            </Button>
-                            <Button 
-                              size="sm" 
-                              variant="destructive"
-                              className="font-medium"
-                              onClick={() => handleUpdateStatus(app.userService.id, "rejected")}
-                            >
-                              Reject
-                            </Button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Active & Closed Loans */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Active & Closed Loans Ledger</CardTitle>
-                <CardDescription>Track outstanding balances and EMI repayment progress</CardDescription>
-              </CardHeader>
-              <CardContent className="overflow-auto max-h-[300px]">
-                {filteredProcessed.length === 0 ? (
-                  <div className="text-center text-gray-400 py-6 text-sm">No active or closed loans found matching search criteria.</div>
-                ) : (
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        {["App #", "Customer", "Loan Name", "Approved Amount", "Monthly EMI", "Outstanding", "Paid", "Status"].map((h) => (
-                          <th key={h} className="px-6 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase">
-                            {h}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-100">
-                      {filteredProcessed.map((app) => (
-                        <tr key={app.userService.id} className="hover:bg-gray-50 text-sm">
-                          <td className="px-6 py-3 font-semibold text-primary">{app.userService.applicationNumber}</td>
-                          <td className="px-6 py-3 font-medium text-gray-800">{app.user.name}</td>
-                          <td className="px-6 py-3 font-medium text-gray-700 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
-                          <td className="px-6 py-3 font-bold text-gray-900">{formatCurrency(Number(app.userService.amount))}</td>
-                          <td className="px-6 py-3 text-gray-600">{formatCurrency(Number(app.userService.emi || "0"))}</td>
-                          <td className="px-6 py-3 font-semibold text-amber-600">{formatCurrency(Number(app.userService.outstandingAmount || "0"))}</td>
-                          <td className="px-6 py-3 font-semibold text-green-600">{formatCurrency(Number(app.userService.totalPaidAmount || "0"))}</td>
-                          <td className="px-6 py-3">
-                            <Badge className={
-                              app.userService.status === "completed" 
-                                ? "bg-green-100 text-green-800 border-none hover:bg-green-100" 
-                                : app.userService.status === "active" 
-                                ? "bg-blue-100 text-blue-800 border-none hover:bg-blue-100" 
-                                : "bg-red-100 text-red-800 border-none hover:bg-red-100"
-                            }>
-                              {app.userService.status}
-                            </Badge>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Live Registered Users */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Registered User Accounts</CardTitle>
-                <CardDescription>Live users registered in the Bhalchandra Finance portal</CardDescription>
-              </CardHeader>
-              <CardContent className="overflow-auto max-h-[300px]">
-                {liveUsers.length === 0 ? (
-                  <div className="text-center text-gray-400 py-6 text-sm">No registered user accounts found.</div>
-                ) : (
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        {["Name", "Username", "Email", "Role", "Status"].map((h) => (
-                          <th key={h} className="px-6 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase">
-                            {h}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-100">
-                      {liveUsers.map((u) => (
-                        <tr key={u.id} className="hover:bg-gray-50 text-sm">
-                          <td className="px-6 py-3 font-semibold text-gray-800">{u.name}</td>
-                          <td className="px-6 py-3 text-gray-600">{u.username}</td>
-                          <td className="px-6 py-3 text-gray-600">{u.email}</td>
-                          <td className="px-6 py-3 font-semibold capitalize text-primary">{u.role}</td>
-                          <td className="px-6 py-3">
-                            <Badge className={
-                              u.isActive 
-                                ? "bg-green-100 text-green-800 border-none hover:bg-green-100" 
-                                : "bg-red-100 text-red-800 border-none hover:bg-red-100"
-                            }>
-                              {u.isActive ? "Active" : "Deactivated"}
-                            </Badge>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Live Payments Ledger */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Live Repayment Transactions Ledger</CardTitle>
-                <CardDescription>Real-time log of customer EMI payments received</CardDescription>
-              </CardHeader>
-              <CardContent className="overflow-auto max-h-[300px]">
-                {livePayments.length === 0 ? (
-                  <div className="text-center text-gray-400 py-6 text-sm">No payment transactions recorded.</div>
-                ) : (
-                  <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        {["TXN ID", "Customer", "Loan Name", "Paid Amount", "Method", "Date", "Status"].map((h) => (
-                          <th key={h} className="px-6 py-2.5 text-left text-xs font-semibold text-gray-600 uppercase">
-                            {h}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-100">
-                      {livePayments.map((p) => (
-                        <tr key={p.payment.id} className="hover:bg-gray-50 text-sm">
-                          <td className="px-6 py-3 font-semibold text-primary">{p.payment.transactionId || p.payment.paymentReference}</td>
-                          <td className="px-6 py-3 font-medium text-gray-800">{p.user.name}</td>
-                          <td className="px-6 py-3 text-gray-700 capitalize">{p.serviceType.displayName || p.serviceType.name}</td>
-                          <td className="px-6 py-3 font-bold text-green-600">{formatCurrency(Number(p.payment.amount))}</td>
-                          <td className="px-6 py-3 font-semibold text-gray-600 uppercase">{p.payment.paymentMethod}</td>
-                          <td className="px-6 py-3 text-gray-600">{new Date(p.payment.paymentDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</td>
-                          <td className="px-6 py-3">
-                            <Badge className={
-                              p.payment.status === "success" 
-                                ? "bg-green-100 text-green-800 border-none hover:bg-green-100" 
-                                : "bg-red-100 text-red-800 border-none hover:bg-red-100"
-                            }>
-                              {p.payment.status}
-                            </Badge>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
       </Tabs>
-
-      {/* UNDERWRITING & KYC VERIFICATION DIALOG */}
-      <Dialog open={!!selectedApp} onOpenChange={(open) => !open && setSelectedApp(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white text-gray-900 border-none shadow-2xl rounded-2xl p-6">
-          <DialogHeader className="border-b border-gray-100 pb-4">
-            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-primary">
-              <ShieldCheck className="h-6 w-6 text-green-600 animate-pulse" />
-              Underwriting Sheet & KYC Audit
-            </DialogTitle>
-            <DialogDescription className="text-sm text-gray-500 font-medium">
-              Verify income proofs, documentation lists, and collateral metrics for Application <strong>{selectedApp?.userService?.applicationNumber}</strong>
-            </DialogDescription>
-          </DialogHeader>
-
-          {selectedApp && (
-            <div className="space-y-6 pt-4 text-sm">
-              
-              {/* Row 1: Profile & Contacts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div className="space-y-3">
-                  <h3 className="font-bold text-gray-700 flex items-center gap-2">
-                    <User className="h-4 w-4 text-primary" /> Applicant Details
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <span className="text-gray-400">Full Name:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.user?.name}</span>
-                    <span className="text-gray-400">Email:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.user?.email}</span>
-                    <span className="text-gray-400">Phone:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.profile?.phoneNumber || "—"}</span>
-                    <span className="text-gray-400">Date of Birth:</span>
-                    <span className="font-semibold text-gray-800">
-                      {selectedApp.profile?.dateOfBirth 
-                        ? new Date(selectedApp.profile.dateOfBirth).toLocaleDateString("en-IN") 
-                        : "—"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <h3 className="font-bold text-gray-700 flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-primary" /> Permanent Address
-                  </h3>
-                  <div className="text-xs space-y-1">
-                    <p className="font-semibold text-gray-800">{selectedApp.profile?.address || "—"}</p>
-                    <p className="text-gray-600">
-                      {[selectedApp.profile?.city, selectedApp.profile?.state, selectedApp.profile?.pincode]
-                        .filter(Boolean)
-                        .join(", ") || "—"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Row 2: Financial Auditing */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3 border border-slate-100 p-4 rounded-xl">
-                  <h3 className="font-bold text-gray-700 flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-primary" /> Employment & Income
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <span className="text-gray-400">Occupation:</span>
-                    <span className="font-semibold text-gray-800 capitalize">{selectedApp.profile?.occupation || "—"}</span>
-                    <span className="text-gray-400">Company Name:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.profile?.companyName || "—"}</span>
-                    <span className="text-gray-400">Monthly Income:</span>
-                    <span className="font-bold text-green-600">
-                      {selectedApp.profile?.monthlyIncome 
-                        ? formatCurrency(parseFloat(selectedApp.profile.monthlyIncome)) 
-                        : "—"}
-                    </span>
-                    <span className="text-gray-400">Credit Score:</span>
-                    <span className="font-bold text-primary">{selectedApp.profile?.creditScore || 720}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3 border border-slate-100 p-4 rounded-xl">
-                  <h3 className="font-bold text-gray-700 flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-primary" /> Loan Terms
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <span className="text-gray-400">Scheme Name:</span>
-                    <span className="font-semibold text-gray-800 capitalize">{selectedApp.serviceType?.displayName || selectedApp.serviceType?.name}</span>
-                    <span className="text-gray-400">Requested Principal:</span>
-                    <span className="font-bold text-gray-900">{formatCurrency(parseFloat(selectedApp.userService?.amount))}</span>
-                    <span className="text-gray-400">Tenure Requested:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.userService?.tenureMonths || selectedApp.userService?.tenure} Months</span>
-                    <span className="text-gray-400">Base Interest Rate:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.userService?.interestRate}% p.a.</span>
-                    <span className="text-gray-400">Purpose of Loan:</span>
-                    <span className="font-semibold text-gray-800 italic col-span-1 break-words">{selectedApp.userService?.purpose || "General Purpose"}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Row 3: Co-Applicant & Collateral */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <div className="space-y-2">
-                  <h4 className="font-bold text-xs text-gray-500 uppercase tracking-wider">Guarantor / Co-Applicant</h4>
-                  {selectedApp.userService?.guarantor ? (
-                    <div className="text-xs space-y-1">
-                      <p className="font-semibold text-gray-800">Name: <span className="font-normal text-gray-600">{(selectedApp.userService.guarantor as any).name || "—"}</span></p>
-                      <p className="font-semibold text-gray-800">Relation: <span className="font-normal text-gray-600">{(selectedApp.userService.guarantor as any).relation || "—"}</span></p>
-                      <p className="font-semibold text-gray-800">Income: <span className="font-normal text-gray-600">{(selectedApp.userService.guarantor as any).income ? formatCurrency(parseFloat((selectedApp.userService.guarantor as any).income)) : "—"}</span></p>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-gray-400 italic">No co-applicant or guarantor provided.</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="font-bold text-xs text-gray-500 uppercase tracking-wider">Collateral / Security Details</h4>
-                  {selectedApp.userService?.collateral ? (
-                    <div className="text-xs space-y-1">
-                      <p className="font-semibold text-gray-800">Existing Loan Ledger: <span className="font-normal text-gray-600">{(selectedApp.userService.collateral as any).details || "—"}</span></p>
-                      <p className="font-semibold text-gray-800">Value of Security: <span className="font-normal text-gray-600">{(selectedApp.userService.collateral as any).value ? formatCurrency(parseFloat((selectedApp.userService.collateral as any).value)) : "—"}</span></p>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-gray-400 italic">No existing loan balance or collateral provided.</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Row 4: KYC Files checklist */}
-              <div className="space-y-3 border border-slate-100 p-4 rounded-xl">
-                <h3 className="font-bold text-gray-700 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-primary" /> Submitted KYC Verification Documents
-                </h3>
-                {selectedApp.userService?.documents && Object.keys(selectedApp.userService.documents).length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {Object.entries(selectedApp.userService.documents).map(([key, val]: any) => (
-                      <div key={key} className="flex justify-between items-center p-2.5 rounded-lg border border-slate-100 bg-slate-50 text-xs">
-                        <div className="space-y-0.5">
-                          <span className="font-bold text-[10px] text-primary uppercase tracking-wider block">
-                            {key.replace(/([A-Z])/g, ' $1')}
-                          </span>
-                          <span className="font-semibold text-gray-700 truncate max-w-[180px] block" title={val.name}>
-                            {val.name}
-                          </span>
-                        </div>
-                        <span className="text-[10px] text-gray-400 font-bold whitespace-nowrap">
-                          {val.size ? `${(val.size / 1024).toFixed(1)} KB` : "Document Loaded"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-4 bg-amber-50 rounded-xl border border-amber-100 text-amber-800 text-xs flex flex-col gap-1 items-center">
-                    <span>⚠️ No KYC file uploads found on this application record.</span>
-                    <span className="text-amber-600/80">Please request manual document copies from the applicant.</span>
-                  </div>
-                )}
-              </div>
-
-            </div>
-          )}
-
-          <DialogFooter className="border-t border-gray-100 pt-4 mt-6 gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setSelectedApp(null)}
-              className="text-gray-500 font-medium"
-            >
-              Close
-            </Button>
-            <Button
-              variant="destructive"
-              className="font-medium"
-              onClick={() => {
-                handleUpdateStatus(selectedApp.userService.id, "rejected");
-                setSelectedApp(null);
-              }}
-            >
-              Reject Application
-            </Button>
-            <Button
-              className="bg-green-600 hover:bg-green-700 text-white font-medium shadow-md shadow-green-100"
-              onClick={() => {
-                handleUpdateStatus(selectedApp.userService.id, "active");
-                setSelectedApp(null);
-              }}
-            >
-              Approve Loan
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
     </div>
   );
 }

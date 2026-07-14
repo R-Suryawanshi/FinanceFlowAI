@@ -149,6 +149,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
   const [modalPincode, setModalPincode] = useState("");
   const [modalPAN, setModalPAN] = useState("");
   const [modalAadhar, setModalAadhar] = useState("");
+  const [modalBankName, setModalBankName] = useState("");
+  const [modalAccountNumber, setModalAccountNumber] = useState("");
+  const [modalIFSC, setModalIFSC] = useState("");
+  const [modalAccountHolder, setModalAccountHolder] = useState("");
+  const [modalAccountType, setModalAccountType] = useState("");
   const [showPaymentUI, setShowPaymentUI] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("UPI");
@@ -259,6 +264,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
         setModalPincode(p.pincode || "");
         setModalPAN(p.pan_number || "");
         setModalAadhar(p.aadhar_number || "");
+        setModalBankName(p.bank_name || "");
+        setModalAccountNumber(p.account_number || "");
+        setModalIFSC(p.ifsc_code || "");
+        setModalAccountHolder(p.account_holder_name || "");
+        setModalAccountType(p.account_type || "");
       }
       
       // If basic details are missing, show the popup modal
@@ -310,6 +320,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
         pincode: modalPincode,
         pan_number: modalPAN,
         aadhar_number: modalAadhar,
+        bank_name: modalBankName,
+        account_number: modalAccountNumber,
+        ifsc_code: modalIFSC,
+        account_holder_name: modalAccountHolder,
+        account_type: modalAccountType,
       };
 
       const response = await fetch("/api/profile", {
@@ -1647,6 +1662,74 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   onChange={(e) => setModalPincode(e.target.value)}
                   required
                 />
+              </div>
+            </div>
+
+            <div className="border-t pt-4 mt-2 space-y-4">
+              <h4 className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
+                <Building className="h-4 w-4 text-blue-700" />
+                Bank Account Details (For Disbursements)
+              </h4>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="modalBankName" className="text-xs font-bold">Bank Name</Label>
+                  <Input
+                    id="modalBankName"
+                    placeholder="e.g. State Bank of India"
+                    value={modalBankName}
+                    onChange={(e) => setModalBankName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="modalAccountHolder" className="text-xs font-bold">Account Holder Name</Label>
+                  <Input
+                    id="modalAccountHolder"
+                    placeholder="e.g. Ritesh Suryawanshi"
+                    value={modalAccountHolder}
+                    onChange={(e) => setModalAccountHolder(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="modalAccountNumber" className="text-xs font-bold">Account Number</Label>
+                  <Input
+                    id="modalAccountNumber"
+                    placeholder="e.g. 30123456789"
+                    value={modalAccountNumber}
+                    onChange={(e) => setModalAccountNumber(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="modalIFSC" className="text-xs font-bold">IFSC Code</Label>
+                  <Input
+                    id="modalIFSC"
+                    placeholder="e.g. SBIN0001234"
+                    value={modalIFSC}
+                    onChange={(e) => setModalIFSC(e.target.value.toUpperCase())}
+                    className="uppercase"
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="modalAccountType" className="text-xs font-bold">Account Type</Label>
+                  <select
+                    id="modalAccountType"
+                    value={modalAccountType}
+                    onChange={(e) => setModalAccountType(e.target.value)}
+                    className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                    required
+                  >
+                    <option value="" disabled>Select Account Type</option>
+                    <option value="Savings">Savings Account</option>
+                    <option value="Current">Current Account</option>
+                  </select>
+                </div>
               </div>
             </div>
 
