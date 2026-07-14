@@ -484,6 +484,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post('/api/admin/users', authenticateToken, requireRole("admin"), async (req, res) => {
+    try {
+      const { username, email, password, name, role = "user" } = req.body;
+
+      if (!username || !email || !password || !name) {
+        return res.status(400).json({ success: false, error: "All fields are required" });
+      }
+
+      const result = await AuthService.register({
+        username,
+        email,
+        password,
+        name,
+        role,
+      });
+
+      if (!result.success) {
+        return res.status(400).json({ success: false, error: result.error });
+      }
+
+      return res.json({
+        success: true,
+        user: result.user,
+      });
+    } catch (error) {
+      console.error("Admin onboarding employee error:", error);
+      return res.status(500).json({ success: false, error: "Failed to onboard employee" });
+    }
+  });
+
+  app.post('/api/admin/users/:id/status', authenticateToken, requireRole("admin"), async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { isActive } = req.body;
+
+      if (typeof isActive !== "boolean") {
+        return res.status(400).json({ success: false, error: "isActive boolean is required" });
+      }
+
+      const user = await storage.updateUser(id, { isActive });
+      if (!user) {
+        return res.status(404).json({ success: false, error: "User not found" });
+      }
+
+      return res.json({ success: true, user });
+    } catch (error) {
+      console.error("Admin toggle status error:", error);
+      return res.status(500).json({ success: false, error: "Failed to toggle user status" });
+    }
+  });
+
+  app.post('/api/admin/users/:id/role', authenticateToken, requireRole("admin"), async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { role } = req.body;
+
+      if (!role) {
+        return res.status(400).json({ success: false, error: "role string is required" });
+      }
+
+      const user = await storage.updateUser(id, { role });
+      if (!user) {
+        return res.status(404).json({ success: false, error: "User not found" });
+      }
+
+      return res.json({ success: true, user });
+    } catch (error) {
+      console.error("Admin update role error:", error);
+      return res.status(500).json({ success: false, error: "Failed to update user role" });
+    }
+  });
+
   app.post('/api/admin/user-services/:id/status', authenticateToken, requireRole("admin"), async (req: AuthenticatedRequest, res) => {
     try {
       const { id } = req.params;

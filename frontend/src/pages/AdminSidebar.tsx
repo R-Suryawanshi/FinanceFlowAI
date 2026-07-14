@@ -8,6 +8,7 @@ import {
   Building2,
   ChevronLeft,
   ChevronRight,
+  Briefcase,
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -39,10 +40,16 @@ export function AdminSidebar({ currentPage, onPageChange, isCollapsed, onToggle 
       description: "Repayment history logs",
     },
     {
-      name: "Users Directory",
-      id: "admin-users",
+      name: "Employees",
+      id: "admin-employees",
+      icon: Briefcase,
+      description: "Staff & roles directory",
+    },
+    {
+      name: "Customers",
+      id: "admin-customers",
       icon: Users,
-      description: "Registered accounts",
+      description: "Borrowers & depositors list",
     },
   ];
 
@@ -138,8 +145,7 @@ export function AdminSidebar({ currentPage, onPageChange, isCollapsed, onToggle 
               }`} />
               
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate leading-none mb-1">{item.name}</p>
-                <p className="text-[10px] text-slate-400 font-medium truncate leading-none">{item.description}</p>
+                <p className="text-sm font-semibold truncate">{item.name}</p>
               </div>
             </button>
           );

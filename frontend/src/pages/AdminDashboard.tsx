@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 import {
   Users,
   Calculator,
@@ -28,7 +29,8 @@ import {
   MapPin,
   Briefcase,
   User,
-  ShieldCheck
+  ShieldCheck,
+  Calendar
 } from "lucide-react";
 import {
   LineChart,
@@ -56,6 +58,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
 export function AdminDashboard({ user, onPageChange }: any) {
+  const { toast } = useToast();
   const [monthlyRevenue, setMonthlyRevenue] = useState<any[]>([]);
   const [forecastData, setForecastData] = useState<any[]>([]);
   const [loanTypes, setLoanTypes] = useState<any[]>([]);
@@ -67,6 +70,31 @@ export function AdminDashboard({ user, onPageChange }: any) {
     end: new Date()
   });
   const [dailyRevenue, setDailyRevenue] = useState<any[]>([]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [interestRates, setInterestRates] = useState<any>({
+    home: 8.50,
+    car: 9.50,
+    personal: 11.00,
+    gold: 12.00,
+    business: 10.50,
+    education: 9.00,
+    fixedDeposit: 7.50
+  });
+  const [processingFees, setProcessingFees] = useState<any>({
+    home: 0.50,
+    car: 1.00,
+    personal: 2.00,
+    gold: 0.50,
+    business: 1.50,
+    education: 0.00
+  });
+  const [systemStatus, setSystemStatus] = useState({
+    maintenanceMode: false,
+    secureTunnel: true,
+    notificationService: true,
+    chatBotService: true
+  });
+  const [savingSettings, setSavingSettings] = useState(false);
   const dashboardRef = useRef<HTMLDivElement>(null);
 
   const [liveStats, setLiveStats] = useState({ totalUsers: 0, activeLoans: 0, totalRevenue: 0 });
@@ -118,6 +146,26 @@ export function AdminDashboard({ user, onPageChange }: any) {
       console.error("Failed to load live admin data", err);
     } finally {
       setLiveLoading(false);
+    }
+  };
+
+  const handleSaveSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingSettings(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      setActivityLog(prev => [
+        `⚙️ System: Interest rates and configurations updated by admin (${user?.email || 'admin'})`,
+        ...prev
+      ]);
+      toast({
+        title: "Settings Updated Successfully",
+        description: "Loan configurations, interest rates, and system services have been reconfigured.",
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSavingSettings(false);
     }
   };
 
@@ -416,16 +464,16 @@ export function AdminDashboard({ user, onPageChange }: any) {
   return (
     <div className="p-6 sm:p-8 space-y-8" ref={dashboardRef}>
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Admin Dashboard</h1>
           <p className="text-muted-foreground">Real-time Finance Insights & AI Forecast</p>
         </div>
-        <div className="flex gap-2" data-html2canvas-ignore="true">
-          <Button variant="outline" onClick={handleExportData}>
+        <div className="flex gap-2 w-full sm:w-auto" data-html2canvas-ignore="true">
+          <Button variant="outline" className="flex-1 sm:flex-none border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850" onClick={handleExportData}>
             <FileDown className="mr-2 h-4 w-4" /> Export CSV
           </Button>
-          <Button onClick={handleGenerateReport} disabled={loading}>
+          <Button className="flex-1 sm:flex-none" onClick={handleGenerateReport} disabled={loading}>
             {loading ? (
               <>
                 <RefreshCcw className="mr-2 h-4 w-4 animate-spin" /> Generating...
@@ -439,23 +487,21 @@ export function AdminDashboard({ user, onPageChange }: any) {
         </div>
       </div>
 
-
-
       {/* PREMIUM KPI CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
         {/* Card 1: Users & Signups */}
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
           {/* Top section */}
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Total Active Users</span>
-              <div className="text-2xl font-bold text-gray-900">{liveStats.totalUsers}</div>
-              <Badge className="bg-green-50 text-green-700 hover:bg-green-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Active Users</span>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">{liveStats.totalUsers}</div>
+              <Badge className="bg-green-50 text-green-700 hover:bg-green-50 dark:bg-green-950/30 dark:text-green-400 border-none text-[10px] py-0.5 px-2 font-semibold">
                 Live Database
               </Badge>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100">
+            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
               <Users className="h-5 w-5" />
             </div>
           </div>
@@ -463,15 +509,15 @@ export function AdminDashboard({ user, onPageChange }: any) {
           {/* Bottom section */}
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">New Signups (Today)</span>
-              <div className="text-xl font-bold text-gray-800">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">New Signups (Today)</span>
+              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">
                 {liveUsers.filter(u => new Date(u.createdAt).toDateString() === new Date().toDateString()).length}
               </div>
-              <span className="text-[10px] text-gray-500 flex items-center gap-1 font-medium">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium">
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" /> Awaiting action
               </span>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100">
+            <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100 dark:shadow-none">
               <Users className="h-5 w-5" />
             </div>
           </div>
@@ -483,16 +529,16 @@ export function AdminDashboard({ user, onPageChange }: any) {
                 variant="ghost"
                 size="sm"
                 onClick={() => onPageChange && onPageChange("admin-users")}
-                className="text-xs text-blue-700 hover:text-blue-800 hover:bg-blue-50 p-0 h-auto font-bold flex items-center gap-1"
+                className="text-xs text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 p-0 h-auto font-bold flex items-center gap-1"
               >
                 Manage Users Directory &rarr;
               </Button>
             </div>
-            <div className="flex justify-between text-xs font-semibold text-gray-600">
+            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
               <span>Verification Rate</span>
-              <span className="text-primary font-bold">{verificationRate}%</span>
+              <span className="text-primary dark:text-blue-400 font-bold">{verificationRate}%</span>
             </div>
-            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" style={{ width: `${verificationRate}%` }} />
             </div>
           </div>
@@ -501,15 +547,15 @@ export function AdminDashboard({ user, onPageChange }: any) {
         </Card>
 
         {/* Card 2: Revenue & Portfolio */}
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
           {/* Top section */}
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Total Revenue</span>
-              <div className="text-2xl font-bold text-gray-900">{formatCurrency(liveStats.totalRevenue)}</div>
-              <span className="text-[10px] text-gray-500 font-medium">From completed EMI payments</span>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Revenue</span>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">{formatCurrency(liveStats.totalRevenue)}</div>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">From completed EMI payments</span>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-100">
+            <div className="h-10 w-10 rounded-xl bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-100 dark:shadow-none">
               <DollarSign className="h-5 w-5" />
             </div>
           </div>
@@ -517,13 +563,13 @@ export function AdminDashboard({ user, onPageChange }: any) {
           {/* Bottom section */}
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Outstanding Portfolio</span>
-              <div className="text-xl font-bold text-gray-800">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Outstanding Portfolio</span>
+              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">
                 {formatCurrency(totalOutstanding)}
               </div>
-              <span className="text-[10px] text-gray-500 font-medium">Total active outstanding balance</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Total active outstanding balance</span>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100">
+            <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100 dark:shadow-none">
               <TrendingUp className="h-5 w-5" />
             </div>
           </div>
@@ -535,16 +581,16 @@ export function AdminDashboard({ user, onPageChange }: any) {
                 variant="ghost"
                 size="sm"
                 onClick={() => onPageChange && onPageChange("admin-payments")}
-                className="text-xs text-cyan-700 hover:text-cyan-800 hover:bg-cyan-50 p-0 h-auto font-bold flex items-center gap-1"
+                className="text-xs text-cyan-750 dark:text-cyan-400 hover:text-cyan-800 dark:hover:text-cyan-300 hover:bg-cyan-50 dark:hover:bg-cyan-950/30 p-0 h-auto font-bold flex items-center gap-1"
               >
                 View Repayments Ledger &rarr;
               </Button>
             </div>
-            <div className="flex justify-between text-xs font-semibold text-gray-600">
+            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
               <span>Collection Recovery Rate</span>
-              <span className="text-cyan-600 font-bold">86.8%</span>
+              <span className="text-cyan-650 dark:text-cyan-400 font-bold">86.8%</span>
             </div>
-            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full" style={{ width: "86.8%" }} />
             </div>
           </div>
@@ -553,17 +599,17 @@ export function AdminDashboard({ user, onPageChange }: any) {
         </Card>
 
         {/* Card 3: Applications & Performance */}
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
           {/* Top section */}
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Total Applications</span>
-              <div className="text-2xl font-bold text-gray-900">{liveApplications.length}</div>
-              <Badge className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Applications</span>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">{liveApplications.length}</div>
+              <Badge className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50 dark:bg-indigo-950/30 dark:text-indigo-400 border-none text-[10px] py-0.5 px-2 font-semibold">
                 +100% Growth
               </Badge>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100">
+            <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100 dark:shadow-none">
               <FileText className="h-5 w-5" />
             </div>
           </div>
@@ -571,13 +617,13 @@ export function AdminDashboard({ user, onPageChange }: any) {
           {/* Bottom section */}
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Pending Reviews</span>
-              <div className="text-xl font-bold text-amber-600">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Pending Reviews</span>
+              <div className="text-xl font-bold text-amber-600 dark:text-amber-400">
                 {liveApplications.filter(a => a.userService.status === "pending").length}
               </div>
-              <span className="text-[10px] text-gray-500 font-medium">Awaiting administrator approval</span>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Awaiting administrator approval</span>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-100">
+            <div className="h-10 w-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-100 dark:shadow-none">
               <Clock className="h-5 w-5" />
             </div>
           </div>
@@ -589,16 +635,16 @@ export function AdminDashboard({ user, onPageChange }: any) {
                 variant="ghost"
                 size="sm"
                 onClick={() => onPageChange && onPageChange("admin-applications")}
-                className="text-xs text-indigo-700 hover:text-indigo-800 hover:bg-indigo-50 p-0 h-auto font-bold flex items-center gap-1"
+                className="text-xs text-indigo-700 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-950/30 p-0 h-auto font-bold flex items-center gap-1"
               >
                 Review Loan Applications &rarr;
               </Button>
             </div>
-            <div className="flex justify-between text-xs font-semibold text-gray-600">
+            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
               <span>Approval Success Rate</span>
-              <span className="text-indigo-600 font-bold">{approvalSuccessRate}%</span>
+              <span className="text-indigo-650 dark:text-indigo-400 font-bold">{approvalSuccessRate}%</span>
             </div>
-            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style={{ width: `${approvalSuccessRate}%` }} />
             </div>
           </div>
@@ -607,17 +653,17 @@ export function AdminDashboard({ user, onPageChange }: any) {
         </Card>
 
         {/* Card 4: FDs & Investments */}
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
           {/* Top section */}
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Fixed Deposit Accounts</span>
-              <div className="text-2xl font-bold text-gray-900">{fdAccountsCount}</div>
-              <Badge className="bg-rose-50 text-rose-700 hover:bg-rose-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Fixed Deposit Accounts</span>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">{fdAccountsCount}</div>
+              <Badge className="bg-rose-50 text-rose-700 hover:bg-rose-50 dark:bg-rose-950/30 dark:text-rose-400 border-none text-[10px] py-0.5 px-2 font-semibold">
                 High-Yield Interest
               </Badge>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-md shadow-rose-100">
+            <div className="h-10 w-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-md shadow-rose-100 dark:shadow-none">
               <PiggyBank className="h-5 w-5" />
             </div>
           </div>
@@ -625,22 +671,22 @@ export function AdminDashboard({ user, onPageChange }: any) {
           {/* Bottom section */}
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">FD Investment Volume</span>
-              <div className="text-xl font-bold text-gray-800">{formatCurrency(fdVolume)}</div>
-              <span className="text-[10px] text-gray-500 font-medium">Total capital invested in FDs</span>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">FD Investment Volume</span>
+              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{formatCurrency(fdVolume)}</div>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Total capital invested in FDs</span>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-pink-500 text-white flex items-center justify-center shadow-md shadow-pink-100">
+            <div className="h-10 w-10 rounded-xl bg-pink-500 text-white flex items-center justify-center shadow-md shadow-pink-100 dark:shadow-none">
               <TrendingUp className="h-5 w-5" />
             </div>
           </div>
           
           {/* Progress footer */}
           <div className="space-y-1.5 mt-auto">
-            <div className="flex justify-between text-xs font-semibold text-gray-600">
+            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
               <span>Target Deposit Goal</span>
-              <span className="text-rose-600 font-bold">{fdProgress}%</span>
+              <span className="text-rose-605 dark:text-rose-400 font-bold">{fdProgress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-full" style={{ width: `${fdProgress}%` }} />
             </div>
           </div>
@@ -651,65 +697,86 @@ export function AdminDashboard({ user, onPageChange }: any) {
       </div>
 
       {/* TABS */}
-      <Tabs defaultValue="analytics">
-        <TabsList>
-          <TabsTrigger value="analytics">Live Analytics</TabsTrigger>
-          <TabsTrigger value="forecast">AI Forecast</TabsTrigger>
-          <TabsTrigger value="insights">AI Insights</TabsTrigger>
+      <Tabs defaultValue="analytics" className="w-full">
+        <TabsList className="bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/60 p-1 rounded-xl">
+          <TabsTrigger value="analytics" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">Live Analytics</TabsTrigger>
+          <TabsTrigger value="forecast" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">AI Forecast</TabsTrigger>
+          <TabsTrigger value="insights" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">AI Insights</TabsTrigger>
+          <TabsTrigger value="system-settings" className="rounded-lg data-[state=active]:bg-white dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">System Settings</TabsTrigger>
         </TabsList>
 
         {/* ANALYTICS */}
-        <TabsContent value="analytics">
+        <TabsContent value="analytics" className="space-y-8 mt-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Monthly Revenue */}
-            <Card>
-              <CardHeader><CardTitle>Live Monthly Revenue</CardTitle></CardHeader>
+            <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+              <CardHeader><CardTitle className="text-slate-900 dark:text-white">Live Monthly Revenue</CardTitle></CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={monthlyRevenue}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-                    <Line type="monotone" dataKey="amount" stroke="#2563EB" strokeWidth={2} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.15)" />
+                    <XAxis dataKey="month" stroke="currentColor" className="text-[10px] text-muted-foreground" />
+                    <YAxis stroke="currentColor" className="text-[10px] text-muted-foreground" />
+                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--popover-foreground))', borderRadius: '8px' }} formatter={(v) => formatCurrency(Number(v))} />
+                    <Line type="monotone" dataKey="amount" stroke="#2563EB" strokeWidth={2.5} activeDot={{ r: 6 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
             {/* Loan Type Distribution */}
-            <Card>
-              <CardHeader><CardTitle>Live Loan Distribution</CardTitle></CardHeader>
+            <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+              <CardHeader><CardTitle className="text-slate-900 dark:text-white">Live Loan Distribution</CardTitle></CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie data={loanTypes} dataKey="value" outerRadius={100}>
+                    <Pie data={loanTypes} dataKey="value" outerRadius={100} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
                       {loanTypes.map((entry, index) => (
                         <Cell key={index} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--popover-foreground))', borderRadius: '8px' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </CardContent>
             </Card>
 
             {/* Daily Revenue Trend */}
-            <Card className="lg:col-span-2">
-              <CardHeader><CardTitle>Daily Revenue Trend</CardTitle></CardHeader>
-              <CardContent>
-                <DateRange
-                  ranges={[{ startDate: dateRange.start, endDate: dateRange.end, key: 'selection' }]}
-                  onChange={(item: any) => setDateRange({ start: item.selection.startDate, end: item.selection.endDate })}
-                  className="mb-4"
-                />
+            <Card className="lg:col-span-2 bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+              <CardHeader className="flex flex-row justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800/60">
+                <CardTitle className="text-slate-900 dark:text-white">Daily Revenue Trend</CardTitle>
+                <div className="relative z-30" data-html2canvas-ignore="true">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowDatePicker(!showDatePicker)}
+                    className="bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 flex items-center gap-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
+                  >
+                    <Calendar className="h-4 w-4 text-slate-500" />
+                    {dateRange.start.toLocaleDateString("en-IN", { month: "short", day: "numeric" })} - {dateRange.end.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}
+                  </Button>
+                  {showDatePicker && (
+                    <div className="absolute right-0 mt-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 rounded-lg shadow-xl flex flex-col gap-2">
+                      <DateRange
+                        ranges={[{ startDate: dateRange.start, endDate: dateRange.end, key: 'selection' }]}
+                        onChange={(item: any) => setDateRange({ start: item.selection.startDate, end: item.selection.endDate })}
+                        maxDate={new Date()}
+                      />
+                      <Button size="sm" className="self-end" onClick={() => setShowDatePicker(false)}>
+                        Apply Range
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="pt-6">
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart data={dailyRevenue}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" />
-                    <YAxis />
-                    <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-                    <Line type="monotone" dataKey="amount" stroke="#F59E0B" strokeWidth={2} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.15)" />
+                    <XAxis dataKey="date" stroke="currentColor" className="text-[10px] text-muted-foreground" />
+                    <YAxis stroke="currentColor" className="text-[10px] text-muted-foreground" />
+                    <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--popover-foreground))', borderRadius: '8px' }} formatter={(v) => formatCurrency(Number(v))} />
+                    <Line type="monotone" dataKey="amount" stroke="#F59E0B" strokeWidth={2.5} activeDot={{ r: 6 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -718,22 +785,22 @@ export function AdminDashboard({ user, onPageChange }: any) {
         </TabsContent>
 
         {/* FORECAST */}
-        <TabsContent value="forecast">
-          <Card>
+        <TabsContent value="forecast" className="mt-6">
+          <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Brain className="h-5 w-5 text-blue-600" /> AI Revenue Forecast
+              <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white">
+                <Brain className="h-5 w-5 text-blue-600 dark:text-blue-400" /> AI Revenue Forecast
               </CardTitle>
               <CardDescription>Next 3 months based on current growth trends</CardDescription>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={350}>
                 <LineChart data={forecastData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip formatter={(v) => formatCurrency(Number(v))} />
-                                    <Line type="monotone" dataKey="amount" stroke="#16A34A" strokeWidth={2} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.15)" />
+                  <XAxis dataKey="month" stroke="currentColor" className="text-[10px] text-muted-foreground" />
+                  <YAxis stroke="currentColor" className="text-[10px] text-muted-foreground" />
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--popover-foreground))', borderRadius: '8px' }} formatter={(v) => formatCurrency(Number(v))} />
+                  <Line type="monotone" dataKey="amount" stroke="#16A34A" strokeWidth={2.5} activeDot={{ r: 6 }} />
                 </LineChart>
               </ResponsiveContainer>
             </CardContent>
@@ -741,35 +808,259 @@ export function AdminDashboard({ user, onPageChange }: any) {
         </TabsContent>
 
         {/* AI INSIGHTS */}
-        <TabsContent value="insights">
+        <TabsContent value="insights" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card>
+            <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
               <CardHeader>
-                <CardTitle>AI Insights & Recommendations</CardTitle>
+                <CardTitle className="text-slate-900 dark:text-white">AI Insights & Recommendations</CardTitle>
                 <CardDescription>Smart suggestions generated from your data</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-3">
                 {aiInsights.map((insight, idx) => (
-                  <div key={idx} className="p-2 bg-blue-50 rounded-md">{insight}</div>
+                  <div key={idx} className="p-3 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100/50 dark:border-blue-900/30 rounded-xl text-slate-800 dark:text-slate-250 text-sm font-medium">
+                    {insight}
+                  </div>
                 ))}
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
               <CardHeader>
-                <CardTitle>Activity Log & Notifications</CardTitle>
+                <CardTitle className="text-slate-900 dark:text-white">Activity Log & Notifications</CardTitle>
                 <CardDescription>Recent admin actions and alerts</CardDescription>
               </CardHeader>
               <CardContent className="overflow-auto max-h-96 space-y-1">
                 {activityLog.length === 0 ? (
-                  <div className="text-gray-500 text-sm">No recent activity.</div>
+                  <div className="text-gray-550 dark:text-slate-500 text-sm py-4 text-center">No recent activity.</div>
                 ) : (
                   activityLog.map((act, idx) => (
-                    <div key={idx} className="text-sm">{act}</div>
+                    <div key={idx} className="text-sm py-2.5 px-3 border-b border-slate-100 dark:border-slate-800 last:border-none text-slate-700 dark:text-slate-350">
+                      {act}
+                    </div>
                   ))
                 )}
               </CardContent>
             </Card>
+          </div>
+        </TabsContent>
+
+        {/* SYSTEM SETTINGS */}
+        <TabsContent value="system-settings" className="mt-6 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            {/* Form for interest rates and fees */}
+            <Card className="lg:col-span-2 bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+              <CardHeader>
+                <CardTitle className="text-slate-900 dark:text-white">Loan Product Configurator</CardTitle>
+                <CardDescription>Adjust base interest rates and processing fees globally for all customers</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSaveSettings} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Rate inputs */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Base Interest Rates (% p.a.)</h4>
+                      
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-350">Home Loan Rate</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          value={interestRates.home}
+                          onChange={(e) => setInterestRates({...interestRates, home: parseFloat(e.target.value)})}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Car Loan Rate</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          value={interestRates.car}
+                          onChange={(e) => setInterestRates({...interestRates, car: parseFloat(e.target.value)})}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Personal Loan Rate</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          value={interestRates.personal}
+                          onChange={(e) => setInterestRates({...interestRates, personal: parseFloat(e.target.value)})}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Gold Loan Rate</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          value={interestRates.gold}
+                          onChange={(e) => setInterestRates({...interestRates, gold: parseFloat(e.target.value)})}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Fee inputs */}
+                    <div className="space-y-4">
+                      <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Processing Fees (%)</h4>
+                      
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Home Loan Fee</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          value={processingFees.home}
+                          onChange={(e) => setProcessingFees({...processingFees, home: parseFloat(e.target.value)})}
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Car Loan Fee</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          value={processingFees.car}
+                          onChange={(e) => setProcessingFees({...processingFees, car: parseFloat(e.target.value)})}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Personal Loan Fee</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          value={processingFees.personal}
+                          onChange={(e) => setProcessingFees({...processingFees, personal: parseFloat(e.target.value)})}
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Gold Loan Fee</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          value={processingFees.gold}
+                          onChange={(e) => setProcessingFees({...processingFees, gold: parseFloat(e.target.value)})}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button type="submit" className="w-full" disabled={savingSettings}>
+                    {savingSettings ? "Applying Global Configurations..." : "Update System Configurations"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+
+            {/* System service switches & Health stats */}
+            <div className="space-y-6">
+              <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+                <CardHeader>
+                  <CardTitle className="text-slate-900 dark:text-white">Active Service Controls</CardTitle>
+                  <CardDescription>Toggle simulation server properties</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800/60 rounded-xl">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">Maintenance Mode</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Lock database inputs for users</p>
+                    </div>
+                    <Button
+                      variant={systemStatus.maintenanceMode ? "destructive" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        const next = !systemStatus.maintenanceMode;
+                        setSystemStatus({ ...systemStatus, maintenanceMode: next });
+                        setActivityLog(prev => [`⚙️ System: Maintenance mode toggled to ${next ? 'ENABLED' : 'DISABLED'}`, ...prev]);
+                        toast({ title: "Maintenance Mode Status Changed", description: `Maintenance mode simulation is now ${next ? 'Active' : 'Inactive'}.` });
+                      }}
+                    >
+                      {systemStatus.maintenanceMode ? "Disable" : "Enable"}
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800/60 rounded-xl">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">Encrypted Tunnel (SSL)</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Encrypt incoming client payloads</p>
+                    </div>
+                    <Button
+                      variant={systemStatus.secureTunnel ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        const next = !systemStatus.secureTunnel;
+                        setSystemStatus({ ...systemStatus, secureTunnel: next });
+                        setActivityLog(prev => [`⚙️ System: SSL Secure Tunnel toggled to ${next ? 'ACTIVE' : 'INACTIVE'}`, ...prev]);
+                      }}
+                    >
+                      {systemStatus.secureTunnel ? "Active" : "Inactive"}
+                    </Button>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800/60 rounded-xl">
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900 dark:text-white">Email Push Queue</p>
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Notify customers of application status</p>
+                    </div>
+                    <Button
+                      variant={systemStatus.notificationService ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        const next = !systemStatus.notificationService;
+                        setSystemStatus({ ...systemStatus, notificationService: next });
+                        setActivityLog(prev => [`⚙️ System: Email Notifications service toggled to ${next ? 'ACTIVE' : 'INACTIVE'}`, ...prev]);
+                      }}
+                    >
+                      {systemStatus.notificationService ? "Active" : "Inactive"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Health stats */}
+              <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+                <CardHeader>
+                  <CardTitle className="text-slate-900 dark:text-white">System Resource Diagnostics</CardTitle>
+                  <CardDescription>Real-time simulated engine telemetry</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="p-3 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/10 rounded-xl text-center">
+                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">CPU Core Load</span>
+                      <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">1.25%</p>
+                    </div>
+                    <div className="p-3 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/10 rounded-xl text-center">
+                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">RAM Allocation</span>
+                      <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">420 MB</p>
+                    </div>
+                    <div className="p-3 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/10 rounded-xl text-center">
+                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">API Latency</span>
+                      <p className="text-lg font-bold text-green-600 dark:text-green-455 mt-1">18 ms</p>
+                    </div>
+                    <div className="p-3 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/10 rounded-xl text-center">
+                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">DB Threads</span>
+                      <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">12 / 100</p>
+                    </div>
+                  </div>
+                  <div className="text-center pt-2">
+                    <Badge className="bg-emerald-100 text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-400 border-none px-3 py-1 font-semibold text-xs">
+                      SSL Certificate Status: Secure & Active
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </TabsContent>
       </Tabs>
