@@ -644,148 +644,148 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Active Loans</span>
-              <div className="text-2xl font-bold text-gray-900">{formatCurrency(stats.activeLoanAmount)}</div>
-              <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Active Loans</span>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">{formatCurrency(stats.activeLoanAmount)}</div>
+              <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-50 dark:bg-blue-950/30 dark:text-blue-400 border-none text-[10px] py-0.5 px-2 font-semibold">
                 {stats.activeLoanCount} Active
               </Badge>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100">
+            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
               <CreditCard className="h-5 w-5" />
             </div>
           </div>
 
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Monthly EMI Due</span>
-              <div className="text-xl font-bold text-gray-800">{formatCurrency(totalEmiDue)}</div>
-              <span className="text-[10px] text-gray-500 font-medium">Next billing cycle</span>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Monthly EMI Due</span>
+              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{formatCurrency(totalEmiDue)}</div>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Next billing cycle</span>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-100">
+            <div className="h-10 w-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-100 dark:shadow-none">
               <Clock className="h-5 w-5" />
             </div>
           </div>
 
           <div className="space-y-1.5 mt-auto">
-            <div className="flex justify-between text-xs font-semibold text-gray-600">
+            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
               <span>Repayment Progress</span>
-              <span className="text-blue-600 font-bold">{repaymentProgress}%</span>
+              <span className="text-blue-600 dark:text-blue-400 font-bold">{repaymentProgress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" style={{ width: `${repaymentProgress}%` }} />
             </div>
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500" />
         </Card>
 
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Total Services</span>
-              <div className="text-2xl font-bold text-gray-900">{stats.totalServices}</div>
-              <Badge className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Services</span>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalServices}</div>
+              <Badge className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50 dark:bg-indigo-950/30 dark:text-indigo-400 border-none text-[10px] py-0.5 px-2 font-semibold">
                 All Time
               </Badge>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100">
+            <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100 dark:shadow-none">
               <FileText className="h-5 w-5" />
             </div>
           </div>
 
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Pending Reviews</span>
-              <div className="text-xl font-bold text-amber-600">{stats.pendingServices}</div>
-              <span className="text-[10px] text-gray-500 font-medium">Awaiting approval updates</span>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Pending Reviews</span>
+              <div className="text-xl font-bold text-amber-600 dark:text-amber-400">{stats.pendingServices}</div>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Awaiting approval updates</span>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100">
+            <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100 dark:shadow-none">
               <LayoutDashboard className="h-5 w-5" />
             </div>
           </div>
 
           <div className="space-y-1.5 mt-auto">
-            <div className="flex justify-between text-xs font-semibold text-gray-600">
+            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
               <span>Approval Completion</span>
-              <span className="text-indigo-600 font-bold">{approvalProgress}%</span>
+              <span className="text-indigo-600 dark:text-indigo-400 font-bold">{approvalProgress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style={{ width: `${approvalProgress}%` }} />
             </div>
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500" />
         </Card>
 
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Credit Score</span>
-              <div className="text-2xl font-bold text-gray-900">{stats.creditScore > 0 ? stats.creditScore : "----"}</div>
-              <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Credit Score</span>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">{stats.creditScore > 0 ? stats.creditScore : "----"}</div>
+              <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400 border-none text-[10px] py-0.5 px-2 font-semibold">
                 {creditScoreLabel}
               </Badge>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100">
+            <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100 dark:shadow-none">
               <TrendingUp className="h-5 w-5" />
             </div>
           </div>
 
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Monthly Income</span>
-              <div className="text-xl font-bold text-gray-800">{userProfile?.monthlyIncome ? formatCurrency(userProfile.monthlyIncome) : "----"}</div>
-              <span className="text-[10px] text-gray-500 font-medium">{userProfile?.occupation || "Profile details"}</span>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Monthly Income</span>
+              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{userProfile?.monthlyIncome ? formatCurrency(userProfile.monthlyIncome) : "----"}</div>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{userProfile?.occupation || "Profile details"}</span>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-100">
+            <div className="h-10 w-10 rounded-xl bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-100 dark:shadow-none">
               <ShieldCheck className="h-5 w-5" />
             </div>
           </div>
 
           <div className="space-y-1.5 mt-auto">
-            <div className="flex justify-between text-xs font-semibold text-gray-600">
+            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
               <span>Score Strength</span>
-              <span className="text-emerald-600 font-bold">{creditScoreProgress}%</span>
+              <span className="text-emerald-600 dark:text-emerald-450 font-bold">{creditScoreProgress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full" style={{ width: `${creditScoreProgress}%` }} />
             </div>
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-cyan-500" />
         </Card>
 
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-gray-100">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Recent Payments</span>
-              <div className="text-2xl font-bold text-gray-900">{stats.recentPayments}</div>
-              <Badge className="bg-rose-50 text-rose-700 hover:bg-rose-50 border-none text-[10px] py-0.5 px-2 font-semibold">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Recent Payments</span>
+              <div className="text-2xl font-bold text-slate-900 dark:text-white">{stats.recentPayments}</div>
+              <Badge className="bg-rose-50 text-rose-700 hover:bg-rose-50 dark:bg-rose-950/30 dark:text-rose-455 border-none text-[10px] py-0.5 px-2 font-semibold">
                 Last 30 Days
               </Badge>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-md shadow-rose-100">
+            <div className="h-10 w-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-md shadow-rose-100 dark:shadow-none">
               <Clock className="h-5 w-5" />
             </div>
           </div>
 
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Total Paid</span>
-              <div className="text-xl font-bold text-gray-800">{formatCurrency(stats.totalPaidAmount)}</div>
-              <span className="text-[10px] text-gray-500 font-medium">Completed repayments</span>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Paid</span>
+              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{formatCurrency(stats.totalPaidAmount)}</div>
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Completed repayments</span>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-pink-500 text-white flex items-center justify-center shadow-md shadow-pink-100">
+            <div className="h-10 w-10 rounded-xl bg-pink-500 text-white flex items-center justify-center shadow-md shadow-pink-100 dark:shadow-none">
               <CheckCircle className="h-5 w-5" />
             </div>
           </div>
 
           <div className="space-y-1.5 mt-auto">
-            <div className="flex justify-between text-xs font-semibold text-gray-600">
+            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
               <span>Payment Activity</span>
-              <span className="text-rose-600 font-bold">{paymentActivityProgress}%</span>
+              <span className="text-rose-600 dark:text-rose-455 font-bold">{paymentActivityProgress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-full" style={{ width: `${paymentActivityProgress}%` }} />
             </div>
           </div>

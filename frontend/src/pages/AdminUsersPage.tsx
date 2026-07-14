@@ -88,12 +88,12 @@ export function AdminUsersPage({ user }: any) {
   return (
     <div className="p-6 sm:p-8 space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Registered Users</h1>
           <p className="text-muted-foreground">Monitor and manage registered user accounts in the Bhalchandra Finance portal</p>
         </div>
-        <Button variant="outline" size="sm" onClick={fetchLiveUsersData} disabled={loading}>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850" onClick={fetchLiveUsersData} disabled={loading}>
           <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh Data
         </Button>
@@ -102,13 +102,13 @@ export function AdminUsersPage({ user }: any) {
       {/* KPI Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Metric 1: Total Active Users */}
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Total Active Users</span>
-              <div className="text-3xl font-bold text-gray-900">{liveStats.totalUsers}</div>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Active Users</span>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">{liveStats.totalUsers}</div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100">
+            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
               <Users className="h-5 w-5" />
             </div>
           </div>
@@ -116,15 +116,15 @@ export function AdminUsersPage({ user }: any) {
         </Card>
 
         {/* Metric 2: New Signups Today */}
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">New Signups (Today)</span>
-              <div className="text-3xl font-bold text-gray-800">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">New Signups (Today)</span>
+              <div className="text-3xl font-bold text-slate-800 dark:text-slate-200">
                 {liveUsers.filter(u => new Date(u.createdAt).toDateString() === new Date().toDateString()).length}
               </div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100">
+            <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100 dark:shadow-none">
               <Users className="h-5 w-5" />
             </div>
           </div>
@@ -132,13 +132,13 @@ export function AdminUsersPage({ user }: any) {
         </Card>
 
         {/* Metric 3: Verification Rate */}
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Verification Rate</span>
-              <div className="text-3xl font-bold text-emerald-600">{verificationRate}%</div>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Verification Rate</span>
+              <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-450">{verificationRate}%</div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100">
+            <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100 dark:shadow-none">
               <Users className="h-5 w-5" />
             </div>
           </div>
@@ -147,14 +147,14 @@ export function AdminUsersPage({ user }: any) {
       </div>
 
       {/* Search Input */}
-      <div className="bg-slate-50 p-4 rounded-xl border flex flex-col sm:flex-row justify-between items-center gap-4">
-        <h2 className="font-semibold text-lg text-slate-800">Users Accounts Directory</h2>
+      <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h2 className="font-semibold text-lg text-slate-850 dark:text-slate-200">Users Accounts Directory</h2>
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search by name, email, username or role..."
-            className="border pl-8 pr-3 py-2 w-full rounded-md text-sm bg-white"
+            className="border border-slate-200 dark:border-slate-800 pl-8 pr-3 py-2 w-full rounded-md text-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-ring"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -162,37 +162,37 @@ export function AdminUsersPage({ user }: any) {
       </div>
 
       {/* Users List Table */}
-      <Card className="rounded-2xl border shadow-md overflow-hidden">
-        <CardHeader className="bg-slate-50/50 border-b">
-          <CardTitle className="text-lg text-slate-900 font-bold">Registered User Accounts</CardTitle>
+      <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden bg-white dark:bg-slate-900">
+        <CardHeader className="bg-slate-50/50 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800/80">
+          <CardTitle className="text-lg text-slate-900 dark:text-white font-bold">Registered User Accounts</CardTitle>
           <CardDescription>Live users registered in the Bhalchandra Finance portal</CardDescription>
         </CardHeader>
         <CardContent className="p-0 overflow-auto max-h-[500px]">
           {filteredUsers.length === 0 ? (
-            <div className="text-center text-gray-400 py-12 text-sm font-medium">No registered user accounts found.</div>
+            <div className="text-center text-slate-450 dark:text-slate-500 py-12 text-sm font-medium">No registered user accounts found.</div>
           ) : (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-slate-55/30">
+            <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+              <thead className="bg-slate-50 dark:bg-slate-950/30">
                 <tr>
                   {["Name", "Username", "Email", "Role", "Status"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredUsers.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-50/40 text-sm">
-                    <td className="px-6 py-4 font-semibold text-gray-800">{u.name}</td>
-                    <td className="px-6 py-4 text-gray-600">{u.username}</td>
-                    <td className="px-6 py-4 text-gray-600">{u.email}</td>
-                    <td className="px-6 py-4 font-semibold capitalize text-primary">{u.role}</td>
+                  <tr key={u.id} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/40 text-sm">
+                    <td className="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">{u.name}</td>
+                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{u.username}</td>
+                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{u.email}</td>
+                    <td className="px-6 py-4 font-semibold capitalize text-primary dark:text-blue-400">{u.role}</td>
                     <td className="px-6 py-4">
                       <Badge className={
                         u.isActive 
-                          ? "bg-green-105 text-green-800 border-none hover:bg-green-105" 
-                          : "bg-red-105 text-red-800 border-none hover:bg-red-105"
+                          ? "bg-green-100 text-green-800 dark:bg-green-950/30 dark:text-green-400 border-none hover:bg-green-100" 
+                          : "bg-red-100 text-red-800 dark:bg-red-950/30 dark:text-red-400 border-none hover:bg-red-100"
                       }>
                         {u.isActive ? "Active" : "Deactivated"}
                       </Badge>

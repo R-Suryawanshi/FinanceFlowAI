@@ -17,6 +17,9 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 import { AdminApplicationsPage } from "./pages/AdminApplicationsPage";
 import { AdminPaymentsPage } from "./pages/AdminPaymentsPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
+import { AdminEmployeesPage } from "./pages/AdminEmployeesPage";
+import { AdminCustomersPage } from "./pages/AdminCustomersPage";
+import { AdminAddEmployeePage } from "./pages/AdminAddEmployeePage";
 import { AdminSidebar } from "./pages/AdminSidebar";
 import { UserDashboard } from "./pages/UserDashboard";
 import { LoanApplicationForm } from "./pages/LoanApplicationForm";
@@ -204,6 +207,9 @@ function App() {
       case "admin-applications": return user?.role === "admin" ? <AdminApplicationsPage user={user} /> : <>Access Denied</>;
       case "admin-payments": return user?.role === "admin" ? <AdminPaymentsPage user={user} /> : <>Access Denied</>;
       case "admin-users": return user?.role === "admin" ? <AdminUsersPage user={user} /> : <>Access Denied</>;
+      case "admin-employees": return user?.role === "admin" ? <AdminEmployeesPage user={user} onPageChange={setCurrentPage} /> : <>Access Denied</>;
+      case "admin-add-employee": return user?.role === "admin" ? <AdminAddEmployeePage user={user} onPageChange={setCurrentPage} /> : <>Access Denied</>;
+      case "admin-customers": return user?.role === "admin" ? <AdminCustomersPage user={user} /> : <>Access Denied</>;
       case "user-dashboard": return user ? (
         <UserDashboard
           user={user}
@@ -243,7 +249,7 @@ function App() {
               />
             )}
             
-            <div className={`flex-1 flex flex-col min-w-0 ${isAdminPage ? "bg-slate-50/70 dark:bg-slate-905/40" : ""}`}>
+            <div className={`flex-1 flex flex-col min-w-0 ${isAdminPage ? "bg-slate-50/70 dark:bg-slate-950/40" : ""}`}>
               <Header
                 currentPage={currentPage}
                 onPageChange={setCurrentPage}

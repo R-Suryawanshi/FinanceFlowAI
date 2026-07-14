@@ -326,3 +326,104 @@
     inset: -1px;
   }
 }
+
+/* React Date Range Dark Mode Overrides */
+.dark .rdrCalendarWrapper,
+.dark .rdrDateRangeWrapper {
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: var(--radius);
+}
+
+.dark .rdrMonthAndYearWrapper {
+  background: transparent !important;
+  padding-top: 12px !important;
+}
+
+.dark .rdrMonthAndYearPickers select {
+  color: hsl(var(--foreground)) !important;
+  background: hsl(var(--background)) !important;
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.dark .rdrMonthName {
+  color: hsl(var(--foreground)) !important;
+  font-weight: 600;
+}
+
+.dark .rdrWeekDay {
+  color: hsl(var(--muted-foreground)) !important;
+  font-weight: 500;
+}
+
+.dark .rdrDayNumber span {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .rdrDayPassive .rdrDayNumber span {
+  color: hsl(var(--muted-foreground)) !important;
+  opacity: 0.4;
+}
+
+.dark .rdrDayDisabled {
+  background-color: transparent !important;
+}
+
+.dark .rdrDayDisabled .rdrDayNumber span {
+  color: hsl(var(--muted-foreground)) !important;
+  opacity: 0.2;
+}
+
+.dark .rdrDayToday .rdrDayNumber span::after {
+  background: hsl(var(--primary)) !important;
+}
+
+.dark .rdrNextPrevButton {
+  background: hsl(var(--muted)) !important;
+  border-radius: 4px;
+}
+
+.dark .rdrNextPrevButton:hover {
+  background: hsl(var(--accent)) !important;
+}
+
+.dark .rdrNextPrevButton i {
+  border-color: hsl(var(--foreground)) !important;
+}
+
+.dark .rdrDateDisplayWrapper {
+  background-color: hsl(var(--muted) / 0.5) !important;
+}
+
+.dark .rdrDateDisplayItem {
+  background-color: hsl(var(--card)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: none !important;
+}
+
+.dark .rdrDateDisplayItem input {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .rdrSelected,
+.dark .rdrInRange,
+.dark .rdrStartEdge,
+.dark .rdrEndEdge {
+  background: hsl(var(--primary) / 0.15) !important;
+}
+
+.dark .rdrStartEdge,
+.dark .rdrEndEdge {
+  background: hsl(var(--primary)) !important;
+}
+
+.dark .rdrDaySelected {
+  background: hsl(var(--primary)) !important;
+}
+
+.dark .rdrDayHovered {
+  border-color: hsl(var(--primary) / 0.4) !important;
+  background: hsl(var(--primary) / 0.1) !important;
+}

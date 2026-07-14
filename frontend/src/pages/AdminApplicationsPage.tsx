@@ -156,12 +156,12 @@ export function AdminApplicationsPage({ user }: any) {
   return (
     <div className="p-6 sm:p-8 space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Applications Ledger</h1>
           <p className="text-muted-foreground">Manage and review incoming customer finance applications</p>
         </div>
-        <Button variant="outline" size="sm" onClick={fetchLiveApplicationsData} disabled={loading}>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850" onClick={fetchLiveApplicationsData} disabled={loading}>
           <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh Data
         </Button>
@@ -170,13 +170,13 @@ export function AdminApplicationsPage({ user }: any) {
       {/* KPI Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Metric 1: Total Applications */}
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Total Applications</span>
-              <div className="text-3xl font-bold text-gray-900">{liveApplications.length}</div>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Applications</span>
+              <div className="text-3xl font-bold text-slate-900 dark:text-white">{liveApplications.length}</div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100">
+            <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100 dark:shadow-none">
               <FileText className="h-5 w-5" />
             </div>
           </div>
@@ -184,15 +184,15 @@ export function AdminApplicationsPage({ user }: any) {
         </Card>
 
         {/* Metric 2: Pending Reviews */}
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Pending Reviews</span>
-              <div className="text-3xl font-bold text-amber-600">
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Pending Reviews</span>
+              <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">
                 {liveApplications.filter(a => a.userService.status === "pending").length}
               </div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-100">
+            <div className="h-10 w-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-100 dark:shadow-none">
               <Clock className="h-5 w-5" />
             </div>
           </div>
@@ -200,13 +200,13 @@ export function AdminApplicationsPage({ user }: any) {
         </Card>
 
         {/* Metric 3: Approval Rate */}
-        <Card className="rounded-2xl border border-blue-100/50 shadow-lg shadow-blue-50/50 bg-white relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Approval Success Rate</span>
-              <div className="text-3xl font-bold text-indigo-600">{approvalSuccessRate}%</div>
+              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Approval Success Rate</span>
+              <div className="text-3xl font-bold text-indigo-650 dark:text-indigo-400">{approvalSuccessRate}%</div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100">
+            <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100 dark:shadow-none">
               <CheckCircle className="h-5 w-5" />
             </div>
           </div>
@@ -215,10 +215,10 @@ export function AdminApplicationsPage({ user }: any) {
       </div>
 
       {/* Filter and Search */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50 p-4 rounded-xl border">
-        <h2 className="font-semibold text-lg text-slate-800">Review Board</h2>
-        <div className="flex gap-3 w-full sm:w-auto">
-          <select className="border p-2 rounded-md text-sm bg-white shrink-0" value={filter} onChange={(e) => setFilter(e.target.value)}>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+        <h2 className="font-semibold text-lg text-slate-850 dark:text-slate-200">Review Board</h2>
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+          <select className="border border-slate-200 dark:border-slate-800 p-2 rounded-md text-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 shrink-0 focus:outline-none focus:ring-1 focus:ring-ring" value={filter} onChange={(e) => setFilter(e.target.value)}>
             <option value="All">All Statuses</option>
             <option value="Pending">Pending Only</option>
             <option value="Approved">Approved Only</option>
@@ -229,7 +229,7 @@ export function AdminApplicationsPage({ user }: any) {
             <input
               type="text"
               placeholder="Search user or service..."
-              className="border pl-8 pr-3 py-2 w-full rounded-md text-sm bg-white"
+              className="border border-slate-200 dark:border-slate-800 pl-8 pr-3 py-2 w-full rounded-md text-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-ring"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -239,39 +239,39 @@ export function AdminApplicationsPage({ user }: any) {
 
       {/* Pending Approvals Table */}
       {(filter === "All" || filter === "Pending") && (
-        <Card className="rounded-2xl border shadow-md overflow-hidden">
-          <CardHeader className="bg-slate-50/50 border-b">
-            <CardTitle className="text-lg text-slate-900">Pending Loan Applications</CardTitle>
+        <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden bg-white dark:bg-slate-900">
+          <CardHeader className="bg-slate-50/50 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800/80">
+            <CardTitle className="text-lg text-slate-900 dark:text-white font-bold">Pending Loan Applications</CardTitle>
             <CardDescription>Verify user documents and underwrite requested loans</CardDescription>
           </CardHeader>
           <CardContent className="p-0 overflow-auto max-h-[400px]">
             {filteredPending.length === 0 ? (
-              <div className="text-center text-gray-400 py-12 text-sm font-medium">No pending applications found.</div>
+              <div className="text-center text-slate-400 dark:text-slate-500 py-12 text-sm font-medium">No pending applications found.</div>
             ) : (
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-slate-50">
+              <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+                <thead className="bg-slate-50 dark:bg-slate-950/30">
                   <tr>
                     {["App #", "Customer", "Email", "Loan Name", "Requested", "Tenure", "Details", "Action"].map((h) => (
-                      <th key={h} className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                      <th key={h} className="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-100">
+                <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredPending.map((app) => (
-                    <tr key={app.userService.id} className="hover:bg-slate-50/40 text-sm">
-                      <td className="px-6 py-4 font-semibold text-primary">{app.userService.applicationNumber}</td>
-                      <td className="px-6 py-4 font-medium text-gray-800">{app.user.name}</td>
-                      <td className="px-6 py-4 text-gray-600">{app.user.email}</td>
-                      <td className="px-6 py-4 font-medium text-gray-700 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
-                      <td className="px-6 py-4 font-bold text-gray-900">{formatCurrency(Number(app.userService.amount))}</td>
-                      <td className="px-6 py-4 text-gray-600">{app.userService.tenureMonths} Months</td>
+                    <tr key={app.userService.id} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/40 text-sm">
+                      <td className="px-6 py-4 font-semibold text-primary dark:text-blue-400">{app.userService.applicationNumber}</td>
+                      <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{app.user.name}</td>
+                      <td className="px-6 py-4 text-slate-650 dark:text-slate-400">{app.user.email}</td>
+                      <td className="px-6 py-4 font-medium text-slate-700 dark:text-slate-300 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
+                      <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">{formatCurrency(Number(app.userService.amount))}</td>
+                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{app.userService.tenureMonths} Months</td>
                       <td className="px-6 py-4">
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="border-primary/20 text-primary hover:bg-primary/5 flex items-center gap-1 font-medium text-xs rounded-lg"
+                          className="border-primary/20 dark:border-blue-800 text-primary dark:text-blue-400 hover:bg-primary/5 dark:hover:bg-blue-955/20 flex items-center gap-1 font-medium text-xs rounded-lg"
                           onClick={() => setSelectedApp(app)}
                         >
                           <FileText className="h-3.5 w-3.5" />
@@ -305,42 +305,42 @@ export function AdminApplicationsPage({ user }: any) {
       )}
 
       {/* Active & Closed Loans Ledger */}
-      <Card className="rounded-2xl border shadow-md overflow-hidden">
-        <CardHeader className="bg-slate-50/50 border-b">
-          <CardTitle className="text-lg text-slate-900">Active & Closed Loans Ledger</CardTitle>
+      <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden bg-white dark:bg-slate-900">
+        <CardHeader className="bg-slate-50/50 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800/80">
+          <CardTitle className="text-lg text-slate-900 dark:text-white font-bold">Active & Closed Loans Ledger</CardTitle>
           <CardDescription>Repayment tracking and balances ledger for verified loans</CardDescription>
         </CardHeader>
         <CardContent className="p-0 overflow-auto max-h-[400px]">
           {filteredProcessed.length === 0 ? (
-            <div className="text-center text-gray-400 py-12 text-sm font-medium">No processed applications found matching search criteria.</div>
+            <div className="text-center text-slate-450 dark:text-slate-500 py-12 text-sm font-medium">No processed applications found matching search criteria.</div>
           ) : (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-slate-50">
+            <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
+              <thead className="bg-slate-50 dark:bg-slate-950/30">
                 <tr>
                   {["App #", "Customer", "Loan Name", "Approved Amount", "Monthly EMI", "Outstanding", "Paid", "Status"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-100">
+              <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredProcessed.map((app) => (
-                  <tr key={app.userService.id} className="hover:bg-slate-50/40 text-sm">
-                    <td className="px-6 py-4 font-semibold text-primary">{app.userService.applicationNumber}</td>
-                    <td className="px-6 py-4 font-medium text-gray-800">{app.user.name}</td>
-                    <td className="px-6 py-4 font-medium text-gray-700 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
-                    <td className="px-6 py-4 font-bold text-gray-900">{formatCurrency(Number(app.userService.amount))}</td>
-                    <td className="px-6 py-4 text-gray-600">{formatCurrency(Number(app.userService.emi || "0"))}</td>
-                    <td className="px-6 py-4 font-semibold text-amber-600">{formatCurrency(Number(app.userService.outstandingAmount || "0"))}</td>
-                    <td className="px-6 py-4 font-semibold text-green-600">{formatCurrency(Number(app.userService.totalPaidAmount || "0"))}</td>
+                  <tr key={app.userService.id} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/40 text-sm">
+                    <td className="px-6 py-4 font-semibold text-primary dark:text-blue-400">{app.userService.applicationNumber}</td>
+                    <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{app.user.name}</td>
+                    <td className="px-6 py-4 font-medium text-slate-700 dark:text-slate-300 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
+                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">{formatCurrency(Number(app.userService.amount))}</td>
+                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{formatCurrency(Number(app.userService.emi || "0"))}</td>
+                    <td className="px-6 py-4 font-semibold text-amber-600 dark:text-amber-400">{formatCurrency(Number(app.userService.outstandingAmount || "0"))}</td>
+                    <td className="px-6 py-4 font-semibold text-green-600 dark:text-green-400">{formatCurrency(Number(app.userService.totalPaidAmount || "0"))}</td>
                     <td className="px-6 py-4">
                       <Badge className={
                         app.userService.status === "completed" 
-                          ? "bg-green-100 text-green-800 border-none hover:bg-green-100" 
+                          ? "bg-green-100 text-green-800 dark:bg-green-950/30 dark:text-green-400 border-none hover:bg-green-100" 
                           : app.userService.status === "active" 
-                          ? "bg-blue-100 text-blue-800 border-none hover:bg-blue-100" 
-                          : "bg-red-100 text-red-800 border-none hover:bg-red-100"
+                          ? "bg-blue-100 text-blue-800 dark:bg-blue-955/30 dark:text-blue-400 border-none hover:bg-blue-100" 
+                          : "bg-red-100 text-red-800 dark:bg-red-950/30 dark:text-red-400 border-none hover:bg-red-100"
                       }>
                         {app.userService.status}
                       </Badge>
@@ -355,13 +355,13 @@ export function AdminApplicationsPage({ user }: any) {
 
       {/* UNDERWRITING & KYC VERIFICATION DIALOG */}
       <Dialog open={!!selectedApp} onOpenChange={(open) => !open && setSelectedApp(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white text-gray-900 border-none shadow-2xl rounded-2xl p-6">
-          <DialogHeader className="border-b border-gray-100 pb-4">
-            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-primary">
-              <ShieldCheck className="h-6 w-6 text-green-600 animate-pulse" />
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl p-6">
+          <DialogHeader className="border-b border-slate-100 dark:border-slate-800/80 pb-4">
+            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-primary dark:text-blue-400">
+              <ShieldCheck className="h-6 w-6 text-green-650 animate-pulse" />
               Underwriting Sheet & KYC Audit
             </DialogTitle>
-            <DialogDescription className="text-sm text-gray-500 font-medium">
+            <DialogDescription className="text-sm text-slate-500 dark:text-slate-400 font-medium">
               Verify income proofs, documentation lists, and collateral metrics for Application <strong>{selectedApp?.userService?.applicationNumber}</strong>
             </DialogDescription>
           </DialogHeader>
@@ -370,20 +370,20 @@ export function AdminApplicationsPage({ user }: any) {
             <div className="space-y-6 pt-4 text-sm">
               
               {/* Row 1: Profile & Contacts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-950/20 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
                 <div className="space-y-3">
-                  <h3 className="font-bold text-gray-700 flex items-center gap-2">
-                    <User className="h-4 w-4 text-primary" /> Applicant Details
+                  <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                    <User className="h-4 w-4 text-primary dark:text-blue-400" /> Applicant Details
                   </h3>
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <span className="text-gray-400">Full Name:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.user?.name}</span>
-                    <span className="text-gray-400">Email:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.user?.email}</span>
-                    <span className="text-gray-400">Phone:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.profile?.phoneNumber || "—"}</span>
-                    <span className="text-gray-400">Date of Birth:</span>
-                    <span className="font-semibold text-gray-800">
+                    <span className="text-slate-400 dark:text-slate-500">Full Name:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.user?.name}</span>
+                    <span className="text-slate-400 dark:text-slate-500">Email:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.user?.email}</span>
+                    <span className="text-slate-400 dark:text-slate-500">Phone:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.profile?.phoneNumber || "—"}</span>
+                    <span className="text-slate-400 dark:text-slate-500">Date of Birth:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">
                       {selectedApp.profile?.dateOfBirth 
                         ? new Date(selectedApp.profile.dateOfBirth).toLocaleDateString("en-IN") 
                         : "—"}
@@ -392,12 +392,12 @@ export function AdminApplicationsPage({ user }: any) {
                 </div>
 
                 <div className="space-y-3">
-                  <h3 className="font-bold text-gray-700 flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-primary" /> Permanent Address
+                  <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-primary dark:text-blue-400" /> Permanent Address
                   </h3>
                   <div className="text-xs space-y-1">
-                    <p className="font-semibold text-gray-800">{selectedApp.profile?.address || "—"}</p>
-                    <p className="text-gray-600">
+                    <p className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.profile?.address || "—"}</p>
+                    <p className="text-slate-650 dark:text-slate-400">
                       {[selectedApp.profile?.city, selectedApp.profile?.state, selectedApp.profile?.pincode]
                         .filter(Boolean)
                         .join(", ") || "—"}
@@ -408,98 +408,98 @@ export function AdminApplicationsPage({ user }: any) {
 
               {/* Row 2: Financial Auditing */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3 border border-slate-100 p-4 rounded-xl">
-                  <h3 className="font-bold text-gray-700 flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-primary" /> Employment & Income
+                <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
+                  <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                    <Briefcase className="h-4 w-4 text-primary dark:text-blue-400" /> Employment & Income
                   </h3>
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <span className="text-gray-400">Occupation:</span>
-                    <span className="font-semibold text-gray-800 capitalize">{selectedApp.profile?.occupation || "—"}</span>
-                    <span className="text-gray-400">Company Name:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.profile?.companyName || "—"}</span>
-                    <span className="text-gray-400">Monthly Income:</span>
-                    <span className="font-bold text-green-600">
+                    <span className="text-slate-400 dark:text-slate-500">Occupation:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 capitalize">{selectedApp.profile?.occupation || "—"}</span>
+                    <span className="text-slate-400 dark:text-slate-500">Company Name:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.profile?.companyName || "—"}</span>
+                    <span className="text-slate-400 dark:text-slate-500">Monthly Income:</span>
+                    <span className="font-bold text-green-600 dark:text-green-400">
                       {selectedApp.profile?.monthlyIncome 
                         ? formatCurrency(parseFloat(selectedApp.profile.monthlyIncome)) 
                         : "—"}
                     </span>
-                    <span className="text-gray-400">Credit Score:</span>
-                    <span className="font-bold text-primary">{selectedApp.profile?.creditScore || 720}</span>
+                    <span className="text-slate-400 dark:text-slate-500">Credit Score:</span>
+                    <span className="font-bold text-primary dark:text-blue-400">{selectedApp.profile?.creditScore || 720}</span>
                   </div>
                 </div>
 
-                <div className="space-y-3 border border-slate-100 p-4 rounded-xl">
-                  <h3 className="font-bold text-gray-700 flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-primary" /> Loan Terms
+                <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
+                  <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                    <DollarSign className="h-4 w-4 text-primary dark:text-blue-400" /> Loan Terms
                   </h3>
                   <div className="grid grid-cols-2 gap-2 text-xs">
-                    <span className="text-gray-400">Scheme Name:</span>
-                    <span className="font-semibold text-gray-800 capitalize">{selectedApp.serviceType?.displayName || selectedApp.serviceType?.name}</span>
-                    <span className="text-gray-400">Requested Principal:</span>
-                    <span className="font-bold text-gray-900">{formatCurrency(parseFloat(selectedApp.userService?.amount))}</span>
-                    <span className="text-gray-400">Tenure Requested:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.userService?.tenureMonths || selectedApp.userService?.tenure} Months</span>
-                    <span className="text-gray-400">Base Interest Rate:</span>
-                    <span className="font-semibold text-gray-800">{selectedApp.userService?.interestRate}% p.a.</span>
-                    <span className="text-gray-400">Purpose of Loan:</span>
-                    <span className="font-semibold text-gray-800 italic col-span-1 break-words">{selectedApp.userService?.purpose || "General Purpose"}</span>
+                    <span className="text-slate-400 dark:text-slate-500">Scheme Name:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 capitalize">{selectedApp.serviceType?.displayName || selectedApp.serviceType?.name}</span>
+                    <span className="text-slate-400 dark:text-slate-500">Requested Principal:</span>
+                    <span className="font-bold text-slate-900 dark:text-white">{formatCurrency(parseFloat(selectedApp.userService?.amount))}</span>
+                    <span className="text-slate-400 dark:text-slate-500">Tenure Requested:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.userService?.tenureMonths || selectedApp.userService?.tenure} Months</span>
+                    <span className="text-slate-400 dark:text-slate-500">Base Interest Rate:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.userService?.interestRate}% p.a.</span>
+                    <span className="text-slate-400 dark:text-slate-500">Purpose of Loan:</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 italic col-span-1 break-words">{selectedApp.userService?.purpose || "General Purpose"}</span>
                   </div>
                 </div>
               </div>
 
               {/* Row 3: Co-Applicant & Collateral */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-950/20 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
                 <div className="space-y-2">
-                  <h4 className="font-bold text-xs text-gray-500 uppercase tracking-wider">Guarantor / Co-Applicant</h4>
+                  <h4 className="font-bold text-xs text-slate-450 dark:text-slate-400 uppercase tracking-wider">Guarantor / Co-Applicant</h4>
                   {selectedApp.userService?.guarantor ? (
                     <div className="text-xs space-y-1">
-                      <p className="font-semibold text-gray-800">Name: <span className="font-normal text-gray-600">{(selectedApp.userService.guarantor as any).name || "—"}</span></p>
-                      <p className="font-semibold text-gray-800">Relation: <span className="font-normal text-gray-600">{(selectedApp.userService.guarantor as any).relation || "—"}</span></p>
-                      <p className="font-semibold text-gray-800">Income: <span className="font-normal text-gray-600">{(selectedApp.userService.guarantor as any).income ? formatCurrency(parseFloat((selectedApp.userService.guarantor as any).income)) : "—"}</span></p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">Name: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).name || "—"}</span></p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">Relation: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).relation || "—"}</span></p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">Income: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).income ? formatCurrency(parseFloat((selectedApp.userService.guarantor as any).income)) : "—"}</span></p>
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-400 italic">No co-applicant or guarantor provided.</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-550 italic">No co-applicant or guarantor provided.</p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <h4 className="font-bold text-xs text-gray-500 uppercase tracking-wider">Collateral / Security Details</h4>
+                  <h4 className="font-bold text-xs text-slate-450 dark:text-slate-400 uppercase tracking-wider">Collateral / Security Details</h4>
                   {selectedApp.userService?.collateral ? (
                     <div className="text-xs space-y-1">
-                      <p className="font-semibold text-gray-800">Existing Loan Ledger: <span className="font-normal text-gray-600">{(selectedApp.userService.collateral as any).details || "—"}</span></p>
-                      <p className="font-semibold text-gray-800">Value of Security: <span className="font-normal text-gray-600">{(selectedApp.userService.collateral as any).value ? formatCurrency(parseFloat((selectedApp.userService.collateral as any).value)) : "—"}</span></p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">Existing Loan Ledger: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.collateral as any).details || "—"}</span></p>
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">Value of Security: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.collateral as any).value ? formatCurrency(parseFloat((selectedApp.userService.collateral as any).value)) : "—"}</span></p>
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-400 italic">No existing loan balance or collateral provided.</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-550 italic">No existing loan balance or collateral provided.</p>
                   )}
                 </div>
               </div>
 
               {/* Row 4: KYC Files checklist */}
-              <div className="space-y-3 border border-slate-100 p-4 rounded-xl">
-                <h3 className="font-bold text-gray-700 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-primary" /> Submitted KYC Verification Documents
+              <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
+                <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-primary dark:text-blue-400" /> Submitted KYC Verification Documents
                 </h3>
                 {selectedApp.userService?.documents && Object.keys(selectedApp.userService.documents).length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {Object.entries(selectedApp.userService.documents).map(([key, val]: any) => (
-                      <div key={key} className="flex justify-between items-center p-2.5 rounded-lg border border-slate-100 bg-slate-50 text-xs">
+                      <div key={key} className="flex justify-between items-center p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/20 text-xs">
                         <div className="space-y-0.5">
-                          <span className="font-bold text-[10px] text-primary uppercase tracking-wider block">
+                          <span className="font-bold text-[10px] text-primary dark:text-blue-400 uppercase tracking-wider block">
                             {key.replace(/([A-Z])/g, ' $1')}
                           </span>
-                          <span className="font-semibold text-gray-700 truncate max-w-[180px] block" title={val.name}>
+                          <span className="font-semibold text-slate-750 dark:text-slate-200 truncate max-w-[180px] block" title={val.name}>
                             {val.name}
                           </span>
                         </div>
-                        <span className="text-[10px] text-gray-400 font-bold whitespace-nowrap">
+                        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold whitespace-nowrap">
                           {val.size ? `${(val.size / 1024).toFixed(1)} KB` : "Document Loaded"}
                         </span>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-4 bg-amber-50 rounded-xl border border-amber-100 text-amber-800 text-xs flex flex-col gap-1 items-center">
+                  <div className="text-center py-4 bg-amber-50 dark:bg-amber-950/10 rounded-xl border border-amber-100 dark:border-amber-900/30 text-amber-800 dark:text-amber-400 text-xs flex flex-col gap-1 items-center">
                     <span>⚠️ No KYC file uploads found on this application record.</span>
                     <span className="text-amber-600/80">Please request manual document copies from the applicant.</span>
                   </div>
@@ -509,11 +509,11 @@ export function AdminApplicationsPage({ user }: any) {
             </div>
           )}
 
-          <DialogFooter className="border-t border-gray-100 pt-4 mt-6 gap-2">
+          <DialogFooter className="border-t border-slate-100 dark:border-slate-800/80 pt-4 mt-6 gap-2">
             <Button
               variant="outline"
               onClick={() => setSelectedApp(null)}
-              className="text-gray-500 font-medium"
+              className="text-slate-500 dark:text-slate-400 font-medium border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850"
             >
               Close
             </Button>
@@ -528,7 +528,7 @@ export function AdminApplicationsPage({ user }: any) {
               Reject Application
             </Button>
             <Button
-              className="bg-green-600 hover:bg-green-700 text-white font-medium shadow-md shadow-green-100"
+              className="bg-green-600 hover:bg-green-700 text-white font-medium shadow-md shadow-green-100 dark:shadow-none"
               onClick={() => {
                 handleUpdateStatus(selectedApp.userService.id, "active");
                 setSelectedApp(null);
