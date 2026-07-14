@@ -33,7 +33,7 @@ export const serviceTypes = pgTable("service_types", {
 
 export const userProfiles = pgTable("user_profiles", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").notNull().references(() => users.id),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   phoneNumber: text("phone_number"),
   dateOfBirth: timestamp("date_of_birth"),
   gender: text("gender"),
@@ -59,7 +59,7 @@ export const userProfiles = pgTable("user_profiles", {
 
 export const userServices = pgTable("user_services", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").notNull().references(() => users.id),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   serviceTypeId: uuid("service_type_id").notNull().references(() => serviceTypes.id),
   applicationNumber: text("application_number").notNull().unique(),
   amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
@@ -86,7 +86,7 @@ export const userServices = pgTable("user_services", {
 
 export const emiSchedule = pgTable("emi_schedule", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userServiceId: uuid("user_service_id").notNull().references(() => userServices.id),
+  userServiceId: uuid("user_service_id").notNull().references(() => userServices.id, { onDelete: "cascade" }),
   emiNumber: integer("emi_number").notNull(),
   dueDate: timestamp("due_date").notNull(),
   emiAmount: numeric("emi_amount", { precision: 12, scale: 2 }).notNull(),
@@ -103,8 +103,8 @@ export const emiSchedule = pgTable("emi_schedule", {
 
 export const payments = pgTable("payments", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userServiceId: uuid("user_service_id").notNull().references(() => userServices.id),
-  emiScheduleId: uuid("emi_schedule_id").references(() => emiSchedule.id),
+  userServiceId: uuid("user_service_id").notNull().references(() => userServices.id, { onDelete: "cascade" }),
+  emiScheduleId: uuid("emi_schedule_id").references(() => emiSchedule.id, { onDelete: "set null" }),
   paymentReference: text("payment_reference").notNull().unique(),
   amount: numeric("amount", { precision: 12, scale: 2 }).notNull(),
   paymentMethod: text("payment_method").notNull(), // online, cheque, cash, neft, upi
@@ -119,15 +119,15 @@ export const payments = pgTable("payments", {
 
 export const documents = pgTable("documents", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").notNull().references(() => users.id),
-  userServiceId: uuid("user_service_id").references(() => userServices.id),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  userServiceId: uuid("user_service_id").references(() => userServices.id, { onDelete: "cascade" }),
   documentType: text("document_type").notNull(), // identity_proof, address_proof, income_proof, bank_statement
   fileName: text("file_name").notNull(),
   fileUrl: text("file_url").notNull(),
   fileSize: integer("file_size"),
   mimeType: text("mime_type"),
   verificationStatus: text("verification_status").default("pending"), // pending, verified, rejected
-  verifiedBy: uuid("verified_by").references(() => users.id),
+  verifiedBy: uuid("verified_by").references(() => users.id, { onDelete: "set null" }),
   verificationDate: timestamp("verification_date"),
   verificationNotes: text("verification_notes"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -159,7 +159,7 @@ export const interestRates = pgTable("interest_rates", {
 
 export const notifications = pgTable("notifications", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").notNull().references(() => users.id),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   title: text("title").notNull(),
   message: text("message").notNull(),
   type: text("type").notNull(), // info, warning, success, error
