@@ -1202,18 +1202,7 @@ export function LoanApplicationForm({ loanType, onSubmit, onPageChange, defaultA
 
       {!profileLoading && (
         <>
-          {missingFields.length > 0 && (
-            <Alert className="border-amber-250 bg-amber-50/50 text-amber-800 dark:border-amber-900/50 dark:bg-amber-955/20 dark:text-amber-400">
-              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-450" />
-              <AlertDescription>
-                <span className="font-semibold block mb-1">Please Complete Your Profile Information</span>
-                The following required fields are missing from your saved profile and must be filled in below:{" "}
-                <span className="font-medium text-amber-900 dark:text-amber-300">
-                  {missingFields.join(", ")}
-                </span>.
-              </AlertDescription>
-            </Alert>
-          )}
+
 
           {error && (
             <Alert variant="destructive">
