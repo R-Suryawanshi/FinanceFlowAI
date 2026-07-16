@@ -31,7 +31,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       icon: Calculator,
       features: ['Home Loans', 'Car Loans', 'Personal Loans', 'Business Loans'],
       rate: 'Starting from 8.5% p.a.',
-      color: 'primary',
+      bgColor: 'bg-indigo-50/50 dark:bg-indigo-955/10',
+      iconColor: 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30',
+      borderColor: 'border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-500/55 hover:shadow-indigo-500/5',
+      badgeColor: 'border-indigo-200 text-indigo-700 bg-indigo-50/50 dark:border-indigo-900/40 dark:text-indigo-400 dark:bg-indigo-950/20',
       cta: 'Calculate EMI',
       ctaAction: () => onNavigateToCalculator('emi')
     },
@@ -42,7 +45,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       icon: Coins,
       features: ['Up to 75% of gold value', 'Minimal documentation', 'Quick approval', 'Secure gold storage'],
       rate: 'Starting from 12% p.a.',
-      color: 'secondary',
+      bgColor: 'bg-amber-50/50 dark:bg-amber-955/10',
+      iconColor: 'text-amber-605 dark:text-amber-450 bg-amber-50 dark:bg-amber-900/30',
+      borderColor: 'border-amber-100 dark:border-amber-900/30 hover:border-amber-500/55 hover:shadow-amber-500/5',
+      badgeColor: 'border-amber-200 text-amber-700 bg-amber-50/50 dark:border-amber-900/40 dark:text-amber-450 dark:bg-amber-955/20',
       cta: 'Check Eligibility',
       ctaAction: () => onNavigateToCalculator('gold')
     },
@@ -53,7 +59,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       icon: Home,
       features: ['Up to ₹5 Crore loan amount', 'Tenure up to 30 years', 'Balance transfer facility', 'Part prepayment option'],
       rate: 'Starting from 8.5% p.a.',
-      color: 'accent',
+      bgColor: 'bg-emerald-50/50 dark:bg-emerald-955/10',
+      iconColor: 'text-emerald-600 dark:text-emerald-455 bg-emerald-50 dark:bg-emerald-900/30',
+      borderColor: 'border-emerald-100 dark:border-emerald-900/30 hover:border-emerald-500/55 hover:shadow-emerald-500/5',
+      badgeColor: 'border-emerald-200 text-emerald-700 bg-emerald-50/50 dark:border-emerald-900/40 dark:text-emerald-455 dark:bg-emerald-955/20',
       cta: 'Apply Now',
       ctaAction: () => onPageChange && onPageChange('loan-application-home')
     },
@@ -64,7 +73,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       icon: Car,
       features: ['Up to 85% financing', 'Flexible tenure options', 'New & used cars', 'Quick processing'],
       rate: 'Starting from 9.5% p.a.',
-      color: 'primary',
+      bgColor: 'bg-orange-50/50 dark:bg-orange-955/10',
+      iconColor: 'text-orange-600 dark:text-orange-455 bg-orange-50 dark:bg-orange-900/30',
+      borderColor: 'border-orange-100 dark:border-orange-900/30 hover:border-orange-500/55 hover:shadow-orange-500/5',
+      badgeColor: 'border-orange-200 text-orange-700 bg-orange-50/50 dark:border-orange-900/40 dark:text-orange-450 dark:bg-orange-955/20',
       cta: 'Apply Now',
       ctaAction: () => onPageChange && onPageChange('loan-application-car')
     },
@@ -75,7 +87,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       icon: CreditCard,
       features: ['Up to ₹50 Lakh', 'No collateral required', 'Flexible repayment', 'Digital process'],
       rate: 'Starting from 11% p.a.',
-      color: 'secondary',
+      bgColor: 'bg-blue-50/50 dark:bg-blue-955/10',
+      iconColor: 'text-blue-600 dark:text-blue-455 bg-blue-50 dark:bg-blue-900/30',
+      borderColor: 'border-blue-100 dark:border-blue-900/30 hover:border-blue-500/55 hover:shadow-blue-500/5',
+      badgeColor: 'border-blue-200 text-blue-700 bg-blue-50/55 dark:border-blue-900/40 dark:text-blue-450 dark:bg-blue-955/20',
       cta: 'Apply Now',
       ctaAction: () => onPageChange && onPageChange('loan-application-personal')
     },
@@ -86,7 +101,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       icon: TrendingUp,
       features: ['Up to 8.50% p.a. returns', 'Compounded quarterly', '0.50% extra for seniors', 'Flexible tenure 12-60 mo'],
       rate: 'Interest up to 9.0% p.a.',
-      color: 'accent',
+      bgColor: 'bg-pink-50/50 dark:bg-pink-955/10',
+      iconColor: 'text-pink-600 dark:text-pink-450 bg-pink-50 dark:bg-pink-900/30',
+      borderColor: 'border-pink-100 dark:border-pink-900/30 hover:border-pink-500/55 hover:shadow-pink-500/5',
+      badgeColor: 'border-pink-200 text-pink-700 bg-pink-50/50 dark:border-pink-900/40 dark:text-pink-455 dark:bg-pink-955/20',
       cta: 'Calculate Returns',
       ctaAction: () => onNavigateToCalculator('fd')
     },
@@ -97,7 +115,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       icon: TrendingUp,
       features: ['Mutual funds', 'SIP planning', 'Tax-saving investments', 'Goal-based planning'],
       rate: 'Expert advisory',
-      color: 'primary',
+      bgColor: 'bg-violet-50/50 dark:bg-violet-955/10',
+      iconColor: 'text-violet-600 dark:text-violet-455 bg-violet-50 dark:bg-violet-900/30',
+      borderColor: 'border-violet-100 dark:border-violet-900/30 hover:border-violet-500/55 hover:shadow-violet-500/5',
+      badgeColor: 'border-violet-200 text-violet-700 bg-violet-50/55 dark:border-violet-900/40 dark:text-violet-450 dark:bg-violet-955/20',
       cta: 'Start Planning',
       ctaAction: () => onGetStarted && onGetStarted()
     }
@@ -107,40 +128,43 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
     {
       icon: Shield,
       title: 'Secure & Trusted',
-      description: 'Bank-level security and regulatory compliance for all your transactions.'
+      description: 'Bank-level 256-bit encryption and regulatory compliance for all your assets.',
+      color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20'
     },
     {
       icon: Clock,
       title: 'Quick Processing',
-      description: 'Fast approval process with minimal documentation requirements.'
+      description: 'Fast approval process with fully digital documentation and paperless flow.',
+      color: 'text-blue-600 bg-blue-50 dark:bg-blue-955/20'
     },
     {
       icon: CheckCircle,
       title: 'Transparent Terms',
-      description: 'No hidden charges, clear terms and conditions for all our services.'
+      description: 'Zero hidden charges, clear schedules, and straightforward repayment guidelines.',
+      color: 'text-purple-600 bg-purple-50 dark:bg-purple-955/20'
     }
   ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
       {/* Header */}
-      <div className="flex items-start gap-5">
+      <div className="flex items-start gap-5 border-b border-slate-100 dark:border-slate-800 pb-8">
         {onBack && (
           <Button
             variant="outline"
             size="icon"
             onClick={onBack}
             data-testid="page-back-button"
-            className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1.5"
+            className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1.5"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
         )}
-        <div className="space-y-3 flex-1 text-left">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground">
+        <div className="space-y-2 flex-1 text-left">
+          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
             Our Financial Services
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl">
+          <p className="text-lg text-slate-500 dark:text-slate-400 max-w-3xl leading-relaxed">
             Comprehensive financial solutions designed to meet all your monetary needs. 
             From loans to investments, we've got you covered with competitive rates and expert guidance.
           </p>
@@ -154,63 +178,58 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
           return (
             <Card 
               key={service.id} 
-              className="hover-elevate cursor-pointer transition-all duration-300"
+              className={`hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900/50 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-lg ${service.borderColor}`}
               data-testid={`card-service-${service.id}`}
             >
               <CardHeader className="space-y-4">
-                <div className={`p-3 rounded-lg w-fit ${
-                  service.color === 'primary' ? 'bg-primary/10' :
-                  service.color === 'secondary' ? 'bg-secondary/10' : 'bg-accent/10'
-                }`}>
-                  <Icon className={`h-8 w-8 ${
-                    service.color === 'primary' ? 'text-primary' :
-                    service.color === 'secondary' ? 'text-secondary' : 'text-accent'
-                  }`} />
+                <div className={`p-3.5 rounded-xl w-fit ${service.iconColor} shadow-sm`}>
+                  <Icon className="h-6 w-6" />
                 </div>
-                <div>
-                  <CardTitle className="text-xl">{service.title}</CardTitle>
-                  <CardDescription className="mt-2">
+                <div className="text-left space-y-1.5">
+                  <CardTitle className="text-xl font-bold text-slate-850 dark:text-slate-100">{service.title}</CardTitle>
+                  <CardDescription className="text-xs text-slate-500 dark:text-slate-400 leading-normal min-h-[40px]">
                     {service.description}
                   </CardDescription>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Rate Badge */}
-                <Badge 
-                  variant="outline" 
-                  className={`${
-                    service.color === 'primary' ? 'border-primary/20 text-primary' :
-                    service.color === 'secondary' ? 'border-secondary/20 text-secondary' : 'border-accent/20 text-accent'
-                  }`}
-                >
-                  {service.rate}
-                </Badge>
 
-                {/* Features List */}
-                <div className="space-y-2">
-                  {service.features.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-secondary flex-shrink-0" />
-                      <span className="text-muted-foreground">{feature}</span>
-                    </div>
-                  ))}
+              <CardContent className="space-y-6 flex-1 flex flex-col justify-between pt-0">
+                <div className="space-y-4 text-left">
+                  {/* Rate Badge */}
+                  <Badge 
+                    variant="outline" 
+                    className={`font-semibold text-xs py-1 px-2.5 rounded-full border ${service.badgeColor}`}
+                  >
+                    {service.rate}
+                  </Badge>
+
+                  {/* Features List */}
+                  <div className="space-y-2.5 pt-2">
+                    {service.features.map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2.5 text-xs">
+                        <CheckCircle className="h-4 w-4 text-emerald-500 dark:text-emerald-450 shrink-0" />
+                        <span className="text-slate-600 dark:text-slate-300 font-medium">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* CTA Button */}
-                <Button
-                  onClick={() => {
-                    if (typeof service.ctaAction === 'function') {
-                      service.ctaAction();
-                    }
-                    console.log('Service CTA clicked:', service.title);
-                  }}
-                  className="w-full flex items-center gap-2"
-                  variant={service.color === 'primary' ? 'default' : 'outline'}
-                  data-testid={`button-${service.id}-cta`}
-                >
-                  {service.cta}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
+                <div className="pt-4">
+                  <Button
+                    onClick={() => {
+                      if (typeof service.ctaAction === 'function') {
+                        service.ctaAction();
+                      }
+                    }}
+                    className="w-full flex items-center justify-center gap-2 font-bold text-xs py-5 rounded-xl transition-all duration-200 shadow-sm hover:shadow active:scale-[0.98] group"
+                    variant={service.id.includes('loan') ? 'default' : 'outline'}
+                    data-testid={`button-${service.id}-cta`}
+                  >
+                    {service.cta}
+                    <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform duration-200" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           );
@@ -218,12 +237,12 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       </div>
 
       {/* Benefits Section */}
-      <div className="bg-muted/30 rounded-lg p-8">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-2">
+      <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-slate-900/60 dark:to-slate-955/20 rounded-3xl p-10 border border-slate-200/50 dark:border-slate-800/80 shadow-inner">
+        <div className="text-center mb-10 max-w-2xl mx-auto space-y-2">
+          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Why Choose Bhalchandra Finance?
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
             We are committed to providing the best financial services with transparency and trust.
           </p>
         </div>
@@ -232,13 +251,13 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
-              <div key={index} className="text-center space-y-4" data-testid={`benefit-${index}`}>
-                <div className="p-4 bg-primary/10 rounded-full w-fit mx-auto">
-                  <Icon className="h-8 w-8 text-primary" />
+              <div key={index} className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-2xl p-6 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 text-center space-y-4" data-testid={`benefit-${index}`}>
+                <div className={`p-4 rounded-full w-fit mx-auto shadow-sm border border-slate-100/50 dark:border-slate-800/50 ${benefit.color}`}>
+                  <Icon className="h-6 w-6" />
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-foreground">{benefit.title}</h3>
-                  <p className="text-muted-foreground mt-2">{benefit.description}</p>
+                <div className="space-y-1.5">
+                  <h3 className="text-lg font-bold text-slate-850 dark:text-slate-100">{benefit.title}</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-normal">{benefit.description}</p>
                 </div>
               </div>
             );
@@ -247,23 +266,29 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       </div>
 
       {/* CTA Section */}
-      <div className="text-center space-y-6 bg-gradient-to-r from-primary/5 to-secondary/5 p-12 rounded-lg">
-        <h2 className="text-3xl font-bold text-foreground">
-          Ready to Get Started?
-        </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          Let our financial experts help you choose the right service for your needs. 
-          Contact us today for a personalized consultation.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-700 to-indigo-850 dark:from-blue-800 dark:to-indigo-950 text-white rounded-3xl p-12 shadow-xl text-center space-y-6">
+        {/* Glow/blur details */}
+        <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-blue-500/25 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-indigo-500/25 blur-3xl" />
+
+        <div className="relative z-10 space-y-3 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-extrabold sm:text-4xl tracking-tight">
+            Ready to Get Started?
+          </h2>
+          <p className="text-sm text-blue-100/80 leading-relaxed font-medium">
+            Let our financial experts help you choose the right service for your needs. 
+            Contact us today for a personalized consultation.
+          </p>
+        </div>
+
+        <div className="relative z-10 flex flex-col sm:flex-row gap-4 justify-center pt-2">
           <Button 
             size="lg"
             onClick={() => {
               onGetStarted();
-              console.log('Services CTA - Get Started clicked');
             }}
             data-testid="button-services-get-started"
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-slate-50 font-bold px-8 py-6 rounded-full shadow-lg"
           >
             Get Started Today
             <ArrowRight className="h-5 w-5" />
@@ -271,8 +296,9 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
           <Button 
             variant="outline" 
             size="lg"
-            onClick={() => console.log('Services CTA - Contact Us clicked')}
+            onClick={() => console.log('Services CTA - Contact Our Experts clicked')}
             data-testid="button-services-contact"
+            className="border-white/30 hover:bg-white/10 text-white font-bold px-8 py-6 rounded-full bg-transparent"
           >
             Contact Our Experts
           </Button>
