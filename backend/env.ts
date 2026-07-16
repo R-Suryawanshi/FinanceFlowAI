@@ -10,8 +10,8 @@ export function validateEnvironment() {
   }
   
   // Validate DATABASE_URL format for Neon
-  const dbUrl = process.env.DATABASE_URL;
-  if (!dbUrl.includes('neon.tech') && !dbUrl.includes('postgresql://')) {
+  const dbUrl = process.env.DATABASE_URL || '';
+  if (dbUrl && !dbUrl.includes('neon.tech') && !dbUrl.includes('postgresql://')) {
     console.warn('DATABASE_URL may not be a valid Neon connection string');
   }
   

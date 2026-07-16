@@ -14,7 +14,8 @@ import {
   MessageCircle,
   Building2,
   Users,
-  CheckCircle
+  CheckCircle,
+  ArrowLeft
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -27,7 +28,11 @@ interface ContactForm {
   message: string;
 }
 
-export function ContactPage() {
+interface ContactPageProps {
+  onBack?: () => void;
+}
+
+export function ContactPage({ onBack }: ContactPageProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ContactForm>({
@@ -132,14 +137,27 @@ export function ContactPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
       {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-          Contact Us
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Get in touch with our financial experts. We're here to help you with all your 
-          financial needs and answer any questions you may have.
-        </p>
+      <div className="flex items-start gap-5">
+        {onBack && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onBack}
+            data-testid="page-back-button"
+            className="h-10 w-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1.5"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        <div className="space-y-3 flex-1 text-left">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground">
+            Contact Us
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl">
+            Get in touch with our financial experts. We're here to help you with all your 
+            financial needs and answer any questions you may have.
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

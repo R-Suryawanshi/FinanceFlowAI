@@ -16,11 +16,17 @@ import {
   CheckCircle,
   AlertTriangle,
   ShieldAlert,
-  UserMinus
+  UserMinus,
+  ArrowLeft
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-export function AdminCustomersPage({ user }: any) {
+interface AdminCustomersPageProps {
+  user: any;
+  onBack?: () => void;
+}
+
+export function AdminCustomersPage({ user, onBack }: AdminCustomersPageProps) {
   const { toast } = useToast();
   const [search, setSearch] = useState("");
   const [liveUsers, setLiveUsers] = useState<any[]>([]);
@@ -121,9 +127,22 @@ export function AdminCustomersPage({ user }: any) {
     <div className="p-6 sm:p-8 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Customer Accounts</h1>
-          <p className="text-muted-foreground">Review registered borrower portfolios, verification status, and credit ratings</p>
+        <div className="flex items-start gap-4">
+          {onBack && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onBack}
+              data-testid="page-back-button"
+              className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          )}
+          <div className="space-y-1 flex-1 text-left">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Customer Accounts</h1>
+            <p className="text-muted-foreground">Review registered borrower portfolios, verification status, and credit ratings</p>
+          </div>
         </div>
         <Button variant="outline" size="sm" className="w-full sm:w-auto border-slate-205 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850" onClick={fetchLiveUsersData} disabled={loading}>
           <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
@@ -238,7 +257,7 @@ export function AdminCustomersPage({ user }: any) {
                       {!cust.isActive && (
                         <Button
                           variant="outline"
-                          size="xs"
+                          size="sm"
                           onClick={() => handleVerifyKyc(cust.id, cust.name)}
                           className="text-xs border border-blue-200 text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/20"
                         >
@@ -247,7 +266,7 @@ export function AdminCustomersPage({ user }: any) {
                       )}
                       <Button
                         variant="outline"
-                        size="xs"
+                        size="sm"
                         onClick={() => handleToggleStatus(cust.id, cust.name, cust.isActive)}
                         className={`text-xs border ${
                           cust.isActive 

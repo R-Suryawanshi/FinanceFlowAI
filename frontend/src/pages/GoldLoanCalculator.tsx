@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Coins, Weight, Percent, Calendar, DollarSign } from "lucide-react";
+import { Coins, Weight, Percent, Calendar, DollarSign, ArrowLeft } from "lucide-react";
 
 interface GoldLoanResult {
   loanAmount: number;
@@ -16,9 +16,10 @@ interface GoldLoanResult {
 
 interface GoldLoanCalculatorProps {
   onApply?: (loanType: 'home' | 'car' | 'personal' | 'gold', amount: number, tenure: number) => void;
+  onBack?: () => void;
 }
 
-export function GoldLoanCalculator({ onApply }: GoldLoanCalculatorProps) {
+export function GoldLoanCalculator({ onApply, onBack }: GoldLoanCalculatorProps) {
   const [goldWeight, setGoldWeight] = useState(50); // in grams
   const [goldPurity, setGoldPurity] = useState("22K");
   const [loanTenure, setLoanTenure] = useState(12); // months
@@ -79,11 +80,24 @@ export function GoldLoanCalculator({ onApply }: GoldLoanCalculatorProps) {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-foreground mb-2">Gold Loan Calculator</h2>
-        <p className="text-muted-foreground">
-          Calculate how much loan you can get against your gold jewelry with instant valuation
-        </p>
+      <div className="flex items-start gap-5 mb-8">
+        {onBack && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onBack}
+            data-testid="page-back-button"
+            className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        <div className="space-y-2 flex-1 text-left">
+          <h2 className="text-3xl font-bold text-foreground">Gold Loan Calculator</h2>
+          <p className="text-muted-foreground">
+            Calculate how much loan you can get against your gold jewelry with instant valuation
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

@@ -37,7 +37,11 @@ import {
   LayoutDashboard,
   UploadCloud,
   Download,
-  ShieldCheck
+  ShieldCheck,
+  Home,
+  Car,
+  User,
+  Save
 } from "lucide-react";
 import {
   Dialog,
@@ -50,7 +54,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { User, Save } from "lucide-react";
 
 interface UserDashboardProps {
   onNavigateToCalculator: (type: "emi" | "gold" | "fd") => void;
@@ -155,6 +158,8 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
   const [modalAccountHolder, setModalAccountHolder] = useState("");
   const [modalAccountType, setModalAccountType] = useState("");
   const [showPaymentUI, setShowPaymentUI] = useState(false);
+  const [showPaymentHistory, setShowPaymentHistory] = useState(false);
+  const [isLoanSelectorOpen, setIsLoanSelectorOpen] = useState(false);
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("UPI");
   const [isPaying, setIsPaying] = useState(false);
@@ -794,15 +799,23 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       </div>
 
       {/* ✅ Integrated Payment Section */}
-      <Card>
+      <Card className="rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900 overflow-hidden">
         <CardHeader>
           <CardTitle>Pending Payments</CardTitle>
           <CardDescription>Manage your loan repayments</CardDescription>
         </CardHeader>
         <CardContent>
           {activeLoans.length === 0 ? (
-            <div className="text-center py-4">
-              <p className="text-muted-foreground">You have no active loans or pending repayments.</p>
+            <div className="text-center py-10 flex flex-col items-center justify-center gap-3">
+              <div className="p-3 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 rounded-full">
+                <ShieldCheck className="h-8 w-8 animate-pulse" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-semibold text-slate-800 dark:text-slate-200">All Caught Up!</p>
+                <p className="text-sm text-muted-foreground max-w-sm">
+                  You have no active loans or pending repayments at this time.
+                </p>
+              </div>
             </div>
           ) : (
             <div className="flex justify-between items-center">
@@ -1296,8 +1309,98 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
         </DialogContent>
       </Dialog>
 
+      {/* Payment History Dialog */}
+      <Dialog open={showPaymentHistory} onOpenChange={setShowPaymentHistory}>
+        <DialogContent className="max-w-3xl sm:rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden p-6">
+          <DialogHeader className="pb-4 border-b border-slate-100 dark:border-slate-800">
+            <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Clock className="h-5 w-5 text-blue-750" />
+              Repayment Transaction History
+            </DialogTitle>
+            <DialogDescription className="text-sm text-slate-500">
+              View your historical payment records and receipts.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="py-4 overflow-x-auto max-h-[400px]">
+            {payments.length === 0 ? (
+              <div className="py-12 flex flex-col items-center justify-center gap-3 text-center">
+                <div className="p-3 bg-slate-50 dark:bg-slate-800/50 text-slate-400 rounded-full">
+                  <CreditCard className="h-8 w-8" />
+                </div>
+                <div className="space-y-1">
+                  <p className="font-semibold text-slate-800 dark:text-slate-200">No Transactions Yet</p>
+                  <p className="text-xs text-muted-foreground max-w-xs">
+                    Once you make your first repayment or EMI, the details will appear here.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-bold uppercase tracking-wider">
+                    <th className="pb-3 pr-4">Date</th>
+                    <th className="pb-3 px-4">Reference ID</th>
+                    <th className="pb-3 px-4">Method</th>
+                    <th className="pb-3 px-4 text-right">Amount</th>
+                    <th className="pb-3 pl-4 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 font-medium">
+                  {payments.map((p) => (
+                    <tr key={p.payment.id} className="text-slate-700 dark:text-slate-350 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                      <td className="py-3 pr-4 text-slate-500">
+                        {new Date(p.payment.paymentDate).toLocaleDateString("en-IN", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit"
+                        })}
+                      </td>
+                      <td className="py-3 px-4 font-mono text-[10px] text-slate-500">
+                        {p.payment.paymentReference}
+                      </td>
+                      <td className="py-3 px-4 font-semibold uppercase text-slate-600 dark:text-slate-400">
+                        {p.payment.paymentMethod}
+                      </td>
+                      <td className="py-3 px-4 text-right font-bold text-slate-900 dark:text-white">
+                        {formatCurrency(parseFloat(p.payment.amount))}
+                      </td>
+                      <td className="py-3 pl-4 text-right">
+                        <Badge
+                          className={`border-none text-[10px] font-bold px-2 py-0.5 ${
+                            p.payment.status === "success" || p.payment.status === "completed"
+                              ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400"
+                              : p.payment.status === "pending"
+                              ? "bg-amber-50 text-amber-700 hover:bg-amber-50 dark:bg-amber-950/30 dark:text-amber-400"
+                              : "bg-rose-50 text-rose-700 hover:bg-rose-50 dark:bg-rose-950/30 dark:text-rose-455"
+                          }`}
+                        >
+                          {p.payment.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+          <DialogFooter className="pt-4 border-t border-slate-100 dark:border-slate-800">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowPaymentHistory(false)}
+              className="border-slate-200 dark:border-slate-800"
+            >
+              Close Window
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Quick Actions */}
-      <Card>
+      <Card className="rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900 overflow-hidden">
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
           <CardDescription>Access your most used financial tools</CardDescription>
@@ -1314,26 +1417,29 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
             ].map((action) => {
               const Icon = action.icon;
               return (
-                <Button
+                <button
                   key={action.id}
-                  variant="outline"
-                  className="h-20 flex flex-col gap-2"
+                  type="button"
                   onClick={() => {
                     if (action.id === "emi-calc") onNavigateToCalculator("emi");
                     else if (action.id === "gold-calc") onNavigateToCalculator("gold");
                     else if (action.id === "fd-calc") onNavigateToCalculator("fd");
                     else if (action.id === "make-payment") setShowPaymentUI(true);
-                    else if (action.id === "loan-apply" && onNavigateToPage) onNavigateToPage("loan-application-personal");
+                    else if (action.id === "loan-apply" && onNavigateToPage) setIsLoanSelectorOpen(true);
                     else if (action.id === "payment-history") {
-                      const schedCard = document.querySelector(".timeline-card");
-                      if (schedCard) schedCard.scrollIntoView({ behavior: "smooth" });
+                      setShowPaymentHistory(true);
                     }
                   }}
+                  className="p-5 flex items-start gap-4 rounded-xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 text-left hover:border-blue-500/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 hover:shadow-md transition-all duration-200 group active:scale-[0.98]"
                 >
-                  <Icon className="h-6 w-6" />
-                  <span className="font-medium text-sm">{action.title}</span>
-                  <span className="text-xs text-muted-foreground">{action.description}</span>
-                </Button>
+                  <div className="p-3 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 rounded-lg group-hover:scale-110 transition-transform duration-200 shrink-0">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-1 min-w-0">
+                    <p className="font-semibold text-sm text-slate-850 dark:text-slate-200 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">{action.title}</p>
+                    <p className="text-xs text-muted-foreground leading-normal">{action.description}</p>
+                  </div>
+                </button>
               );
             })}
           </div>
@@ -1767,6 +1873,91 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               </Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog for Loan Type Selection */}
+      <Dialog open={isLoanSelectorOpen} onOpenChange={setIsLoanSelectorOpen}>
+        <DialogContent className="max-w-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+              <FileText className="h-5 w-5 text-blue-700 dark:text-blue-450" />
+              Select Loan Type
+            </DialogTitle>
+            <DialogDescription className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+              Choose the category of loan you want to apply for to start the application process
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 py-4">
+            {[
+              {
+                id: "home",
+                title: "Home Loan",
+                icon: Home,
+                desc: "Buy your dream home with low rates",
+                color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 hover:border-emerald-300"
+              },
+              {
+                id: "car",
+                title: "Car Loan",
+                icon: Car,
+                desc: "Finance new or pre-owned vehicles",
+                color: "text-amber-600 bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/30 hover:border-amber-300"
+              },
+              {
+                id: "personal",
+                title: "Personal Loan",
+                icon: User,
+                desc: "Get instant cash for personal needs",
+                color: "text-blue-600 bg-blue-50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900/30 hover:border-blue-300"
+              },
+              {
+                id: "gold",
+                title: "Gold Loan",
+                icon: Coins,
+                desc: "Unlock the value of your gold items",
+                color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-950/20 border-yellow-100 dark:border-yellow-900/30 hover:border-yellow-300"
+              }
+            ].map((loanOption) => {
+              const LoanIcon = loanOption.icon;
+              return (
+                <button
+                  key={loanOption.id}
+                  type="button"
+                  onClick={() => {
+                    setIsLoanSelectorOpen(false);
+                    if (onNavigateToPage) {
+                      onNavigateToPage(`loan-application-${loanOption.id}`);
+                    }
+                  }}
+                  className={`p-4 rounded-xl border flex items-start gap-3.5 text-left transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] group bg-white dark:bg-slate-900/50 ${loanOption.color}`}
+                >
+                  <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 shadow-sm border border-slate-100/50 dark:border-slate-800 shrink-0">
+                    <LoanIcon className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-1 min-w-0">
+                    <span className="font-bold text-sm text-slate-800 dark:text-slate-200 block group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
+                      {loanOption.title}
+                    </span>
+                    <span className="text-[11px] text-muted-foreground leading-normal block">
+                      {loanOption.desc}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsLoanSelectorOpen(false)}
+              className="w-full text-slate-500 font-semibold border-slate-200 dark:border-slate-800 rounded-full"
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

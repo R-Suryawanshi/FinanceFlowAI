@@ -204,18 +204,18 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-955 pb-16 px-4 md:px-8 pt-32 max-w-7xl mx-auto">
       {/* Header section */}
-      <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="space-y-1">
-          <button 
-            type="button"
-            onClick={onBack}
-            className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-blue-700 dark:hover:text-blue-400 transition-colors mb-2 group"
-          >
-            <ArrowLeft className="h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
-            Back to Dashboard
-          </button>
+      <div className="mb-8 flex items-start gap-5">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onBack}
+          data-testid="page-back-button"
+          className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+        >
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div className="space-y-1 flex-1 text-left">
           <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <User className="h-8 w-8 text-blue-700" />
             My Account Profile
           </h1>
           <p className="text-sm text-slate-500">

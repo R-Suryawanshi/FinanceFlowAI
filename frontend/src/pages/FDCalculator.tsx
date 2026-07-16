@@ -4,9 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { PiggyBank, Percent, Calendar, CheckCircle } from "lucide-react";
+import { PiggyBank, Percent, Calendar, CheckCircle, ArrowLeft } from "lucide-react";
 
-export function FDCalculator() {
+interface FDCalculatorProps {
+  onBack?: () => void;
+}
+
+export function FDCalculator({ onBack }: FDCalculatorProps) {
   const [depositAmount, setDepositAmount] = useState(50000); // INR
   const [tenureMonths, setTenureMonths] = useState(36); // months
   const [isSeniorCitizen, setIsSeniorCitizen] = useState(false);
@@ -133,11 +137,24 @@ export function FDCalculator() {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-foreground mb-2">Fixed Deposit (FD) Calculator</h2>
-        <p className="text-muted-foreground">
-          Grow your savings with secure high-yield returns. Plan your future returns instantly.
-        </p>
+      <div className="flex items-start gap-5 mb-8">
+        {onBack && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onBack}
+            data-testid="page-back-button"
+            className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        <div className="space-y-2 flex-1 text-left">
+          <h2 className="text-3xl font-bold text-foreground">Fixed Deposit (FD) Calculator</h2>
+          <p className="text-muted-foreground">
+            Grow your savings with secure high-yield returns. Plan your future returns instantly.
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

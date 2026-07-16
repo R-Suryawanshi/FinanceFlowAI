@@ -15,12 +15,18 @@ import {
   RefreshCcw,
   Search,
   Calendar,
+  ArrowLeft
 } from "lucide-react";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 
-export function AdminPaymentsPage({ user }: any) {
+interface AdminPaymentsPageProps {
+  user: any;
+  onBack?: () => void;
+}
+
+export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
   const [search, setSearch] = useState("");
   const [liveStats, setLiveStats] = useState({ totalUsers: 0, activeLoans: 0, totalRevenue: 0 });
   const [livePayments, setLivePayments] = useState<any[]>([]);
@@ -116,9 +122,22 @@ export function AdminPaymentsPage({ user }: any) {
     <div className="p-6 sm:p-8 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Repayments Ledger</h1>
-          <p className="text-muted-foreground">Track historical and incoming customer EMI payment transactions</p>
+        <div className="flex items-start gap-4">
+          {onBack && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onBack}
+              data-testid="page-back-button"
+              className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          )}
+          <div className="space-y-1 flex-1 text-left">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Repayments Ledger</h1>
+            <p className="text-muted-foreground">Track historical and incoming customer EMI payment transactions</p>
+          </div>
         </div>
         <Button variant="outline" size="sm" className="w-full sm:w-auto border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-855" onClick={fetchLivePaymentsData} disabled={loading}>
           <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />

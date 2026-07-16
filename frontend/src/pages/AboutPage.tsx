@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { 
   Building2, 
   Users, 
@@ -10,10 +11,15 @@ import {
   TrendingUp,
   CheckCircle,
   Calendar,
-  MapPin
+  MapPin,
+  ArrowLeft
 } from "lucide-react";
 
-export function AboutPage() {
+interface AboutPageProps {
+  onBack?: () => void;
+}
+
+export function AboutPage({ onBack }: AboutPageProps) {
   const stats = [
     { label: 'Years of Experience', value: '11+', icon: Calendar },
     { label: 'Happy Customers', value: '2,000+', icon: Users },
@@ -79,15 +85,28 @@ export function AboutPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
       {/* Header */}
-      <div className="text-center space-y-6">
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-          About Bhalchandra Finance
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-4xl mx-auto">
-          For over 15 years, we have been dedicated to providing comprehensive financial solutions 
-          that empower individuals and businesses to achieve their financial goals. Our commitment to 
-          excellence, transparency, and customer satisfaction has made us a trusted name in the industry.
-        </p>
+      <div className="flex items-start gap-5">
+        {onBack && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onBack}
+            data-testid="page-back-button"
+            className="h-10 w-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1.5"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        <div className="space-y-3 flex-1 text-left">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground">
+            About Bhalchandra Finance
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-4xl">
+            For over 15 years, we have been dedicated to providing comprehensive financial solutions 
+            that empower individuals and businesses to achieve their financial goals. Our commitment to 
+            excellence, transparency, and customer satisfaction has made us a trusted name in the industry.
+          </p>
+        </div>
       </div>
 
       {/* Stats */}

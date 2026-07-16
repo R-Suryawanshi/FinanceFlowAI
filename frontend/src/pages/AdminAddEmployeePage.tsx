@@ -8,7 +8,13 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Eye, EyeOff, Calendar, Plus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-export function AdminAddEmployeePage({ user, onPageChange }: any) {
+interface AdminAddEmployeePageProps {
+  user: any;
+  onPageChange: (page: string) => void;
+  onBack?: () => void;
+}
+
+export function AdminAddEmployeePage({ user, onPageChange, onBack }: AdminAddEmployeePageProps) {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -103,12 +109,15 @@ export function AdminAddEmployeePage({ user, onPageChange }: any) {
       
       {/* Title Header Section */}
       <div className="flex items-center gap-4">
-        <button
-          onClick={() => onPageChange && onPageChange("admin-employees")}
-          className="h-10 w-10 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-center text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={onBack || (() => onPageChange && onPageChange("admin-employees"))}
+          data-testid="page-back-button"
+          className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0"
         >
-          <ArrowLeft className="h-4 w-4" />
-        </button>
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Add New Employee</h1>
       </div>
 
