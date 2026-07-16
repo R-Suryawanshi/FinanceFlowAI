@@ -11,16 +11,18 @@ import {
   Shield,
   Clock,
   CheckCircle,
-  ArrowRight
+  ArrowRight,
+  ArrowLeft
 } from "lucide-react";
 
 interface ServicesPageProps {
   onNavigateToCalculator: (type: 'emi' | 'gold' | 'fd') => void;
   onGetStarted: () => void;
-  onPageChange?: (page: string) => void; // Added for page changes
+  onPageChange?: (page: string) => void;
+  onBack?: () => void;
 }
 
-export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChange }: ServicesPageProps) {
+export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChange, onBack }: ServicesPageProps) {
   const services = [
     {
       id: 'emi-calculator',
@@ -122,14 +124,27 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
       {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-          Our Financial Services
-        </h1>
-        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-          Comprehensive financial solutions designed to meet all your monetary needs. 
-          From loans to investments, we've got you covered with competitive rates and expert guidance.
-        </p>
+      <div className="flex items-start gap-5">
+        {onBack && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onBack}
+            data-testid="page-back-button"
+            className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1.5"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        <div className="space-y-3 flex-1 text-left">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground">
+            Our Financial Services
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl">
+            Comprehensive financial solutions designed to meet all your monetary needs. 
+            From loans to investments, we've got you covered with competitive rates and expert guidance.
+          </p>
+        </div>
       </div>
 
       {/* Services Grid */}

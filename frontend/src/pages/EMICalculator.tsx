@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Calculator, DollarSign, Calendar, Percent } from "lucide-react";
+import { Calculator, DollarSign, Calendar, Percent, ArrowLeft } from "lucide-react";
 
 interface EMIResult {
   emi: number;
@@ -15,9 +15,10 @@ interface EMIResult {
 
 interface EMICalculatorProps {
   onApply?: (loanType: 'home' | 'car' | 'personal' | 'gold', amount: number, tenure: number) => void;
+  onBack?: () => void;
 }
 
-export function EMICalculator({ onApply }: EMICalculatorProps) {
+export function EMICalculator({ onApply, onBack }: EMICalculatorProps) {
   const [selectedType, setSelectedType] = useState<'home' | 'car' | 'personal' | 'gold'>('personal');
   const [principal, setPrincipal] = useState(500000);
   const [rate, setRate] = useState(11.5);
@@ -63,11 +64,24 @@ export function EMICalculator({ onApply }: EMICalculatorProps) {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-foreground mb-2">EMI Calculator</h2>
-        <p className="text-muted-foreground">
-          Calculate your Equated Monthly Installment (EMI) for home loans, car loans, and personal loans
-        </p>
+      <div className="flex items-start gap-5 mb-8">
+        {onBack && (
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={onBack}
+            data-testid="page-back-button"
+            className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </Button>
+        )}
+        <div className="space-y-2 flex-1 text-left">
+          <h2 className="text-3xl font-bold text-foreground">EMI Calculator</h2>
+          <p className="text-muted-foreground">
+            Calculate your Equated Monthly Installment (EMI) for home loans, car loans, and personal loans
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

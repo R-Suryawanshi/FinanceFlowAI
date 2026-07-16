@@ -28,6 +28,8 @@ import ProfilePage from "./pages/ProfilePage";
 import { Footer } from "./components/Footer";
 import { AuthModal } from "./components/AuthModal";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 
 interface User {
   id: string;
@@ -41,8 +43,44 @@ interface User {
 function App() {
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState("home");
+  const [pageHistory, setPageHistory] = useState<string[]>(["home"]);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    const rootPages = ["home", "admin-dashboard", "user-dashboard"];
+    
+    setPageHistory(prev => {
+      // If navigating back to the second-to-last item, pop the last item.
+      if (prev.length > 1 && prev[prev.length - 2] === currentPage) {
+        return prev.slice(0, -1);
+      }
+      
+      // If the current page is a root page, reset history to just this root page.
+      if (rootPages.includes(currentPage)) {
+        return [currentPage];
+      }
+      
+      // If the current page is already the last item in the history stack, do nothing.
+      if (prev[prev.length - 1] === currentPage) return prev;
+      
+      // Otherwise, push the new page to history.
+      return [...prev, currentPage];
+    });
+  }, [currentPage]);
+
+  const handleBack = () => {
+    if (pageHistory.length > 1) {
+      const prevPage = pageHistory[pageHistory.length - 2];
+      setCurrentPage(prevPage);
+    } else {
+      if (user) {
+        setCurrentPage(user.role === "admin" ? "admin-dashboard" : "user-dashboard");
+      } else {
+        setCurrentPage("home");
+      }
+    }
+  };
 
   const [user, setUser] = useState<User | null>(null);
   const [authToken, setAuthToken] = useState(localStorage.getItem("authToken"));
@@ -177,13 +215,15 @@ function App() {
             }
             onGetStarted={handleGetStarted}
             onPageChange={setCurrentPage}
+            onBack={handleBack}
           />
         );
-      case "about": return <AboutPage />;
-      case "contact": return <ContactPage />;
+      case "about": return <AboutPage onBack={handleBack} />;
+      case "contact": return <ContactPage onBack={handleBack} />;
       case "emi-calculator":
         return (
           <EMICalculator
+            onBack={handleBack}
             onApply={(type, amount, tenure) => {
               setPrefilledAmount(amount);
               setPrefilledTenure(tenure);
@@ -194,6 +234,7 @@ function App() {
       case "gold-calculator":
         return (
           <GoldLoanCalculator
+            onBack={handleBack}
             onApply={(type, amount, tenure) => {
               setPrefilledAmount(amount);
               setPrefilledTenure(tenure);
@@ -202,14 +243,14 @@ function App() {
           />
         );
       case "fd-calculator":
-        return <FDCalculator />;
+        return <FDCalculator onBack={handleBack} />;
       case "admin-dashboard": return user?.role === "admin" ? <AdminDashboard user={user} onPageChange={setCurrentPage} /> : <>Access Denied</>;
-      case "admin-applications": return user?.role === "admin" ? <AdminApplicationsPage user={user} /> : <>Access Denied</>;
-      case "admin-payments": return user?.role === "admin" ? <AdminPaymentsPage user={user} /> : <>Access Denied</>;
-      case "admin-users": return user?.role === "admin" ? <AdminUsersPage user={user} /> : <>Access Denied</>;
-      case "admin-employees": return user?.role === "admin" ? <AdminEmployeesPage user={user} onPageChange={setCurrentPage} /> : <>Access Denied</>;
-      case "admin-add-employee": return user?.role === "admin" ? <AdminAddEmployeePage user={user} onPageChange={setCurrentPage} /> : <>Access Denied</>;
-      case "admin-customers": return user?.role === "admin" ? <AdminCustomersPage user={user} /> : <>Access Denied</>;
+      case "admin-applications": return user?.role === "admin" ? <AdminApplicationsPage user={user} onBack={handleBack} /> : <>Access Denied</>;
+      case "admin-payments": return user?.role === "admin" ? <AdminPaymentsPage user={user} onBack={handleBack} /> : <>Access Denied</>;
+      case "admin-users": return user?.role === "admin" ? <AdminUsersPage user={user} onBack={handleBack} /> : <>Access Denied</>;
+      case "admin-employees": return user?.role === "admin" ? <AdminEmployeesPage user={user} onPageChange={setCurrentPage} onBack={handleBack} /> : <>Access Denied</>;
+      case "admin-add-employee": return user?.role === "admin" ? <AdminAddEmployeePage user={user} onPageChange={setCurrentPage} onBack={handleBack} /> : <>Access Denied</>;
+      case "admin-customers": return user?.role === "admin" ? <AdminCustomersPage user={user} onBack={handleBack} /> : <>Access Denied</>;
       case "user-dashboard": return user ? (
         <UserDashboard
           user={user}
@@ -222,13 +263,13 @@ function App() {
       case "profile": return user ? (
         <ProfilePage
           user={user}
-          onBack={() => setCurrentPage(user.role === "admin" ? "admin-dashboard" : "user-dashboard")}
+          onBack={handleBack}
         />
       ) : <>Please login</>;
-      case "loan-application-home": return <LoanApplicationForm loanType="home" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} />;
-      case "loan-application-car": return <LoanApplicationForm loanType="car" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} />;
-      case "loan-application-personal": return <LoanApplicationForm loanType="personal" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} />;
-      case "loan-application-gold": return <LoanApplicationForm loanType="gold" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} />;
+      case "loan-application-home": return <LoanApplicationForm loanType="home" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} onBack={handleBack} user={user} />;
+      case "loan-application-car": return <LoanApplicationForm loanType="car" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} onBack={handleBack} user={user} />;
+      case "loan-application-personal": return <LoanApplicationForm loanType="personal" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} onBack={handleBack} user={user} />;
+      case "loan-application-gold": return <LoanApplicationForm loanType="gold" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} onBack={handleBack} user={user} />;
       default: return <Hero onGetStarted={handleGetStarted} onLearnMore={() => setCurrentPage("about")} />;
     }
   };

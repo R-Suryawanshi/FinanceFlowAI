@@ -13,9 +13,15 @@ import {
   Users,
   RefreshCcw,
   Search,
+  ArrowLeft
 } from "lucide-react";
 
-export function AdminUsersPage({ user }: any) {
+interface AdminUsersPageProps {
+  user: any;
+  onBack?: () => void;
+}
+
+export function AdminUsersPage({ user, onBack }: AdminUsersPageProps) {
   const [search, setSearch] = useState("");
   const [liveStats, setLiveStats] = useState({ totalUsers: 0, activeLoans: 0, totalRevenue: 0 });
   const [liveUsers, setLiveUsers] = useState<any[]>([]);
@@ -89,9 +95,22 @@ export function AdminUsersPage({ user }: any) {
     <div className="p-6 sm:p-8 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Registered Users</h1>
-          <p className="text-muted-foreground">Monitor and manage registered user accounts in the Bhalchandra Finance portal</p>
+        <div className="flex items-start gap-4">
+          {onBack && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onBack}
+              data-testid="page-back-button"
+              className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          )}
+          <div className="space-y-1 flex-1 text-left">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Registered Users</h1>
+            <p className="text-muted-foreground">Monitor and manage registered user accounts in the Bhalchandra Finance portal</p>
+          </div>
         </div>
         <Button variant="outline" size="sm" className="w-full sm:w-auto border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850" onClick={fetchLiveUsersData} disabled={loading}>
           <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />

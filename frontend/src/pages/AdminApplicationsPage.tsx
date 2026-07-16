@@ -20,6 +20,8 @@ import {
   RefreshCcw,
   Search,
   CheckCircle,
+  ArrowLeft,
+  Building
 } from "lucide-react";
 import {
   Dialog,
@@ -30,7 +32,12 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
-export function AdminApplicationsPage({ user }: any) {
+interface AdminApplicationsPageProps {
+  user: any;
+  onBack?: () => void;
+}
+
+export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPageProps) {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [liveStats, setLiveStats] = useState({ totalUsers: 0, activeLoans: 0, totalRevenue: 0 });
@@ -157,9 +164,22 @@ export function AdminApplicationsPage({ user }: any) {
     <div className="p-6 sm:p-8 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Applications Ledger</h1>
-          <p className="text-muted-foreground">Manage and review incoming customer finance applications</p>
+        <div className="flex items-start gap-4">
+          {onBack && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onBack}
+              data-testid="page-back-button"
+              className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+          )}
+          <div className="space-y-1 flex-1 text-left">
+            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Applications Ledger</h1>
+            <p className="text-muted-foreground">Manage and review incoming customer finance applications</p>
+          </div>
         </div>
         <Button variant="outline" size="sm" className="w-full sm:w-auto border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850" onClick={fetchLiveApplicationsData} disabled={loading}>
           <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
@@ -366,149 +386,211 @@ export function AdminApplicationsPage({ user }: any) {
             </DialogDescription>
           </DialogHeader>
 
-          {selectedApp && (
-            <div className="space-y-6 pt-4 text-sm">
-              
-              {/* Row 1: Profile & Contacts */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-950/20 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                <div className="space-y-3">
-                  <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
-                    <User className="h-4 w-4 text-primary dark:text-blue-400" /> Applicant Details
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <span className="text-slate-400 dark:text-slate-500">Full Name:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.user?.name}</span>
-                    <span className="text-slate-400 dark:text-slate-500">Email:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.user?.email}</span>
-                    <span className="text-slate-400 dark:text-slate-500">Phone:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.profile?.phoneNumber || "—"}</span>
-                    <span className="text-slate-400 dark:text-slate-500">Date of Birth:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">
-                      {selectedApp.profile?.dateOfBirth 
-                        ? new Date(selectedApp.profile.dateOfBirth).toLocaleDateString("en-IN") 
-                        : "—"}
-                    </span>
+          {selectedApp && (() => {
+            const appNotesProfile = selectedApp.userService?.notes ? (
+              (() => {
+                try {
+                  const parsed = JSON.parse(selectedApp.userService.notes);
+                  if (parsed && typeof parsed === 'object' && parsed.fullName) {
+                    return parsed;
+                  }
+                } catch (e) {}
+                return null;
+              })()
+            ) : null;
+
+            const p = appNotesProfile || selectedApp.profile || {};
+            const name = appNotesProfile?.fullName || selectedApp.user?.name || "—";
+            const email = appNotesProfile?.email || selectedApp.user?.email || "—";
+            const phone = appNotesProfile?.phone || p.phoneNumber || "—";
+            const dob = appNotesProfile?.dateOfBirth || p.dateOfBirth;
+            const gender = appNotesProfile?.gender || p.gender || "—";
+            const aadhar = appNotesProfile?.aadharNumber || p.aadharNumber || "—";
+            const pan = appNotesProfile?.panNumber || p.panNumber || "—";
+            const address = appNotesProfile?.address || p.address || "—";
+            const city = appNotesProfile?.city || p.city || "";
+            const state = appNotesProfile?.state || p.state || "";
+            const pincode = appNotesProfile?.pincode || p.pincode || "";
+            
+            const occupation = appNotesProfile?.occupation || p.occupation || "—";
+            const companyName = appNotesProfile?.companyName || p.companyName || "—";
+            const monthlyIncome = appNotesProfile?.monthlyIncome || p.monthlyIncome || "0";
+            const creditScore = p.creditScore || 720;
+
+            const bankName = appNotesProfile?.bankName || p.bankName || "—";
+            const accountNumber = appNotesProfile?.accountNumber || p.accountNumber || "—";
+            const ifscCode = appNotesProfile?.ifscCode || p.ifscCode || "—";
+            const accountHolderName = appNotesProfile?.accountHolderName || p.accountHolderName || "—";
+            const accountType = appNotesProfile?.accountType || p.accountType || "—";
+
+            return (
+              <div className="space-y-6 pt-4 text-sm">
+                
+                {/* Row 1: Profile & Contacts */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-950/20 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                      <User className="h-4 w-4 text-primary dark:text-blue-400" /> Applicant Details
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <span className="text-slate-400 dark:text-slate-500">Full Name:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{name}</span>
+                      <span className="text-slate-400 dark:text-slate-500">Gender:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{gender}</span>
+                      <span className="text-slate-400 dark:text-slate-500">Email:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{email}</span>
+                      <span className="text-slate-400 dark:text-slate-500">Phone:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{phone}</span>
+                      <span className="text-slate-400 dark:text-slate-500">Date of Birth:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">
+                        {dob ? new Date(dob).toLocaleDateString("en-IN") : "—"}
+                      </span>
+                      <span className="text-slate-400 dark:text-slate-500">Aadhaar Number:</span>
+                      <span className="font-semibold text-slate-850 dark:text-slate-200">{aadhar}</span>
+                      <span className="text-slate-400 dark:text-slate-500">PAN Number:</span>
+                      <span className="font-semibold text-slate-850 dark:text-slate-200">{pan}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-primary dark:text-blue-400" /> Address Details
+                    </h3>
+                    <div className="text-xs space-y-1">
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">{address}</p>
+                      <p className="text-slate-650 dark:text-slate-400">
+                        {[city, state, pincode].filter(Boolean).join(", ") || "—"}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-primary dark:text-blue-400" /> Permanent Address
-                  </h3>
-                  <div className="text-xs space-y-1">
-                    <p className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.profile?.address || "—"}</p>
-                    <p className="text-slate-650 dark:text-slate-400">
-                      {[selectedApp.profile?.city, selectedApp.profile?.state, selectedApp.profile?.pincode]
-                        .filter(Boolean)
-                        .join(", ") || "—"}
-                    </p>
+                {/* Row 2: Financial Auditing */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
+                    <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                      <Briefcase className="h-4 w-4 text-primary dark:text-blue-400" /> Employment & Income
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <span className="text-slate-400 dark:text-slate-500">Occupation:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 capitalize">{occupation}</span>
+                      <span className="text-slate-400 dark:text-slate-500">Company Name:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{companyName}</span>
+                      <span className="text-slate-400 dark:text-slate-550">Monthly Income:</span>
+                      <span className="font-bold text-green-600 dark:text-green-400">
+                        {monthlyIncome ? formatCurrency(parseFloat(monthlyIncome)) : "—"}
+                      </span>
+                      <span className="text-slate-400 dark:text-slate-500">Credit Score:</span>
+                      <span className="font-bold text-primary dark:text-blue-400">{creditScore}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
+                    <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                      <DollarSign className="h-4 w-4 text-primary dark:text-blue-400" /> Loan Terms
+                    </h3>
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <span className="text-slate-400 dark:text-slate-500">Scheme Name:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 capitalize">{selectedApp.serviceType?.displayName || selectedApp.serviceType?.name}</span>
+                      <span className="text-slate-400 dark:text-slate-500">Requested Principal:</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{formatCurrency(parseFloat(selectedApp.userService?.amount))}</span>
+                      <span className="text-slate-400 dark:text-slate-500">Tenure Requested:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.userService?.tenureMonths || selectedApp.userService?.tenure} Months</span>
+                      <span className="text-slate-400 dark:text-slate-500">Base Interest Rate:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.userService?.interestRate}% p.a.</span>
+                      <span className="text-slate-400 dark:text-slate-500">Purpose of Loan:</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 italic col-span-1 break-words">{selectedApp.userService?.purpose || "General Purpose"}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Row 2: Financial Auditing */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Row 2.5: Bank Account Details */}
+                <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/10">
+                  <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                    <Building className="h-4 w-4 text-primary dark:text-blue-400" /> Disbursement Bank Account Details
+                  </h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                    <div>
+                      <span className="text-slate-450 dark:text-slate-500 block mb-0.5">Bank Name</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{bankName}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-450 dark:text-slate-500 block mb-0.5">Account Number</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono">{accountNumber}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-450 dark:text-slate-500 block mb-0.5">IFSC Code</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono">{ifscCode}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-450 dark:text-slate-500 block mb-0.5">Account Holder & Type</span>
+                      <span className="font-semibold text-slate-800 dark:text-slate-200">{accountHolderName} ({accountType})</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Row 3: Co-Applicant & Collateral */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-950/20 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                  <div className="space-y-2">
+                    <h4 className="font-bold text-xs text-slate-450 dark:text-slate-400 uppercase tracking-wider">Guarantor / Co-Applicant</h4>
+                    {selectedApp.userService?.guarantor ? (
+                      <div className="text-xs space-y-1">
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">Name: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).name || "—"}</span></p>
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">Relation: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).relation || "—"}</span></p>
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">Income: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).income ? formatCurrency(parseFloat((selectedApp.userService.guarantor as any).income)) : "—"}</span></p>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-slate-400 dark:text-slate-550 italic">No co-applicant or guarantor provided.</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="font-bold text-xs text-slate-450 dark:text-slate-400 uppercase tracking-wider">Collateral / Security Details</h4>
+                    {selectedApp.userService?.collateral ? (
+                      <div className="text-xs space-y-1">
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">Existing Loan Ledger: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.collateral as any).details || "—"}</span></p>
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">Value of Security: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.collateral as any).value ? formatCurrency(parseFloat((selectedApp.userService.collateral as any).value)) : "—"}</span></p>
+                      </div>
+                    ) : (
+                      <p className="text-xs text-slate-400 dark:text-slate-550 italic">No existing loan balance or collateral provided.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Row 4: KYC Files checklist */}
                 <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
                   <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
-                    <Briefcase className="h-4 w-4 text-primary dark:text-blue-400" /> Employment & Income
+                    <FileText className="h-4 w-4 text-primary dark:text-blue-400" /> Submitted KYC Verification Documents
                   </h3>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <span className="text-slate-400 dark:text-slate-500">Occupation:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200 capitalize">{selectedApp.profile?.occupation || "—"}</span>
-                    <span className="text-slate-400 dark:text-slate-500">Company Name:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.profile?.companyName || "—"}</span>
-                    <span className="text-slate-400 dark:text-slate-500">Monthly Income:</span>
-                    <span className="font-bold text-green-600 dark:text-green-400">
-                      {selectedApp.profile?.monthlyIncome 
-                        ? formatCurrency(parseFloat(selectedApp.profile.monthlyIncome)) 
-                        : "—"}
-                    </span>
-                    <span className="text-slate-400 dark:text-slate-500">Credit Score:</span>
-                    <span className="font-bold text-primary dark:text-blue-400">{selectedApp.profile?.creditScore || 720}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
-                  <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
-                    <DollarSign className="h-4 w-4 text-primary dark:text-blue-400" /> Loan Terms
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <span className="text-slate-400 dark:text-slate-500">Scheme Name:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200 capitalize">{selectedApp.serviceType?.displayName || selectedApp.serviceType?.name}</span>
-                    <span className="text-slate-400 dark:text-slate-500">Requested Principal:</span>
-                    <span className="font-bold text-slate-900 dark:text-white">{formatCurrency(parseFloat(selectedApp.userService?.amount))}</span>
-                    <span className="text-slate-400 dark:text-slate-500">Tenure Requested:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.userService?.tenureMonths || selectedApp.userService?.tenure} Months</span>
-                    <span className="text-slate-400 dark:text-slate-500">Base Interest Rate:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.userService?.interestRate}% p.a.</span>
-                    <span className="text-slate-400 dark:text-slate-500">Purpose of Loan:</span>
-                    <span className="font-semibold text-slate-800 dark:text-slate-200 italic col-span-1 break-words">{selectedApp.userService?.purpose || "General Purpose"}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Row 3: Co-Applicant & Collateral */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-950/20 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
-                <div className="space-y-2">
-                  <h4 className="font-bold text-xs text-slate-450 dark:text-slate-400 uppercase tracking-wider">Guarantor / Co-Applicant</h4>
-                  {selectedApp.userService?.guarantor ? (
-                    <div className="text-xs space-y-1">
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">Name: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).name || "—"}</span></p>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">Relation: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).relation || "—"}</span></p>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">Income: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).income ? formatCurrency(parseFloat((selectedApp.userService.guarantor as any).income)) : "—"}</span></p>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-slate-400 dark:text-slate-550 italic">No co-applicant or guarantor provided.</p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <h4 className="font-bold text-xs text-slate-450 dark:text-slate-400 uppercase tracking-wider">Collateral / Security Details</h4>
-                  {selectedApp.userService?.collateral ? (
-                    <div className="text-xs space-y-1">
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">Existing Loan Ledger: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.collateral as any).details || "—"}</span></p>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">Value of Security: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.collateral as any).value ? formatCurrency(parseFloat((selectedApp.userService.collateral as any).value)) : "—"}</span></p>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-slate-400 dark:text-slate-550 italic">No existing loan balance or collateral provided.</p>
-                  )}
-                </div>
-              </div>
-
-              {/* Row 4: KYC Files checklist */}
-              <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
-                <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
-                  <FileText className="h-4 w-4 text-primary dark:text-blue-400" /> Submitted KYC Verification Documents
-                </h3>
-                {selectedApp.userService?.documents && Object.keys(selectedApp.userService.documents).length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {Object.entries(selectedApp.userService.documents).map(([key, val]: any) => (
-                      <div key={key} className="flex justify-between items-center p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-950/20 text-xs">
-                        <div className="space-y-0.5">
-                          <span className="font-bold text-[10px] text-primary dark:text-blue-400 uppercase tracking-wider block">
-                            {key.replace(/([A-Z])/g, ' $1')}
-                          </span>
-                          <span className="font-semibold text-slate-750 dark:text-slate-200 truncate max-w-[180px] block" title={val.name}>
-                            {val.name}
+                  {selectedApp.userService?.documents && Object.keys(selectedApp.userService.documents).length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {Object.entries(selectedApp.userService.documents).map(([key, val]: any) => (
+                        <div key={key} className="flex justify-between items-center p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-955/20 text-xs">
+                          <div className="space-y-0.5">
+                            <span className="font-bold text-[10px] text-primary dark:text-blue-400 uppercase tracking-wider block">
+                              {key.replace(/([A-Z])/g, ' $1')}
+                            </span>
+                            <span className="font-semibold text-slate-755 dark:text-slate-205 truncate max-w-[180px] block" title={val.name}>
+                              {val.name}
+                            </span>
+                          </div>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold whitespace-nowrap">
+                            {val.size ? `${(val.size / 1024).toFixed(1)} KB` : "Document Loaded"}
                           </span>
                         </div>
-                        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold whitespace-nowrap">
-                          {val.size ? `${(val.size / 1024).toFixed(1)} KB` : "Document Loaded"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-4 bg-amber-50 dark:bg-amber-950/10 rounded-xl border border-amber-100 dark:border-amber-900/30 text-amber-800 dark:text-amber-400 text-xs flex flex-col gap-1 items-center">
-                    <span>⚠️ No KYC file uploads found on this application record.</span>
-                    <span className="text-amber-600/80">Please request manual document copies from the applicant.</span>
-                  </div>
-                )}
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4 bg-amber-50 dark:bg-amber-955/10 rounded-xl border border-amber-100 dark:border-amber-900/30 text-amber-800 dark:text-amber-400 text-xs flex flex-col gap-1 items-center">
+                      <span>⚠️ No KYC file uploads found on this application record.</span>
+                      <span className="text-amber-600/80">Please request manual document copies from the applicant.</span>
+                    </div>
+                  )}
+                </div>
+
               </div>
-
-            </div>
-          )}
-
+            );
+          })()}
           <DialogFooter className="border-t border-slate-100 dark:border-slate-800/80 pt-4 mt-6 gap-2">
             <Button
               variant="outline"
