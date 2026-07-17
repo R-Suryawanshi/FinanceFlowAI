@@ -1,12 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { 
   User, Mail, Phone, MapPin, Briefcase, Calendar, 
-  CreditCard, ArrowLeft, Save, ShieldCheck, DollarSign, Loader2, Sparkles, Building2
+  CreditCard, ArrowLeft, Save, ShieldCheck, DollarSign, Loader2, Sparkles, Building2,
+  Lock, Eye, EyeOff, Bell, Trash2, ShieldAlert
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
 interface UserType {
@@ -41,6 +51,8 @@ interface ProfileData {
   ifsc_code: string;
   account_holder_name: string;
   account_type: string;
+  email_notifications: boolean;
+  sms_notifications: boolean;
 }
 
 export default function ProfilePage({ user, onBack }: ProfilePageProps) {
@@ -68,7 +80,123 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
     ifsc_code: "",
     account_holder_name: "",
     account_type: "",
+    email_notifications: true,
+    sms_notifications: true,
   });
+
+  // Active settings tab state
+  const [activeTab, setActiveTab] = useState<'profile' | 'security'>('profile');
+
+  // Change password states
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: ""
+  });
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
+  // Deactivation states
+  const [deactivateOpen, setDeactivateOpen] = useState(false);
+  const [deactivateLoading, setDeactivateLoading] = useState(false);
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError("");
+    
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError("New passwords do not match.");
+      return;
+    }
+    
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(passwordData.newPassword)) {
+      setPasswordError("Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, and one number.");
+      return;
+    }
+    
+    setPasswordLoading(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+      
+      const response = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        })
+      });
+      
+      const data = await response.json();
+      if (response.ok && data.success) {
+        toast({
+          title: "Password Updated",
+          description: "Your password has been changed successfully.",
+        });
+        setPasswordData({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: ""
+        });
+      } else {
+        setPasswordError(data.error || "Failed to update password.");
+      }
+    } catch (err) {
+      console.error(err);
+      setPasswordError("Network error while updating password.");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handleDeactivate = async () => {
+    setDeactivateLoading(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+      
+      const response = await fetch("/api/auth/deactivate", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "Account Deactivated",
+          description: "Your Bhalchandra Finance account has been deactivated.",
+        });
+        localStorage.removeItem("authToken");
+        window.location.href = "/";
+      } else {
+        const data = await response.json();
+        toast({
+          title: "Deactivation Failed",
+          description: data.error || "Could not deactivate account. Please contact support.",
+          variant: "destructive"
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      toast({
+        title: "Network Error",
+        description: "Failed to connect to the server.",
+        variant: "destructive"
+      });
+    } finally {
+      setDeactivateLoading(false);
+      setDeactivateOpen(false);
+    }
+  };
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -110,6 +238,8 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
               ifsc_code: p.ifsc_code || "",
               account_holder_name: p.account_holder_name || "",
               account_type: p.account_type || "",
+              email_notifications: p.email_notifications !== undefined ? !!p.email_notifications : true,
+              sms_notifications: p.sms_notifications !== undefined ? !!p.sms_notifications : true,
             });
           }
         }
@@ -304,382 +434,652 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
               </p>
             </CardContent>
           </Card>
+
+          {/* Navigation Card */}
+          <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
+            <CardContent className="p-2 space-y-1">
+              <button
+                type="button"
+                onClick={() => setActiveTab('profile')}
+                className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2.5 transition-colors ${
+                  activeTab === 'profile'
+                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-450'
+                    : 'text-slate-650 hover:bg-slate-105/50 dark:text-slate-400 dark:hover:bg-slate-900'
+                }`}
+              >
+                <User className="h-4 w-4" />
+                Profile Information
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('security')}
+                className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2.5 transition-colors ${
+                  activeTab === 'security'
+                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-450'
+                    : 'text-slate-650 hover:bg-slate-105/50 dark:text-slate-400 dark:hover:bg-slate-900'
+                }`}
+              >
+                <ShieldCheck className="h-4 w-4" />
+                Account & Security
+              </button>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Right Column - Profile Edit Forms */}
         <div className="lg:col-span-8">
-          <form onSubmit={handleSave} className="space-y-6">
-            {/* Personal Details */}
-            <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-              <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
-                <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                  <User className="h-5 w-5 text-blue-700" />
-                  Personal Information
-                </CardTitle>
-                <CardDescription className="text-xs">Primary contact details and personal status.</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="fullName" className="text-xs font-bold">Full Name (From Account)</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="fullName" 
-                        value={user.name} 
-                        disabled 
-                        className="pl-9 bg-slate-100/60 text-slate-500 dark:bg-slate-900/50" 
-                      />
+          {activeTab === 'profile' && (
+            <form onSubmit={handleSave} className="space-y-6">
+              {/* Personal Details */}
+              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
+                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                    <User className="h-5 w-5 text-blue-700" />
+                    Personal Information
+                  </CardTitle>
+                  <CardDescription className="text-xs">Primary contact details and personal status.</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="fullName" className="text-xs font-bold">Full Name (From Account)</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="fullName" 
+                          value={user.name} 
+                          disabled 
+                          className="pl-9 bg-slate-100/60 text-slate-500 dark:bg-slate-900/50" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="email" className="text-xs font-bold">Email Address (From Account)</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="email" 
+                          value={user.email} 
+                          disabled 
+                          className="pl-9 bg-slate-100/60 text-slate-500 dark:bg-slate-900/50" 
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="email" className="text-xs font-bold">Email Address (From Account)</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="email" 
-                        value={user.email} 
-                        disabled 
-                        className="pl-9 bg-slate-100/60 text-slate-500 dark:bg-slate-900/50" 
-                      />
-                    </div>
-                  </div>
-                </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="phone_number" className="text-xs font-bold">Phone Number</Label>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="phone_number" 
+                          name="phone_number"
+                          placeholder="+91 XXXXX XXXXX" 
+                          value={profile.phone_number} 
+                          onChange={handleChange}
+                          className="pl-9" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="date_of_birth" className="text-xs font-bold">Date of Birth</Label>
+                      <div className="relative">
+                        <Calendar className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="date_of_birth" 
+                          name="date_of_birth"
+                          type="date" 
+                          value={profile.date_of_birth} 
+                          onChange={handleChange}
+                          className="pl-9" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="gender" className="text-xs font-bold">Gender</Label>
+                      <select
+                        id="gender"
+                        name="gender"
+                        value={profile.gender}
+                        onChange={handleChange}
+                        className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                      >
+                        <option value="" disabled>Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="marital_status" className="text-xs font-bold">Marital Status</Label>
+                      <select
+                        id="marital_status"
+                        name="marital_status"
+                        value={profile.marital_status}
+                        onChange={handleChange}
+                        className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                      >
+                        <option value="" disabled>Select Marital Status</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Divorced">Divorced</option>
+                        <option value="Widowed">Widowed</option>
+                      </select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Professional & Financial Information */}
+              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
+                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                    <Briefcase className="h-5 w-5 text-blue-700" />
+                    Professional & Financial Details
+                  </CardTitle>
+                  <CardDescription className="text-xs">Income data and identity verification criteria.</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="occupation" className="text-xs font-bold">Occupation</Label>
+                      <div className="relative">
+                        <Briefcase className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="occupation" 
+                          name="occupation"
+                          placeholder="e.g. Software Engineer" 
+                          value={profile.occupation} 
+                          onChange={handleChange}
+                          className="pl-9" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="company_name" className="text-xs font-bold">Company Name</Label>
+                      <div className="relative">
+                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="company_name" 
+                          name="company_name"
+                          placeholder="e.g. Tata Consultancy Services" 
+                          value={profile.company_name} 
+                          onChange={handleChange}
+                          className="pl-9" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="monthly_income" className="text-xs font-bold">Monthly Income (₹)</Label>
+                      <div className="relative">
+                        <DollarSign className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="monthly_income" 
+                          name="monthly_income"
+                          placeholder="e.g. 75000" 
+                          type="number"
+                          value={profile.monthly_income} 
+                          onChange={handleChange}
+                          className="pl-9" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="pan_number" className="text-xs font-bold">PAN Card Number</Label>
+                      <div className="relative">
+                        <CreditCard className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="pan_number" 
+                          name="pan_number"
+                          placeholder="e.g. ABCDE1234F" 
+                          value={profile.pan_number} 
+                          onChange={handleChange}
+                          className="pl-9 uppercase" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="aadhar_number" className="text-xs font-bold">Aadhaar Card Number</Label>
+                      <div className="relative">
+                        <CreditCard className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="aadhar_number" 
+                          name="aadhar_number"
+                          placeholder="e.g. 1234 5678 9012" 
+                          value={profile.aadhar_number} 
+                          onChange={handleChange}
+                          className="pl-9" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Address Details */}
+              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
+                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                    <MapPin className="h-5 w-5 text-blue-700" />
+                    Resident Address Details
+                  </CardTitle>
+                  <CardDescription className="text-xs">Physical address for documentation and KYC.</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6 space-y-4">
                   <div className="space-y-1.5">
-                    <Label htmlFor="phone_number" className="text-xs font-bold">Phone Number</Label>
+                    <Label htmlFor="address" className="text-xs font-bold">Street Address</Label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                       <Input 
-                        id="phone_number" 
-                        name="phone_number"
-                        placeholder="+91 XXXXX XXXXX" 
-                        value={profile.phone_number} 
+                        id="address" 
+                        name="address"
+                        placeholder="Flat, Building name, Street address" 
+                        value={profile.address} 
                         onChange={handleChange}
                         className="pl-9" 
                       />
                     </div>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="date_of_birth" className="text-xs font-bold">Date of Birth</Label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="city" className="text-xs font-bold">City</Label>
                       <Input 
-                        id="date_of_birth" 
-                        name="date_of_birth"
-                        type="date" 
-                        value={profile.date_of_birth} 
+                        id="city" 
+                        name="city"
+                        placeholder="e.g. Parbhani" 
+                        value={profile.city} 
                         onChange={handleChange}
-                        className="pl-9" 
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="state" className="text-xs font-bold">State</Label>
+                      <Input 
+                        id="state" 
+                        name="state"
+                        placeholder="e.g. Maharashtra" 
+                        value={profile.state} 
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="pincode" className="text-xs font-bold">Pincode</Label>
+                      <Input 
+                        id="pincode" 
+                        name="pincode"
+                        placeholder="e.g. 431402" 
+                        value={profile.pincode} 
+                        onChange={handleChange}
                       />
                     </div>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="gender" className="text-xs font-bold">Gender</Label>
-                    <select
-                      id="gender"
-                      name="gender"
-                      value={profile.gender}
-                      onChange={handleChange}
-                      className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                </CardContent>
+              </Card>
+
+              {/* Bank Account Details */}
+              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
+                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                    <Building2 className="h-5 w-5 text-blue-700" />
+                    Bank Account Details
+                  </CardTitle>
+                  <CardDescription className="text-xs">Configure your payout bank account for loan disbursements and auto-repayments.</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="bank_name" className="text-xs font-bold">Bank Name</Label>
+                      <div className="relative">
+                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="bank_name" 
+                          name="bank_name"
+                          placeholder="e.g. State Bank of India" 
+                          value={profile.bank_name} 
+                          onChange={handleChange}
+                          className="pl-9" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="account_holder_name" className="text-xs font-bold">Account Holder Name</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="account_holder_name" 
+                          name="account_holder_name"
+                          placeholder="e.g. Ritesh Suryawanshi" 
+                          value={profile.account_holder_name} 
+                          onChange={handleChange}
+                          className="pl-9" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="account_number" className="text-xs font-bold">Account Number</Label>
+                      <div className="relative">
+                        <CreditCard className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="account_number" 
+                          name="account_number"
+                          placeholder="e.g. 30123456789" 
+                          value={profile.account_number} 
+                          onChange={handleChange}
+                          className="pl-9" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="ifsc_code" className="text-xs font-bold">IFSC Code</Label>
+                      <div className="relative">
+                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Input 
+                          id="ifsc_code" 
+                          name="ifsc_code"
+                          placeholder="e.g. SBIN0001234" 
+                          value={profile.ifsc_code} 
+                          onChange={handleChange}
+                          className="pl-9 uppercase" 
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="account_type" className="text-xs font-bold">Account Type</Label>
+                      <select
+                        id="account_type"
+                        name="account_type"
+                        value={profile.account_type}
+                        onChange={handleChange}
+                        className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                      >
+                        <option value="" disabled>Select Account Type</option>
+                        <option value="Savings">Savings Account</option>
+                        <option value="Current">Current Account</option>
+                      </select>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Form actions */}
+              <div className="flex justify-end gap-3 pt-2">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={onBack}
+                  disabled={saving}
+                  className="rounded-full px-6 bg-transparent"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={saving}
+                  className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-8 flex items-center gap-2 border border-transparent shadow-md"
+                >
+                  {saving ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="h-4 w-4" />
+                      Save Profile
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          )}
+
+          {activeTab === 'security' && (
+            <div className="space-y-6">
+              {/* Change Password Card */}
+              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
+                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                    <Lock className="h-5 w-5 text-blue-700" />
+                    Change Password
+                  </CardTitle>
+                  <CardDescription className="text-xs">Update your password to keep your account secure.</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6">
+                  <form onSubmit={handlePasswordChange} className="space-y-4">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="currentPassword" className="text-xs font-bold block text-left">Current Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="currentPassword"
+                          type={showCurrentPassword ? "text" : "password"}
+                          value={passwordData.currentPassword}
+                          onChange={(e) => setPasswordData(p => ({ ...p, currentPassword: e.target.value }))}
+                          required
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                          className="absolute right-3 top-3 text-slate-400 hover:text-blue-750"
+                          aria-label={showCurrentPassword ? "Hide password" : "Show password"}
+                        >
+                          {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="newPassword" className="text-xs font-bold block text-left">New Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="newPassword"
+                          type={showNewPassword ? "text" : "password"}
+                          value={passwordData.newPassword}
+                          onChange={(e) => setPasswordData(p => ({ ...p, newPassword: e.target.value }))}
+                          required
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          className="absolute right-3 top-3 text-slate-400 hover:text-blue-750"
+                          aria-label={showNewPassword ? "Hide password" : "Show password"}
+                        >
+                          {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-slate-500 text-left">
+                        Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, and one number.
+                      </p>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="confirmPassword" className="text-xs font-bold block text-left">Confirm New Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="confirmPassword"
+                          type={showConfirmNewPassword ? "text" : "password"}
+                          value={passwordData.confirmPassword}
+                          onChange={(e) => setPasswordData(p => ({ ...p, confirmPassword: e.target.value }))}
+                          required
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
+                          className="absolute right-3 top-3 text-slate-400 hover:text-blue-750"
+                          aria-label={showConfirmNewPassword ? "Hide password" : "Show password"}
+                        >
+                          {showConfirmNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {passwordError && (
+                      <div className="p-3 text-xs bg-red-50 text-red-700 border border-red-250 rounded-lg text-left">
+                        {passwordError}
+                      </div>
+                    )}
+
+                    <div className="flex justify-end pt-2">
+                      <Button
+                        type="submit"
+                        disabled={passwordLoading}
+                        className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-6 flex items-center gap-2 border border-transparent shadow-md"
+                      >
+                        {passwordLoading ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Updating...
+                          </>
+                        ) : (
+                          <>
+                            <Lock className="h-4 w-4" />
+                            Update Password
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+
+              {/* Notification Preferences Card */}
+              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
+                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
+                    <Bell className="h-5 w-5 text-blue-700" />
+                    Notification Preferences
+                  </CardTitle>
+                  <CardDescription className="text-xs">Manage how you receive alerts and communications.</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6 space-y-6">
+                  <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800">
+                    <div className="space-y-0.5 text-left">
+                      <Label className="text-sm font-semibold text-slate-900 dark:text-white">Email Notifications</Label>
+                      <p className="text-xs text-slate-500">Receive loan approval letters, receipts, and account statements via email.</p>
+                    </div>
+                    <Switch
+                      checked={profile.email_notifications}
+                      onCheckedChange={(checked) => setProfile(p => ({ ...p, email_notifications: checked }))}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800">
+                    <div className="space-y-0.5 text-left">
+                      <Label className="text-sm font-semibold text-slate-900 dark:text-white">SMS & Phone Alerts</Label>
+                      <p className="text-xs text-slate-500">Receive SMS verification codes and urgent due date reminders on your phone.</p>
+                    </div>
+                    <Switch
+                      checked={profile.sms_notifications}
+                      onCheckedChange={(checked) => setProfile(p => ({ ...p, sms_notifications: checked }))}
+                    />
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <Button
+                      onClick={handleSave}
+                      disabled={saving}
+                      className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-8 flex items-center gap-2 border border-transparent shadow-md"
                     >
-                      <option value="" disabled>Select Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                      <option value="Other">Other</option>
-                    </select>
+                      {saving ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="h-4 w-4" />
+                          Save Preferences
+                        </>
+                      )}
+                    </Button>
                   </div>
-                </div>
+                </CardContent>
+              </Card>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="marital_status" className="text-xs font-bold">Marital Status</Label>
-                    <select
-                      id="marital_status"
-                      name="marital_status"
-                      value={profile.marital_status}
-                      onChange={handleChange}
-                      className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+              {/* Danger Zone Card */}
+              <Card className="border-red-200 dark:border-red-900 shadow-md bg-red-50/20 dark:bg-red-950/10">
+                <CardHeader className="pb-4 border-b border-red-100 dark:border-red-900/40">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-red-750 dark:text-red-400">
+                    <ShieldAlert className="h-5 w-5" />
+                    Danger Zone
+                  </CardTitle>
+                  <CardDescription className="text-xs text-red-650 dark:text-red-300">Irreversible account actions.</CardDescription>
+                </CardHeader>
+                <CardContent className="pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="text-left space-y-1">
+                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Deactivate Account</h3>
+                    <p className="text-xs text-slate-500">Permanently deactivate your Bhalchandra Finance account. This action cannot be undone.</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={() => setDeactivateOpen(true)}
+                    className="rounded-full px-6 flex items-center gap-2"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Deactivate Account
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Deactivation Confirmation Dialog */}
+              <Dialog open={deactivateOpen} onOpenChange={setDeactivateOpen}>
+                <DialogContent className="max-w-md bg-white border border-slate-200 shadow-2xl rounded-2xl p-6">
+                  <DialogHeader className="text-left flex flex-col gap-2">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-700">
+                      <ShieldAlert className="h-6 w-6" />
+                    </div>
+                    <DialogTitle className="text-lg font-bold text-slate-900">Are you absolutely sure?</DialogTitle>
+                    <DialogDescription className="text-sm text-slate-500 leading-relaxed">
+                      This action will permanently deactivate your account. You will be logged out instantly and will no longer be able to sign in or access your loan history.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="mt-6 flex flex-col sm:flex-row justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setDeactivateOpen(false)}
+                      disabled={deactivateLoading}
+                      className="rounded-full"
                     >
-                      <option value="" disabled>Select Marital Status</option>
-                      <option value="Single">Single</option>
-                      <option value="Married">Married</option>
-                      <option value="Divorced">Divorced</option>
-                      <option value="Widowed">Widowed</option>
-                    </select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Professional & Financial Information */}
-            <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-              <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
-                <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                  <Briefcase className="h-5 w-5 text-blue-700" />
-                  Professional & Financial Details
-                </CardTitle>
-                <CardDescription className="text-xs">Income data and identity verification criteria.</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="occupation" className="text-xs font-bold">Occupation</Label>
-                    <div className="relative">
-                      <Briefcase className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="occupation" 
-                        name="occupation"
-                        placeholder="e.g. Software Engineer" 
-                        value={profile.occupation} 
-                        onChange={handleChange}
-                        className="pl-9" 
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="company_name" className="text-xs font-bold">Company Name</Label>
-                    <div className="relative">
-                      <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="company_name" 
-                        name="company_name"
-                        placeholder="e.g. Tata Consultancy Services" 
-                        value={profile.company_name} 
-                        onChange={handleChange}
-                        className="pl-9" 
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="monthly_income" className="text-xs font-bold">Monthly Income (₹)</Label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="monthly_income" 
-                        name="monthly_income"
-                        placeholder="e.g. 75000" 
-                        type="number"
-                        value={profile.monthly_income} 
-                        onChange={handleChange}
-                        className="pl-9" 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="pan_number" className="text-xs font-bold">PAN Card Number</Label>
-                    <div className="relative">
-                      <CreditCard className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="pan_number" 
-                        name="pan_number"
-                        placeholder="e.g. ABCDE1234F" 
-                        value={profile.pan_number} 
-                        onChange={handleChange}
-                        className="pl-9 uppercase" 
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="aadhar_number" className="text-xs font-bold">Aadhaar Card Number</Label>
-                    <div className="relative">
-                      <CreditCard className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="aadhar_number" 
-                        name="aadhar_number"
-                        placeholder="e.g. 1234 5678 9012" 
-                        value={profile.aadhar_number} 
-                        onChange={handleChange}
-                        className="pl-9" 
-                      />
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Address Details */}
-            <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-              <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
-                <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                  <MapPin className="h-5 w-5 text-blue-700" />
-                  Resident Address Details
-                </CardTitle>
-                <CardDescription className="text-xs">Physical address for documentation and KYC.</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="space-y-1.5">
-                  <Label htmlFor="address" className="text-xs font-bold">Street Address</Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                    <Input 
-                      id="address" 
-                      name="address"
-                      placeholder="Flat, Building name, Street address" 
-                      value={profile.address} 
-                      onChange={handleChange}
-                      className="pl-9" 
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="city" className="text-xs font-bold">City</Label>
-                    <Input 
-                      id="city" 
-                      name="city"
-                      placeholder="e.g. Parbhani" 
-                      value={profile.city} 
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="state" className="text-xs font-bold">State</Label>
-                    <Input 
-                      id="state" 
-                      name="state"
-                      placeholder="e.g. Maharashtra" 
-                      value={profile.state} 
-                      onChange={handleChange}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="pincode" className="text-xs font-bold">Pincode</Label>
-                    <Input 
-                      id="pincode" 
-                      name="pincode"
-                      placeholder="e.g. 431402" 
-                      value={profile.pincode} 
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Bank Account Details */}
-            <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-              <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
-                <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                  <Building2 className="h-5 w-5 text-blue-700" />
-                  Bank Account Details
-                </CardTitle>
-                <CardDescription className="text-xs">Configure your payout bank account for loan disbursements and auto-repayments.</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-6 space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="bank_name" className="text-xs font-bold">Bank Name</Label>
-                    <div className="relative">
-                      <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="bank_name" 
-                        name="bank_name"
-                        placeholder="e.g. State Bank of India" 
-                        value={profile.bank_name} 
-                        onChange={handleChange}
-                        className="pl-9" 
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="account_holder_name" className="text-xs font-bold">Account Holder Name</Label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="account_holder_name" 
-                        name="account_holder_name"
-                        placeholder="e.g. Ritesh Suryawanshi" 
-                        value={profile.account_holder_name} 
-                        onChange={handleChange}
-                        className="pl-9" 
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="account_number" className="text-xs font-bold">Account Number</Label>
-                    <div className="relative">
-                      <CreditCard className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="account_number" 
-                        name="account_number"
-                        placeholder="e.g. 30123456789" 
-                        value={profile.account_number} 
-                        onChange={handleChange}
-                        className="pl-9" 
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="ifsc_code" className="text-xs font-bold">IFSC Code</Label>
-                    <div className="relative">
-                      <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                      <Input 
-                        id="ifsc_code" 
-                        name="ifsc_code"
-                        placeholder="e.g. SBIN0001234" 
-                        value={profile.ifsc_code} 
-                        onChange={handleChange}
-                        className="pl-9 uppercase" 
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="account_type" className="text-xs font-bold">Account Type</Label>
-                    <select
-                      id="account_type"
-                      name="account_type"
-                      value={profile.account_type}
-                      onChange={handleChange}
-                      className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                      Cancel
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={handleDeactivate}
+                      disabled={deactivateLoading}
+                      className="rounded-full flex items-center gap-2"
                     >
-                      <option value="" disabled>Select Account Type</option>
-                      <option value="Savings">Savings Account</option>
-                      <option value="Current">Current Account</option>
-                    </select>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Form actions */}
-            <div className="flex justify-end gap-3 pt-2">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={onBack}
-                disabled={saving}
-                className="rounded-full px-6 bg-transparent"
-              >
-                Cancel
-              </Button>
-              <Button 
-                type="submit" 
-                disabled={saving}
-                className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-8 flex items-center gap-2 border border-transparent shadow-md"
-              >
-                {saving ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : (
-                  <>
-                    <Save className="h-4 w-4" />
-                    Save Profile
-                  </>
-                )}
-              </Button>
+                      {deactivateLoading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Deactivating...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="h-4 w-4" />
+                          Yes, Deactivate Account
+                        </>
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
-          </form>
+          )}
         </div>
       </div>
     </div>

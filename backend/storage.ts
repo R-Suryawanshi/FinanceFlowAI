@@ -12,6 +12,7 @@ import {
   goldRates, 
   interestRates, 
   notifications,
+  supportTickets,
   type User,
   type ServiceType,
   type UserProfile,
@@ -21,7 +22,8 @@ import {
   type Document,
   type GoldRate,
   type InterestRate,
-  type Notification
+  type Notification,
+  type SupportTicket
 } from "@shared/schema";
 
 export class Storage {
@@ -266,6 +268,41 @@ export class Storage {
       .where(eq(notifications.id, id))
       .returning();
     return notification;
+  }
+
+  // Support Tickets methods
+  async createSupportTicket(ticketData: Omit<SupportTicket, 'id' | 'createdAt' | 'updatedAt'>) {
+    const [ticket] = await db.insert(supportTickets).values({
+      ...ticketData,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    }).returning();
+    return ticket;
+  }
+
+  async getUserSupportTickets(userId: string) {
+    return await db.select().from(supportTickets)
+      .where(eq(supportTickets.userId, userId))
+      .orderBy(desc(supportTickets.createdAt));
+  }
+
+  async getSupportTicket(id: string) {
+    const [ticket] = await db.select().from(supportTickets)
+      .where(eq(supportTickets.id, id));
+    return ticket;
+  }
+
+  async updateSupportTicket(id: string, updates: Partial<SupportTicket>) {
+    const [ticket] = await db.update(supportTickets)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(supportTickets.id, id))
+      .returning();
+    return ticket;
+  }
+
+  async getAllSupportTickets() {
+    return await db.select().from(supportTickets)
+      .orderBy(desc(supportTickets.createdAt));
   }
 
   // Analytics methods

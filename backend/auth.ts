@@ -142,6 +142,21 @@ export class AuthService {
     }
   }
 
+  static async resetPassword(email: string, newPassword: string): Promise<boolean> {
+    try {
+      const emailLower = email.toLowerCase();
+      const hashedPassword = await this.hashPassword(newPassword);
+      const updated = await db.update(users)
+        .set({ password: hashedPassword, updatedAt: new Date() })
+        .where(eq(users.email, emailLower))
+        .returning();
+      return Array.isArray(updated) && updated.length > 0;
+    } catch (error) {
+      console.error("Reset password error:", error);
+      return false;
+    }
+  }
+
   static async getUserById(id: string): Promise<Omit<User, "password"> | null> {
     try {
       const found = await db.select()

@@ -41,7 +41,12 @@ import {
   Home,
   Car,
   User,
-  Save
+  Save,
+  ShieldAlert,
+  HelpCircle,
+  Send,
+  MessageSquare,
+  LifeBuoy
 } from "lucide-react";
 import {
   Dialog,
@@ -100,6 +105,9 @@ interface Payment {
     paymentDate: string;
     status: string;
     paymentReference: string;
+    remarks?: string | null;
+    transactionId?: string | null;
+    bankReference?: string | null;
   };
   userService: {
     applicationNumber: string;
@@ -166,6 +174,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [emiSchedule, setEmiSchedule] = useState<any[]>([]);
   const [paymentStage, setPaymentStage] = useState<"input" | "details" | "otp" | "processing" | "success">("input");
+  const [isForeclosure, setIsForeclosure] = useState(false);
 
   // UPI details state
   const [upiId, setUpiId] = useState("");
@@ -183,6 +192,19 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
   const [selectedBank, setSelectedBank] = useState("SBI");
   const [bankUsername, setBankUsername] = useState("");
   const [bankPassword, setBankPassword] = useState("");
+
+  // Fixed Deposit pre-closure states
+  const [closingFd, setClosingFd] = useState<UserService | null>(null);
+  const [closeFdLoading, setCloseFdLoading] = useState(false);
+  const [closeFdCalcs, setCloseFdCalcs] = useState<any>(null);
+
+  // Support Tickets states
+  const [supportTickets, setSupportTickets] = useState<any[]>([]);
+  const [ticketSubject, setTicketSubject] = useState("");
+  const [ticketDescription, setTicketDescription] = useState("");
+  const [ticketCategory, setTicketCategory] = useState("general");
+  const [ticketPriority, setTicketPriority] = useState("medium");
+  const [ticketSubmitting, setTicketSubmitting] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -233,24 +255,27 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
       const authHeaders = { Authorization: `Bearer ${token}` };
 
-      const [servicesResponse, paymentsResponse, profileResponse] = await Promise.all([
+      const [servicesResponse, paymentsResponse, profileResponse, ticketsResponse] = await Promise.all([
         fetch("/api/user-services", { headers: authHeaders }),
         fetch("/api/payments", { headers: authHeaders }),
         fetch("/api/profile", { headers: authHeaders }),
+        fetch("/api/support-tickets", { headers: authHeaders }),
       ]);
 
-      if (!servicesResponse.ok || !paymentsResponse.ok || !profileResponse.ok) {
+      if (!servicesResponse.ok || !paymentsResponse.ok || !profileResponse.ok || !ticketsResponse.ok) {
         throw new Error("Dashboard API request failed");
       }
 
-      const [servicesData, paymentsData, profileData] = await Promise.all([
+      const [servicesData, paymentsData, profileData, ticketsData] = await Promise.all([
         servicesResponse.json(),
         paymentsResponse.json(),
         profileResponse.json(),
+        ticketsResponse.json(),
       ]);
 
       setUserServices(servicesData.services || []);
       setPayments(paymentsData.payments || []);
+      setSupportTickets(ticketsData.tickets || []);
       
       const p = profileData.profile || null;
       setUserProfile(p);
@@ -303,6 +328,366 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       setError("Failed to load dashboard data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const exportTransactionsCSV = () => {
+    if (payments.length === 0) return;
+    const headers = ["Date", "Reference ID", "Method", "Amount", "Status", "Remarks"];
+    const rows = payments.map(p => [
+      new Date(p.payment.paymentDate).toISOString(),
+      p.payment.paymentReference,
+      p.payment.paymentMethod,
+      p.payment.amount,
+      p.payment.status,
+      p.payment.remarks || ""
+    ]);
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Bhalchandra_Transactions_${user?.name.replace(/ /g, "_")}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const printReceipt = (p: Payment) => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    
+    const receiptHtml = `
+      <html>
+        <head>
+          <title>Payment Receipt - Bhalchandra Finance</title>
+          <style>
+            body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1f2937; padding: 40px; }
+            .receipt-container { max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; padding: 30px; border-radius: 12px; }
+            .header { text-align: center; border-bottom: 2px solid #2563eb; padding-bottom: 20px; margin-bottom: 20px; }
+            .company-title { font-size: 20px; font-weight: 800; color: #1d4ed8; letter-spacing: 0.5px; }
+            .receipt-title { font-size: 13px; color: #6b7280; margin-top: 5px; text-transform: uppercase; font-weight: 650; }
+            .grid { display: grid; grid-template-cols: 1fr 1fr; gap: 15px; margin: 25px 0; }
+            .label { font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+            .value { font-size: 14px; font-weight: 600; color: #111827; margin-top: 3px; }
+            .total-box { background: #f3f4f6; padding: 15px; border-radius: 8px; text-align: center; margin-top: 25px; border: 1px solid #e5e7eb; }
+            .total-amount { font-size: 24px; font-weight: 900; color: #1e3a8a; }
+            .footer { text-align: center; margin-top: 30px; font-size: 10px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 15px; }
+          </style>
+        </head>
+        <body>
+          <div class="receipt-container">
+            <div class="header">
+              <div class="company-title">BHALCHANDRA FINANCE PVT LTD</div>
+              <div class="receipt-title">Official Repayment Receipt</div>
+            </div>
+            
+            <div class="grid">
+              <div>
+                <div class="label">Customer Name</div>
+                <div class="value">${user?.name}</div>
+              </div>
+              <div>
+                <div class="label">Email Address</div>
+                <div class="value">${user?.email}</div>
+              </div>
+              <div>
+                <div class="label">Transaction Date</div>
+                <div class="value">${new Date(p.payment.paymentDate).toLocaleString("en-IN")}</div>
+              </div>
+              <div>
+                <div class="label">Reference ID</div>
+                <div class="value">${p.payment.paymentReference}</div>
+              </div>
+              <div>
+                <div class="label">Payment Method</div>
+                <div class="value" style="text-transform: uppercase;">${p.payment.paymentMethod}</div>
+              </div>
+              <div>
+                <div class="label">Transaction Status</div>
+                <div class="value" style="color: #047857; text-transform: uppercase;">${p.payment.status}</div>
+              </div>
+            </div>
+            
+            <div class="total-box">
+              <div class="label" style="margin-bottom: 5px;">Amount Paid</div>
+              <div class="total-amount">₹${parseFloat(p.payment.amount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</div>
+            </div>
+            
+            <div class="footer">
+              Thank you for your business. For any support, contact customercare@bhalchandrafinance.com<br>
+              This is a computer-generated receipt and requires no physical signature.
+            </div>
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `;
+    
+    printWindow.document.write(receiptHtml);
+    printWindow.document.close();
+  };
+
+  const exportAmortizationCSV = () => {
+    const activeLoans = userServices.filter(
+      (s) => s.serviceType.name !== "fixed_deposit" && !s.serviceType.displayName.toLowerCase().includes("deposit")
+    );
+    if (emiSchedule.length === 0 || activeLoans.length === 0) return;
+    const headers = ["Installment #", "Due Date", "EMI Amount", "Principal", "Interest", "Outstanding Balance", "Status"];
+    const rows = emiSchedule.map((item) => {
+      const isPaid = item.status === "paid";
+      return [
+        item.emiNumber,
+        new Date(item.dueDate).toLocaleDateString("en-IN"),
+        item.emiAmount,
+        item.principalAmount,
+        item.interestAmount,
+        item.outstandingBalance,
+        isPaid ? "Paid" : "Upcoming"
+      ];
+    });
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Amortization_Schedule_${activeLoans[0].userService.applicationNumber}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const exportAmortizationPDF = () => {
+    const activeLoans = userServices.filter(
+      (s) => s.serviceType.name !== "fixed_deposit" && !s.serviceType.displayName.toLowerCase().includes("deposit")
+    );
+    if (emiSchedule.length === 0 || activeLoans.length === 0) return;
+    const loan = activeLoans[0].userService;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    
+    const rowsHtml = emiSchedule.map((item) => {
+      const isPaid = item.status === "paid";
+      return `
+        <tr>
+          <td>${item.emiNumber}</td>
+          <td>${new Date(item.dueDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</td>
+          <td>₹${parseFloat(item.emiAmount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>
+          <td>₹${parseFloat(item.principalAmount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>
+          <td>₹${parseFloat(item.interestAmount).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>
+          <td>₹${parseFloat(item.outstandingBalance).toLocaleString("en-IN", { minimumFractionDigits: 2 })}</td>
+          <td style="color: ${isPaid ? '#059669' : '#d97706'}; font-weight: bold;">${isPaid ? 'PAID' : 'UPCOMING'}</td>
+        </tr>
+      `;
+    }).join("");
+
+    const scheduleHtml = `
+      <html>
+        <head>
+          <title>Amortization Schedule - Bhalchandra Finance</title>
+          <style>
+            body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #1f2937; padding: 40px; }
+            .header { border-bottom: 2px solid #2563eb; padding-bottom: 15px; margin-bottom: 20px; }
+            .title { font-size: 22px; font-weight: 800; color: #1d4ed8; letter-spacing: 0.5px; }
+            .subtitle { font-size: 13px; color: #6b7280; margin-top: 4px; text-transform: uppercase; font-weight: 650; }
+            .meta-grid { display: grid; grid-template-cols: 1fr 1fr 1fr; gap: 15px; margin: 20px 0; font-size: 13px; background: #f9fafb; padding: 15px; border-radius: 8px; border: 1px solid #e5e7eb; }
+            .meta-item { display: flex; flex-direction: column; }
+            .label { font-size: 9px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; }
+            .value { font-weight: bold; margin-top: 3px; color: #111827; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+            th { border-bottom: 2px solid #e5e7eb; text-align: left; padding: 10px 5px; color: #4b5563; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+            td { border-bottom: 1px solid #f3f4f6; padding: 10px 5px; color: #374151; }
+            tr:hover { background: #f9fafb; }
+            .footer { text-align: center; margin-top: 40px; font-size: 10px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 15px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="title">BHALCHANDRA FINANCE PVT LTD</div>
+            <div class="subtitle">Amortization Repayment Schedule</div>
+          </div>
+          
+          <div class="meta-grid">
+            <div class="meta-item">
+              <span class="label">Loan Account Number</span>
+              <span class="value">${loan.applicationNumber}</span>
+            </div>
+            <div class="meta-item">
+              <span class="label">Loan Principal</span>
+              <span class="value">₹${parseFloat(loan.amount).toLocaleString("en-IN")}</span>
+            </div>
+            <div class="meta-item">
+              <span class="label">Interest Rate</span>
+              <span class="value">${loan.interestRate}% P.A.</span>
+            </div>
+            <div class="meta-item">
+              <span class="label">Tenure</span>
+              <span class="value">${loan.tenure} Months</span>
+            </div>
+            <div class="meta-item">
+              <span class="label">Equated Monthly Installment (EMI)</span>
+              <span class="value">₹${parseFloat(loan.emi || "0").toLocaleString("en-IN")}</span>
+            </div>
+            <div class="meta-item">
+              <span class="label">Outstanding Principal</span>
+              <span class="value">₹${parseFloat(loan.outstandingAmount || "0").toLocaleString("en-IN")}</span>
+            </div>
+          </div>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Inst #</th>
+                <th>Due Date</th>
+                <th>EMI Amount</th>
+                <th>Principal Component</th>
+                <th>Interest Component</th>
+                <th>Outstanding Balance</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+          
+          <div class="footer">
+            Bhalchandra Finance - Custom loan solution packages. Subject to regulatory guidelines.
+          </div>
+          
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(scheduleHtml);
+    printWindow.document.close();
+  };
+
+  const handlePreCloseFdClick = (service: UserService) => {
+    const principal = parseFloat(service.userService.amount);
+    const interestRate = parseFloat(service.userService.interestRate);
+    
+    const bookingDate = new Date(service.userService.applicationDate);
+    const currentDate = new Date();
+    const diffTime = Math.max(0, currentDate.getTime() - bookingDate.getTime());
+    const daysActive = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    const prematureRate = Math.max(0, interestRate - 1.0);
+    const accruedInterest = principal * (prematureRate / 100) * (daysActive / 365);
+    const totalPayout = principal + accruedInterest;
+
+    setCloseFdCalcs({
+      principal,
+      originalRate: interestRate,
+      penalizedRate: prematureRate,
+      daysActive,
+      accruedInterest,
+      totalPayout
+    });
+    setClosingFd(service);
+  };
+
+  const handleConfirmCloseFd = async () => {
+    if (!closingFd) return;
+    setCloseFdLoading(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+
+      const response = await fetch(`/api/user-services/${closingFd.userService.id}/close-fd`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        toast({
+          title: "Fixed Deposit Closed",
+          description: `Payout of ₹${data.calculations.totalPayout.toLocaleString("en-IN")} processed successfully.`,
+        });
+        setClosingFd(null);
+        setCloseFdCalcs(null);
+        await fetchUserData();
+      } else {
+        toast({
+          title: "Closure Failed",
+          description: data.error || "Failed to pre-close Fixed Deposit.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Network Error",
+        description: "Could not connect to the server.",
+        variant: "destructive"
+      });
+    } finally {
+      setCloseFdLoading(false);
+    }
+  };
+
+  const handleSupportTicketSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!ticketSubject || !ticketDescription) return;
+    setTicketSubmitting(true);
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+
+      const response = await fetch("/api/support-tickets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          subject: ticketSubject,
+          description: ticketDescription,
+          category: ticketCategory,
+          priority: ticketPriority
+        })
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        toast({
+          title: "Ticket Raised Successfully",
+          description: `Your ticket has been raised with ticket number: ${data.ticket.ticketNumber}.`,
+        });
+        setTicketSubject("");
+        setTicketDescription("");
+        setTicketCategory("general");
+        setTicketPriority("medium");
+        await fetchUserData();
+      } else {
+        toast({
+          title: "Submission Failed",
+          description: data.error || "Failed to raise support ticket.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Network Error",
+        description: "Could not connect to the support backend.",
+        variant: "destructive"
+      });
+    } finally {
+      setTicketSubmitting(false);
     }
   };
 
@@ -452,6 +837,24 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
   const paymentActivityProgress = Math.min(stats.recentPayments * 25, 100);
 
   const getNextEmiDueDate = () => {
+    const activeLoansList = userServices.filter(
+      (s) => s.serviceType.name !== "fixed_deposit" && !s.serviceType.displayName.toLowerCase().includes("deposit")
+    );
+    const active = activeLoansList.filter(
+      (s) => s.userService.status === "active" || s.userService.status === "approved"
+    );
+
+    if (active.length > 0 && emiSchedule.length > 0) {
+      const firstUnpaid = emiSchedule.find((item) => {
+        const isPaid = item.status === "paid";
+        return !isPaid;
+      });
+
+      if (firstUnpaid) {
+        return new Date(firstUnpaid.dueDate);
+      }
+    }
+
     const now = new Date();
     const dueDate = new Date(now.getFullYear(), now.getMonth(), 10);
     if (now.getDate() > 10) {
@@ -461,6 +864,9 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
   };
   
   const nextEmiDueDate = getNextEmiDueDate();
+  const paidCount = emiSchedule.filter(item => item.status === "paid").length;
+  const dueCount = emiSchedule.filter(item => new Date(item.dueDate) <= new Date()).length;
+  const isPrepayBlocked = (paidCount - dueCount) >= 2;
 
   const handlePayment = async () => {
     if (activeLoans.length === 0) return;
@@ -529,7 +935,8 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
         body: JSON.stringify({
           userServiceId: firstActiveLoan.userService.id,
           amount: paymentAmount,
-          paymentMethod: paymentMethod
+          paymentMethod: paymentMethod,
+          isForeclosure: isForeclosure
         })
       });
 
@@ -631,6 +1038,14 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
           <TabsTrigger value="vault" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
             <Lock className="h-4 w-4" />
             KYC & Document Vault
+          </TabsTrigger>
+          <TabsTrigger value="investments" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+            <PiggyBank className="h-4 w-4" />
+            FDs & Investments
+          </TabsTrigger>
+          <TabsTrigger value="support" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+            <HelpCircle className="h-4 w-4" />
+            Support Desk
           </TabsTrigger>
         </TabsList>
 
@@ -818,19 +1233,51 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               </div>
             </div>
           ) : (
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  Next EMI Due: {nextEmiDueDate.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
-                </p>
-                <p className="text-xl font-bold mt-1">{formatCurrency(totalEmiDue)}</p>
+            <div className="flex flex-col gap-4">
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    Next EMI Due: {nextEmiDueDate.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                  </p>
+                  <p className="text-xl font-bold mt-1">
+                    {isPrepayBlocked ? "No Current Dues" : formatCurrency(totalEmiDue)}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline"
+                    className="border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-955/20 text-red-600 dark:text-red-400 hover:text-red-700 font-bold"
+                    onClick={() => {
+                      setIsForeclosure(true);
+                      setPaymentAmount(activeLoans[0].userService.outstandingAmount || "0");
+                      setPaymentStage("input");
+                      setShowPaymentUI(true);
+                    }}
+                  >
+                    <ShieldAlert className="mr-2 h-4 w-4" /> Foreclose Loan
+                  </Button>
+                  <Button 
+                    disabled={isPrepayBlocked}
+                    onClick={() => {
+                      setIsForeclosure(false);
+                      setPaymentAmount(totalEmiDue.toString());
+                      setPaymentStage("input");
+                      setShowPaymentUI(true);
+                    }}
+                  >
+                    <CreditCard className="mr-2 h-4 w-4" /> Pay Now
+                  </Button>
+                </div>
               </div>
-              <Button onClick={() => {
-                setPaymentAmount(totalEmiDue.toString());
-                setShowPaymentUI(true);
-              }}>
-                <CreditCard className="mr-2 h-4 w-4" /> Pay Now
-              </Button>
+              {isPrepayBlocked && (
+                <div className="bg-amber-50 dark:bg-amber-955/20 border border-amber-200/50 dark:border-amber-900/50 rounded-xl p-3 text-xs flex items-start gap-2.5 text-amber-800 dark:text-amber-300 font-medium">
+                  <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <p className="font-semibold">EMI Repayment Limit Reached</p>
+                    <p>You have already pre-paid 1 extra installment in advance. The option to pay your next EMI will open after your next billing cycle starts.</p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </CardContent>
@@ -839,16 +1286,30 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       {/* EMI Repayment Schedule Timeline */}
       {activeLoans.length > 0 && emiSchedule.length > 0 && (
         <Card className="mt-6 timeline-card">
-          <CardHeader>
-            <CardTitle>Repayment Schedule & Amortization Timeline</CardTitle>
-            <CardDescription>Track your monthly payments and upcoming EMIs</CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between gap-4">
+            <div className="space-y-1">
+              <CardTitle>Repayment Schedule & Amortization Timeline</CardTitle>
+              <CardDescription>Track your monthly payments and upcoming EMIs</CardDescription>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <Button 
+                onClick={exportAmortizationCSV}
+                className="bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/50 text-xs font-bold rounded-xl h-9 flex items-center gap-1.5"
+              >
+                <Download className="h-3.5 w-3.5" /> Export CSV
+              </Button>
+              <Button 
+                onClick={exportAmortizationPDF}
+                className="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200/30 text-xs font-bold rounded-xl h-9 flex items-center gap-1.5"
+              >
+                <Download className="h-3.5 w-3.5" /> Export PDF
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="relative border-l border-gray-200 ml-4 pl-6 space-y-8">
               {emiSchedule.map((item) => {
-                const emiNum = item.emiNumber;
-                const emiAmt = parseFloat(item.emiAmount || "0");
-                const isPaid = (activeLoans[0].userService.totalPaidAmount ? parseFloat(activeLoans[0].userService.totalPaidAmount) : 0) >= (emiNum * emiAmt);
+                const isPaid = item.status === "paid";
 
                 return (
                   <div key={item.id} className="relative">
@@ -865,7 +1326,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                     <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2">
                       <div>
                         <p className="text-sm font-semibold text-foreground">
-                          Installment #{emiNum} — {isPaid ? (
+                          Installment #{item.emiNumber} — {isPaid ? (
                             <span className="text-xs text-green-600 bg-green-50 border border-green-200 px-1.5 py-0.5 rounded-full font-medium">Paid</span>
                           ) : (
                             <span className="text-xs text-amber-600 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full font-medium">Upcoming</span>
@@ -879,7 +1340,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-bold text-foreground">{formatCurrency(emiAmt)}</p>
+                        <p className="text-sm font-bold text-foreground">{formatCurrency(parseFloat(item.emiAmount || "0"))}</p>
                         <p className="text-[11px] text-muted-foreground">Outstanding: {formatCurrency(item.outstandingBalance)}</p>
                       </div>
                     </div>
@@ -900,26 +1361,49 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
             <>
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold flex items-center gap-2 text-primary">
-                  <CreditCard className="h-5 w-5" />
-                  Make a Payment
+                  {isForeclosure ? (
+                    <>
+                      <ShieldCheck className="h-5 w-5 text-green-600 animate-pulse" />
+                      Foreclose & Close Loan
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="h-5 w-5" />
+                      Make a Payment
+                    </>
+                  )}
                 </DialogTitle>
                 <DialogDescription className="text-sm text-gray-500 font-medium">
-                  Pay your loan EMI or dues securely via our integrated gateway
+                  {isForeclosure 
+                    ? "Pay off your remaining principal balance to close this loan account immediately"
+                    : "Pay your loan EMI or dues securely via our integrated gateway"}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-5 py-4">
-                {activeLoans.length > 0 && (
-                  <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3 text-xs flex justify-between items-center text-blue-900 font-medium">
-                    <span>Outstanding Active Loan EMI:</span>
-                    <span className="font-bold text-sm text-primary">{formatCurrency(totalEmiDue)}</span>
+                {isForeclosure ? (
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-xs flex flex-col gap-1.5 text-green-900 font-medium">
+                    <span className="font-bold text-sm">Foreclosure Settlement Statement</span>
+                    <span>Paying this amount will fully close loan application #{activeLoans[0]?.userService?.applicationNumber}.</span>
+                    <div className="flex justify-between items-center mt-1 border-t border-green-200/50 pt-1.5">
+                      <span>Total Principal Outstanding:</span>
+                      <span className="font-bold text-sm text-green-700">{formatCurrency(parseFloat(activeLoans[0]?.userService?.outstandingAmount || "0"))}</span>
+                    </div>
                   </div>
+                ) : (
+                  activeLoans.length > 0 && (
+                    <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3 text-xs flex justify-between items-center text-blue-900 font-medium">
+                      <span>Outstanding Active Loan EMI:</span>
+                      <span className="font-bold text-sm text-primary">{formatCurrency(totalEmiDue)}</span>
+                    </div>
+                  )
                 )}
                 <div className="space-y-1.5">
                   <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Amount (₹)</Label>
                   <Input
                     type="number"
                     value={paymentAmount}
-                    onChange={(e) => setPaymentAmount(e.target.value)}
+                    onChange={(e) => !isForeclosure && setPaymentAmount(e.target.value)}
+                    disabled={isForeclosure}
                     placeholder="Enter payment amount"
                     className="h-11 font-semibold text-lg"
                   />
@@ -1312,14 +1796,24 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       {/* Payment History Dialog */}
       <Dialog open={showPaymentHistory} onOpenChange={setShowPaymentHistory}>
         <DialogContent className="max-w-3xl sm:rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden p-6">
-          <DialogHeader className="pb-4 border-b border-slate-100 dark:border-slate-800">
-            <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Clock className="h-5 w-5 text-blue-750" />
-              Repayment Transaction History
-            </DialogTitle>
-            <DialogDescription className="text-sm text-slate-500">
-              View your historical payment records and receipts.
-            </DialogDescription>
+          <DialogHeader className="pb-4 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between gap-4">
+            <div className="space-y-1">
+              <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Clock className="h-5 w-5 text-blue-750" />
+                Repayment Transaction History
+              </DialogTitle>
+              <DialogDescription className="text-sm text-slate-500">
+                View your historical payment records and receipts.
+              </DialogDescription>
+            </div>
+            {payments.length > 0 && (
+              <Button 
+                onClick={exportTransactionsCSV}
+                className="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200/30 text-xs font-bold rounded-xl h-9 flex items-center gap-1.5 shrink-0"
+              >
+                <Download className="h-3.5 w-3.5" /> Export CSV
+              </Button>
+            )}
           </DialogHeader>
 
           <div className="py-4 overflow-x-auto max-h-[400px]">
@@ -1343,7 +1837,8 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                     <th className="pb-3 px-4">Reference ID</th>
                     <th className="pb-3 px-4">Method</th>
                     <th className="pb-3 px-4 text-right">Amount</th>
-                    <th className="pb-3 pl-4 text-right">Status</th>
+                    <th className="pb-3 px-4 text-center">Status</th>
+                    <th className="pb-3 pl-4 text-right">Receipt</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 font-medium">
@@ -1367,7 +1862,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                       <td className="py-3 px-4 text-right font-bold text-slate-900 dark:text-white">
                         {formatCurrency(parseFloat(p.payment.amount))}
                       </td>
-                      <td className="py-3 pl-4 text-right">
+                      <td className="py-3 px-4 text-center">
                         <Badge
                           className={`border-none text-[10px] font-bold px-2 py-0.5 ${
                             p.payment.status === "success" || p.payment.status === "completed"
@@ -1379,6 +1874,22 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                         >
                           {p.payment.status}
                         </Badge>
+                      </td>
+                      <td className="py-3 pl-4 text-right">
+                        {p.payment.status === "success" ? (
+                          <Button
+                            type="button"
+                            onClick={() => printReceipt(p)}
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0 text-slate-400 hover:text-blue-600 rounded-lg flex items-center justify-center ml-auto"
+                            title="Print Receipt"
+                          >
+                            <Download className="h-4 w-4" />
+                          </Button>
+                        ) : (
+                          <span className="text-[10px] text-slate-450 font-medium block text-right">—</span>
+                        )}
                       </td>
                     </tr>
                   ))}
@@ -1445,6 +1956,253 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
           </div>
         </CardContent>
       </Card>
+      </TabsContent>
+
+      {/* Tab 3: FDs & Investments */}
+      <TabsContent value="investments" className="space-y-6">
+        {(() => {
+          const fdServices = userServices.filter(
+            (s) => s.serviceType.name === "fixed_deposit" || s.serviceType.displayName.toLowerCase().includes("deposit")
+          );
+          
+          const activeFds = fdServices.filter((s) => s.userService.status === "active");
+
+          const totalInvested = activeFds.reduce((sum, s) => sum + parseFloat(s.userService.amount), 0);
+          
+          let totalAccrued = 0;
+          let totalMaturity = 0;
+
+          const fdsWithAccrued = activeFds.map((s) => {
+            const principal = parseFloat(s.userService.amount);
+            const rate = parseFloat(s.userService.interestRate) / 100;
+            const tenureMonths = s.userService.tenure;
+            const bookingDate = new Date(s.userService.applicationDate);
+            const currentDate = new Date();
+            
+            const diffTime = Math.max(0, currentDate.getTime() - bookingDate.getTime());
+            const daysActive = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            const accrued = principal * (rate * (daysActive / 365));
+            totalAccrued += accrued;
+
+            const years = tenureMonths / 12;
+            const maturityValue = principal * Math.pow(1 + rate/4, 4 * years);
+            totalMaturity += maturityValue;
+
+            const maturityDate = new Date(s.userService.applicationDate);
+            maturityDate.setMonth(maturityDate.getMonth() + tenureMonths);
+            const totalDuration = Math.max(1, maturityDate.getTime() - bookingDate.getTime());
+            const elapsed = Math.max(0, Math.min(totalDuration, currentDate.getTime() - bookingDate.getTime()));
+            const progressPercent = Math.min(100, Math.round((elapsed / totalDuration) * 100));
+
+            return {
+              ...s,
+              accrued,
+              maturityValue,
+              maturityDate,
+              progressPercent,
+              daysActive
+            };
+          });
+
+          return (
+            <div className="space-y-6">
+              {/* Stats Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-blue-50/10 dark:from-slate-900 dark:to-slate-950/10">
+                  <CardHeader className="pb-2">
+                    <CardDescription className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Invested Principal</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-black text-slate-900 dark:text-white">
+                      ₹{totalInvested.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                    <p className="text-[10px] text-slate-400 mt-1">Active FD principal balances sum</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-green-50/10 dark:from-slate-900 dark:to-slate-950/10">
+                  <CardHeader className="pb-2">
+                    <CardDescription className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Accrued Interest (Live)</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-black text-green-700 dark:text-green-400 flex items-center gap-1">
+                      <TrendingUp className="h-5 w-5 animate-pulse text-green-600" />
+                      ₹{totalAccrued.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                    <p className="text-[10px] text-slate-400 mt-1">Interest earned elapsed to date</p>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-purple-50/10 dark:from-slate-900 dark:to-slate-950/10">
+                  <CardHeader className="pb-2">
+                    <CardDescription className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Est. Maturity Value</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-2xl font-black text-purple-700 dark:text-purple-400">
+                      ₹{totalMaturity.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                    <p className="text-[10px] text-slate-400 mt-1">Total principal + maturity interest</p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* FDs List */}
+              <div className="space-y-4 text-left">
+                <h3 className="text-base font-bold text-slate-900 dark:text-white">Active Fixed Deposits</h3>
+                {activeFds.length === 0 ? (
+                  <Card className="border-slate-200/60 dark:border-slate-800 p-8 text-center flex flex-col items-center justify-center gap-4">
+                    <div className="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-full text-slate-400">
+                      <PiggyBank className="h-10 w-10 text-slate-450" />
+                    </div>
+                    <div className="space-y-1">
+                      <h4 className="font-bold text-slate-900 dark:text-white">No active Fixed Deposits</h4>
+                      <p className="text-xs text-slate-500 max-w-sm">Grow your wealth with Bhalchandra Finance's high-yield Fixed Deposits. Book an FD today with interest rates up to 8.25%.</p>
+                    </div>
+                    <Button 
+                      onClick={() => onNavigateToCalculator("fd")}
+                      className="bg-blue-700 hover:bg-blue-800 text-white rounded-xl px-6 font-semibold"
+                    >
+                      Book a Fixed Deposit
+                    </Button>
+                  </Card>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {fdsWithAccrued.map((fd) => (
+                      <Card key={fd.userService.id} className="border-slate-200/60 dark:border-slate-800 shadow-sm relative overflow-hidden bg-white dark:bg-slate-900">
+                        <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-700"></div>
+                        <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between">
+                          <div>
+                            <CardTitle className="text-sm font-bold text-slate-900 dark:text-white">Fixed Deposit</CardTitle>
+                            <CardDescription className="text-[10px] font-mono mt-0.5">{fd.userService.applicationNumber}</CardDescription>
+                          </div>
+                          <Badge className="bg-blue-50 text-blue-700 border border-blue-200/30 hover:bg-blue-50 text-[10px] font-bold">
+                            {fd.userService.interestRate}% P.A.
+                          </Badge>
+                        </CardHeader>
+                        <CardContent className="pt-4 space-y-4">
+                          <div className="grid grid-cols-2 gap-4 text-left">
+                            <div className="space-y-0.5">
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Principal</span>
+                              <span className="text-sm font-black text-slate-900 dark:text-white">₹{parseFloat(fd.userService.amount).toLocaleString("en-IN")}</span>
+                            </div>
+                            <div className="space-y-0.5">
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Accrued Interest</span>
+                              <span className="text-sm font-black text-green-700 dark:text-green-450">₹{fd.accrued.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            </div>
+                            <div className="space-y-0.5">
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Booking Date</span>
+                              <span className="text-xs font-semibold text-slate-700 dark:text-slate-350">{new Date(fd.userService.applicationDate).toLocaleDateString("en-IN")}</span>
+                            </div>
+                            <div className="space-y-0.5">
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Maturity Date</span>
+                              <span className="text-xs font-semibold text-slate-700 dark:text-slate-350">{fd.maturityDate.toLocaleDateString("en-IN")}</span>
+                            </div>
+                          </div>
+
+                          {/* Progress Bar */}
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-[10px] text-slate-400 font-bold">
+                              <span>Maturity Progress</span>
+                              <span>{fd.progressPercent}% ({fd.daysActive} days)</span>
+                            </div>
+                            <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                              <div className="h-full bg-blue-700 rounded-full transition-all duration-500" style={{ width: `${fd.progressPercent}%` }}></div>
+                            </div>
+                          </div>
+
+                          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
+                            <div className="space-y-0.5 text-left">
+                              <span className="text-[9px] font-bold text-slate-400 uppercase block">Est. Maturity Payout</span>
+                              <span className="text-sm font-black text-purple-700 dark:text-purple-400">₹{fd.maturityValue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                            </div>
+                            <Button 
+                              type="button"
+                              onClick={() => handlePreCloseFdClick(fd)}
+                              className="bg-red-50 hover:bg-red-100 text-red-700 border border-red-200/30 text-xs font-bold rounded-xl px-4 h-9 flex items-center gap-1"
+                            >
+                              <XCircle className="h-3.5 w-3.5" /> Close Prematurely
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Premature Closure Modal */}
+              <Dialog open={closingFd !== null} onOpenChange={(open) => { if (!open) { setClosingFd(null); setCloseFdCalcs(null); } }}>
+                <DialogContent className="max-w-md bg-white border border-slate-200 shadow-2xl rounded-2xl p-6">
+                  <DialogHeader className="text-left flex flex-col gap-2">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-705">
+                      <ShieldAlert className="h-6 w-6" />
+                    </div>
+                    <DialogTitle className="text-lg font-bold text-slate-900">Premature FD Closure</DialogTitle>
+                    <DialogDescription className="text-sm text-slate-500 leading-relaxed">
+                      Are you sure you want to pre-close this Fixed Deposit? Premature withdrawals incur a **1.00% interest rate penalty** as per bank regulations.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  {closeFdCalcs && (
+                    <div className="mt-4 p-4 rounded-xl border border-slate-250 dark:border-slate-800 space-y-3 bg-slate-50 text-xs text-left">
+                      <div className="flex justify-between font-semibold">
+                        <span className="text-slate-500">Invested Principal:</span>
+                        <span className="text-slate-900">₹{closeFdCalcs.principal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                      </div>
+                      <div className="flex justify-between font-semibold">
+                        <span className="text-slate-500">Days Active:</span>
+                        <span className="text-slate-900">{closeFdCalcs.daysActive} days</span>
+                      </div>
+                      <div className="flex justify-between font-semibold">
+                        <span className="text-slate-500">Penalized Interest Rate:</span>
+                        <span className="text-slate-900">{closeFdCalcs.penalizedRate}% (was {closeFdCalcs.originalRate}%)</span>
+                      </div>
+                      <div className="flex justify-between font-semibold text-green-700">
+                        <span>Accrued Interest (Penalized):</span>
+                        <span>+ ₹{closeFdCalcs.accruedInterest.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      </div>
+                      <div className="border-t border-slate-200/60 pt-2 flex justify-between font-black text-sm text-blue-700">
+                        <span>Total Est. Refund Payout:</span>
+                        <span>₹{closeFdCalcs.totalPayout.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <DialogFooter className="mt-6 flex flex-col sm:flex-row justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => { setClosingFd(null); setCloseFdCalcs(null); }}
+                      disabled={closeFdLoading}
+                      className="rounded-full"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      onClick={handleConfirmCloseFd}
+                      disabled={closeFdLoading}
+                      className="rounded-full flex items-center gap-2"
+                    >
+                      {closeFdLoading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Processing Payout...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="h-4 w-4" />
+                          Confirm & Close FD
+                        </>
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
+          );
+        })()}
       </TabsContent>
 
       {/* Tab 2: Document Vault */}
@@ -1591,6 +2349,185 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 >
                   Submit File to Vault
                 </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </TabsContent>
+
+      {/* Tab 4: Support Desk */}
+      <TabsContent value="support" className="space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-left">
+          {/* Raise Ticket Form */}
+          <div className="lg:col-span-1">
+            <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900">
+              <CardHeader>
+                <CardTitle className="text-base font-bold flex items-center gap-2">
+                  <LifeBuoy className="h-5 w-5 text-blue-750" />
+                  Raise Support Ticket
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Create a direct service request with our support desk if you couldn't resolve your issue.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSupportTicketSubmit} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Ticket Category</Label>
+                    <select
+                      value={ticketCategory}
+                      onChange={(e) => setTicketCategory(e.target.value)}
+                      className="w-full h-10 border border-gray-200 dark:border-slate-800 rounded-lg p-2.5 text-xs font-semibold bg-white dark:bg-slate-950 focus:outline-none focus:border-blue-500"
+                    >
+                      <option value="general">General Query / Inquiry</option>
+                      <option value="loan">Loan Account & EMIs</option>
+                      <option value="fixed_deposit">Fixed Deposit Investments</option>
+                      <option value="kyc">KYC & Document Verification</option>
+                      <option value="payment">EMI Repayment & Transfers</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Urgency Priority</Label>
+                    <select
+                      value={ticketPriority}
+                      onChange={(e) => setTicketPriority(e.target.value)}
+                      className="w-full h-10 border border-gray-200 dark:border-slate-800 rounded-lg p-2.5 text-xs font-semibold bg-white dark:bg-slate-950 focus:outline-none focus:border-blue-500"
+                    >
+                      <option value="low">Low - General Feedback</option>
+                      <option value="medium">Medium - Normal Queries</option>
+                      <option value="high">High - Transaction Issues</option>
+                      <option value="urgent">Urgent - Profile Security / Errors</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="ticket-subject" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Subject Title</Label>
+                    <Input
+                      id="ticket-subject"
+                      value={ticketSubject}
+                      onChange={(e) => setTicketSubject(e.target.value)}
+                      placeholder="Brief summary of the issue..."
+                      className="h-10 text-xs rounded-lg border-gray-200 dark:border-slate-800 focus:border-blue-500 bg-white dark:bg-slate-950"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label htmlFor="ticket-desc" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Detailed Description</Label>
+                    <textarea
+                      id="ticket-desc"
+                      rows={4}
+                      value={ticketDescription}
+                      onChange={(e) => setTicketDescription(e.target.value)}
+                      placeholder="Please explain the details of the problem..."
+                      className="w-full border border-gray-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-white dark:bg-slate-950 focus:outline-none focus:border-blue-500"
+                      required
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    disabled={ticketSubmitting}
+                    className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold h-10 text-xs rounded-xl flex items-center justify-center gap-2"
+                  >
+                    {ticketSubmitting ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Raising Ticket...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4" />
+                        Submit Support Ticket
+                      </>
+                    )}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Ticket History */}
+          <div className="lg:col-span-2 space-y-4">
+            <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900">
+              <CardHeader>
+                <CardTitle className="text-base font-bold flex items-center gap-2">
+                  <MessageSquare className="h-5 w-5 text-blue-755" />
+                  Your Support Tickets
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Track the progress and updates for your raised service requests.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {supportTickets.length === 0 ? (
+                  <div className="py-12 flex flex-col items-center justify-center gap-3 text-center">
+                    <div className="p-3 bg-slate-50 dark:bg-slate-800/50 text-slate-400 rounded-full">
+                      <MessageSquare className="h-8 w-8" />
+                    </div>
+                    <div className="space-y-1">
+                      <p className="font-semibold text-slate-800 dark:text-slate-200">No support tickets found</p>
+                      <p className="text-xs text-muted-foreground max-w-sm">
+                        If you have any questions or bugs to file, raise a new ticket on the left and our administration team will attend to it.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {supportTickets.map((t) => (
+                      <div 
+                        key={t.id} 
+                        className="p-4 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900/60 hover:bg-slate-50/20 dark:hover:bg-slate-800/10 transition-colors space-y-3"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                          <div className="space-y-0.5">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs font-bold text-blue-700">{t.ticketNumber}</span>
+                              <span className="text-[10px] text-slate-400 font-semibold">• {new Date(t.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
+                            </div>
+                            <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t.subject}</h4>
+                          </div>
+                          <div className="flex items-center gap-1.5 self-start sm:self-center">
+                            <Badge 
+                              className={`border-none text-[10px] font-bold py-0.5 px-2 uppercase tracking-wide hover:opacity-90 ${
+                                t.status === "open"
+                                  ? "bg-blue-50 text-blue-700 hover:bg-blue-50"
+                                  : t.status === "in_progress"
+                                  ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-50"
+                                  : t.status === "resolved"
+                                  ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-50"
+                                  : "bg-slate-100 text-slate-700 dark:bg-slate-800"
+                              }`}
+                            >
+                              {t.status.replace("_", " ")}
+                            </Badge>
+                            <Badge 
+                              className={`border-none text-[10px] font-bold py-0.5 px-2 uppercase tracking-wide hover:opacity-90 ${
+                                t.priority === "urgent"
+                                  ? "bg-rose-50 text-rose-700 hover:bg-rose-50"
+                                  : t.priority === "high"
+                                  ? "bg-amber-50 text-amber-700 hover:bg-amber-50"
+                                  : t.priority === "medium"
+                                  ? "bg-blue-50 text-blue-600 hover:bg-blue-50"
+                                  : "bg-slate-50 text-slate-600 hover:bg-slate-50"
+                              }`}
+                            >
+                              {t.priority}
+                            </Badge>
+                          </div>
+                        </div>
+                        <p className="text-xs text-slate-500 leading-normal">{t.description}</p>
+                        <div className="flex justify-between items-center text-[10px] text-slate-400 font-semibold pt-1 border-t border-slate-100 dark:border-slate-800/60">
+                          <span>Category: <span className="text-slate-600 dark:text-slate-400 capitalize">{t.category.replace("_", " ")}</span></span>
+                          {t.status === "resolved" && (
+                            <span className="text-green-600">Resolved • Ready to close</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

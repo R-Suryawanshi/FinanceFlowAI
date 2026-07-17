@@ -53,6 +53,8 @@ export const userProfiles = pgTable("user_profiles", {
   ifscCode: text("ifsc_code"),
   accountHolderName: text("account_holder_name"),
   accountType: text("account_type"),
+  emailNotifications: boolean("email_notifications").notNull().default(true),
+  smsNotifications: boolean("sms_notifications").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -168,6 +170,19 @@ export const notifications = pgTable("notifications", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+export const supportTickets = pgTable("support_tickets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  ticketNumber: text("ticket_number").notNull().unique(),
+  subject: text("subject").notNull(),
+  description: text("description").notNull(),
+  category: text("category").notNull(), // loan, fixed_deposit, kyc, payment, general
+  priority: text("priority").notNull().default("medium"), // low, medium, high, urgent
+  status: text("status").notNull().default("open"), // open, in_progress, resolved, closed
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 // Schema exports
 export const insertUserSchema = createInsertSchema(users);
 export const selectUserSchema = createSelectSchema(users);
@@ -189,6 +204,8 @@ export const insertInterestRateSchema = createInsertSchema(interestRates);
 export const selectInterestRateSchema = createSelectSchema(interestRates);
 export const insertNotificationSchema = createInsertSchema(notifications);
 export const selectNotificationSchema = createSelectSchema(notifications);
+export const insertSupportTicketSchema = createInsertSchema(supportTickets);
+export const selectSupportTicketSchema = createSelectSchema(supportTickets);
 
 // Type exports
 export type User = z.infer<typeof selectUserSchema>;
@@ -211,3 +228,5 @@ export type InterestRate = z.infer<typeof selectInterestRateSchema>;
 export type InsertInterestRate = z.infer<typeof insertInterestRateSchema>;
 export type Notification = z.infer<typeof selectNotificationSchema>;
 export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+export type SupportTicket = z.infer<typeof selectSupportTicketSchema>;
+export type InsertSupportTicket = z.infer<typeof insertSupportTicketSchema>;
