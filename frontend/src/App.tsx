@@ -321,6 +321,12 @@ function App() {
               onClose={() => setAuthModalOpen(false)}
               onLogin={handleLogin}
               onSignup={handleSignup}
+              onOAuthSuccess={(token, user) => {
+                setAuthToken(token);
+                setUser(user);
+                setAuthModalOpen(false);
+                setCurrentPage(user.role === "admin" ? "admin-dashboard" : "user-dashboard");
+              }}
             />
           </div>
         </ThemeProvider>

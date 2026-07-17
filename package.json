@@ -7,7 +7,7 @@
   "type": "module",
   "main": "postcss.config.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development tsx backend/index.ts",
+    "dev": "cross-env NODE_ENV=development tsx watch backend/index.ts",
     "build": "vite build && esbuild backend/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "start": "NODE_ENV=production node dist/index.js",
     "check": "tsc",
