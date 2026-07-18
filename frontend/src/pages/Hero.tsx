@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -184,6 +184,27 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
     }
   };
 
+  // Set up intersection observer for scroll reveal animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    const revealElements = document.querySelectorAll(".reveal-on-scroll");
+    revealElements.forEach((el) => observer.observe(el));
+
+    return () => {
+      revealElements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+
   return (
     <div className="overflow-x-hidden bg-background text-foreground min-h-screen">
       
@@ -192,7 +213,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
         <div className="absolute top-20 left-10 -z-10 w-[300px] h-[300px] bg-purple-500/10 dark:bg-purple-900/10 rounded-full filter blur-3xl" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="space-y-8 lg:col-span-7">
+          <div className="space-y-8 lg:col-span-7 animate-fade-in-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 border border-border bg-primary/10 rounded-full text-xs font-semibold text-primary">
               <Shield className="h-3 w-3 text-primary" />
               <span>Bhalchandra Finance • Your Success Partner</span>
@@ -236,13 +257,13 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
           </div>
 
           {/* Right Column - Mockup image */}
-          <div className="relative lg:col-span-5 flex justify-center">
+          <div className="relative lg:col-span-5 flex justify-center animate-fade-in-right">
             <div className="relative w-full max-w-[420px]">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-3xl filter blur-xl opacity-70" />
               <img 
                 src={heroPhoneMockups} 
                 alt="Bhalchandra Finance App Mockup" 
-                className="w-full relative drop-shadow-2xl z-10 select-none animate-fade-in-up"
+                className="w-full relative drop-shadow-2xl z-10 select-none animate-float"
               />
             </div>
           </div>
@@ -250,7 +271,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 2. FEATURES SECTION */}
-      <section className="py-24 bg-muted/20 border-y border-border/50">
+      <section className="py-24 bg-muted/20 border-y border-border/50 reveal-on-scroll">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-16">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="px-3 py-1 border border-border bg-primary/10 rounded-full text-xs font-semibold text-primary">
@@ -339,7 +360,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 3. HOW IT WORKS SECTION */}
-      <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto">
+      <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto reveal-on-scroll">
         <div className="bg-slate-900 dark:bg-slate-900/60 text-white rounded-3xl p-8 lg:p-16 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 -z-10 w-[400px] h-[400px] bg-primary/15 rounded-full filter blur-3xl" />
           
@@ -413,7 +434,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 4. WHY CHOOSE US SECTION */}
-      <section className="py-24 bg-muted/10 border-y border-border/50">
+      <section className="py-24 bg-muted/10 border-y border-border/50 reveal-on-scroll">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-16">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="px-3 py-1 border border-border bg-primary/10 rounded-full text-xs font-semibold text-primary">
@@ -472,7 +493,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 5. FAQ SECTION */}
-      <section className="py-20 bg-muted/20 border-y border-border/50">
+      <section className="py-20 bg-muted/20 border-y border-border/50 reveal-on-scroll">
         <div className="max-w-4xl mx-auto px-4 md:px-8 space-y-12">
           <div className="text-center space-y-3">
             <span className="px-3 py-1 border border-border bg-primary/10 rounded-full text-xs font-semibold text-primary">
@@ -516,7 +537,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 6. SUBSCRIPTION BANNER */}
-      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8">
+      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 reveal-on-scroll">
         <div className="bg-gradient-to-br from-slate-900 to-primary/30 text-white rounded-3xl p-8 lg:p-14 shadow-2xl relative overflow-hidden">
           <div className="absolute -bottom-24 -left-24 w-[350px] h-[350px] bg-teal-500/10 rounded-full filter blur-3xl" />
           
