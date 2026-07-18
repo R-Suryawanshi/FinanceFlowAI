@@ -141,7 +141,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
               </div>
             </div>
             <div className="flex gap-1.5 border-t border-slate-800 pt-2">
-              <div className="flex-1 bg-slate-900 rounded-md border border-slate-800 px-2 py-1 text-[9px] text-slate-500">
+              <div className="flex-1 bg-slate-900 rounded-md border border-slate-800 px-2 py-1 text-[9px] text-muted-foreground">
                 Type a message...
               </div>
               <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center text-white text-[10px] font-bold">
@@ -178,7 +178,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
                 </div>
               </div>
             </div>
-            <span className="text-center text-[8px] text-slate-500">Updating live...</span>
+            <span className="text-center text-[8px] text-muted-foreground">Updating live...</span>
           </div>
         );
     }
@@ -219,11 +219,11 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
               <span>Bhalchandra Finance • Your Success Partner</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-955 dark:text-white leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-tight">
               Take Control of Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600 dark:from-primary dark:to-purple-400">Financial Future</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-655 dark:text-slate-350 max-w-xl">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-xl">
               Expert financial services with AI-powered guidance. From EMI calculations to gold loans, we provide comprehensive solutions tailored to your financial goals.
             </p>
 
@@ -249,7 +249,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
 
             {/* Trust partners */}
             <div className="pt-6 border-t border-border/60">
-              <div className="flex items-center gap-2 text-sm text-slate-500">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Shield className="h-4 w-4 text-green-600" />
                 <span>Bank-level Security</span>
               </div>
@@ -292,8 +292,8 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
                 <div className="w-10 h-10 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl flex items-center justify-center border border-primary/20">
                   <Calculator className="h-5 w-5" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">EMI Calculator</h3>
-                <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed">
+                <h3 className="text-xl font-bold text-foreground">EMI Calculator</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Calculate your monthly payments instantly with our advanced calculator for Home, Car, and Personal loans.
                 </p>
               </div>
@@ -312,8 +312,8 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
                 <div className="w-10 h-10 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl flex items-center justify-center border border-primary/20">
                   <CreditCard className="h-5 w-5" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Gold Loans</h3>
-                <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed">
+                <h3 className="text-xl font-bold text-foreground">Gold Loans</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Get instant loan approvals against your gold jewelry with competitive interest rates and secure vaults.
                 </p>
               </div>
@@ -332,8 +332,8 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
                 <div className="w-10 h-10 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl flex items-center justify-center border border-primary/20">
                   <Sparkles className="h-5 w-5" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">AI Financial Assistant</h3>
-                <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed">
+                <h3 className="text-xl font-bold text-foreground">AI Financial Assistant</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Receive personalized, automated advice regarding your loan planning, EMIs, and document requirements.
                 </p>
               </div>
@@ -473,8 +473,8 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
               <div className="w-10 h-10 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl flex items-center justify-center border border-primary/20 mb-6">
                 <Calculator className="h-5 w-5" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">Flexible Rates & Calculators</h3>
-              <p className="text-xs sm:text-sm text-slate-655 dark:text-slate-400 leading-relaxed">
+              <h3 className="text-lg font-bold text-foreground mb-3">Flexible Rates & Calculators</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 Leverage precise EMI, gold loan, and investment calculators. Get custom scenario results instantly with direct applying pathways.
               </p>
             </div>
