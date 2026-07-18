@@ -973,7 +973,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-[1600px] mx-auto p-6">
         <div className="text-center py-12">
           <div className="text-lg">Loading your dashboard...</div>
         </div>
@@ -1020,7 +1020,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
   });
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-8">
+    <div className="max-w-[1600px] mx-auto p-6 space-y-8">
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-foreground">Welcome back, {user.name}!</h1>
         <div className="text-muted-foreground space-y-1">

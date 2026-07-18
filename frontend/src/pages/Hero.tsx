@@ -297,7 +297,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
   return (
     <div className="overflow-x-hidden bg-background text-foreground min-h-screen">
       
-      <section className="relative pt-8 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
+      <section className="relative pt-8 pb-20 px-4 md:px-8 max-w-[1600px] mx-auto">
         <div className="absolute top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary/10 dark:bg-primary/10 rounded-full filter blur-3xl" />
         <div className="absolute top-20 left-10 -z-10 w-[300px] h-[300px] bg-purple-500/10 dark:bg-purple-900/10 rounded-full filter blur-3xl" />
 
@@ -361,7 +361,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
 
       {/* 2. FEATURES SECTION */}
       <section className="py-24 bg-muted/20 border-y border-border/50 reveal-on-scroll">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-16">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-8 space-y-16">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="px-3 py-1 border border-border bg-primary/10 rounded-full text-xs font-semibold text-primary">
               Simple, Smart, Financial Services
@@ -449,7 +449,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 3. HOW IT WORKS SECTION */}
-      <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto reveal-on-scroll">
+      <section className="py-20 px-4 md:px-8 max-w-[1600px] mx-auto reveal-on-scroll">
         <div className="bg-slate-900 dark:bg-slate-900/60 text-white rounded-3xl p-8 lg:p-16 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 -z-10 w-[400px] h-[400px] bg-primary/15 rounded-full filter blur-3xl" />
           
@@ -524,7 +524,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
 
       {/* 4. WHY CHOOSE US SECTION */}
       <section className="py-24 bg-muted/10 border-y border-border/50 reveal-on-scroll">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-16">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-8 space-y-16">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="px-3 py-1 border border-border bg-primary/10 rounded-full text-xs font-semibold text-primary">
               Why Choose Us
@@ -626,7 +626,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 6. SUBSCRIPTION BANNER */}
-      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 reveal-on-scroll">
+      <section className="py-24 max-w-[1600px] mx-auto px-4 md:px-8 reveal-on-scroll">
         <div className="bg-gradient-to-br from-slate-900 to-primary/30 text-white rounded-3xl p-8 lg:p-14 shadow-2xl relative overflow-hidden">
           <div className="absolute -bottom-24 -left-24 w-[350px] h-[350px] bg-teal-500/10 rounded-full filter blur-3xl" />
           

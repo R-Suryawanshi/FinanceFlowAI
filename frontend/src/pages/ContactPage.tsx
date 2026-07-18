@@ -135,7 +135,7 @@ export function ContactPage({ onBack }: ContactPageProps) {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 space-y-16">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 space-y-16">
       {/* Header */}
       <div className="flex items-start gap-5">
         {onBack && (

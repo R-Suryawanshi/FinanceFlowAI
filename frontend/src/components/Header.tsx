@@ -153,10 +153,10 @@ export function Header({
       className={`sticky z-50 transition-all duration-300 bg-background/80 backdrop-blur-lg border border-border/55 ${
         isAdminPage 
           ? "w-full rounded-none border-b border-t-0 border-x-0 top-0 shadow-sm" 
-          : "rounded-full shadow-lg w-[calc(100%-2rem)] max-w-7xl mx-auto top-4 mt-4"
+          : "rounded-full shadow-lg w-[calc(100%-2rem)] max-w-[1600px] mx-auto top-4 mt-4"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-2">
+      <div className="max-w-[1600px] mx-auto px-2">
         <div className="flex justify-between items-center h-14 px-4">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
