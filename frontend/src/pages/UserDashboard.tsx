@@ -2720,28 +2720,28 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
                 title: "Home Loan",
                 icon: Home,
                 desc: "Buy your dream home with low rates",
-                color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 hover:border-emerald-300"
+                color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/25 hover:border-emerald-500/50"
               },
               {
                 id: "car",
                 title: "Car Loan",
                 icon: Car,
                 desc: "Finance new or pre-owned vehicles",
-                color: "text-amber-600 bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/30 hover:border-amber-300"
+                color: "text-amber-500 bg-amber-500/10 border-amber-500/25 hover:border-amber-500/50"
               },
               {
                 id: "personal",
                 title: "Personal Loan",
                 icon: User,
                 desc: "Get instant cash for personal needs",
-                color: "text-primary bg-primary/10 dark:bg-primary/20 border-primary/20 dark:border-primary/30 hover:border-primary/50"
+                color: "text-primary bg-primary/10 border-primary/20 hover:border-primary/50"
               },
               {
                 id: "gold",
                 title: "Gold Loan",
                 icon: Coins,
                 desc: "Unlock the value of your gold items",
-                color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-950/20 border-yellow-100 dark:border-yellow-900/30 hover:border-yellow-300"
+                color: "text-yellow-500 bg-yellow-500/10 border-yellow-500/25 hover:border-yellow-500/50"
               }
             ].map((loanOption) => {
               const LoanIcon = loanOption.icon;
@@ -2755,7 +2755,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
                       onNavigateToPage(`loan-application-${loanOption.id}`);
                     }
                   }}
-                  className={`p-4 rounded-xl border flex items-start gap-3.5 text-left transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] group bg-card dark:bg-slate-900/50 ${loanOption.color}`}
+                  className={`p-4 rounded-xl border flex items-start gap-3.5 text-left transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] group ${loanOption.color}`}
                 >
                   <div className="p-2.5 rounded-lg bg-card dark:bg-slate-900 shadow-sm border border-border/50 dark:border-border shrink-0">
                     <LoanIcon className="h-5 w-5" />
