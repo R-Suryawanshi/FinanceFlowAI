@@ -32,9 +32,9 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       features: ['Home Loans', 'Car Loans', 'Personal Loans', 'Business Loans'],
       rate: 'Starting from 8.5% p.a.',
       bgColor: 'bg-indigo-50/50 dark:bg-indigo-955/10',
-      iconColor: 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30',
+      iconColor: 'text-indigo-400 bg-indigo-900/20',
       borderColor: 'border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-500/55 hover:shadow-indigo-500/5',
-      badgeColor: 'border-indigo-200 text-indigo-700 bg-indigo-50/50 dark:border-indigo-900/40 dark:text-indigo-400 dark:bg-indigo-950/20',
+      badgeColor: 'border-indigo-900/40 text-indigo-400 bg-indigo-950/20',
       cta: 'Calculate EMI',
       ctaAction: () => onNavigateToCalculator('emi')
     },
@@ -46,7 +46,7 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       features: ['Up to 75% of gold value', 'Minimal documentation', 'Quick approval', 'Secure gold storage'],
       rate: 'Starting from 12% p.a.',
       bgColor: 'bg-amber-50/50 dark:bg-amber-955/10',
-      iconColor: 'text-amber-605 dark:text-amber-450 bg-amber-50 dark:bg-amber-900/30',
+      iconColor: 'text-amber-400 bg-amber-900/20',
       borderColor: 'border-amber-100 dark:border-amber-900/30 hover:border-amber-500/55 hover:shadow-amber-500/5',
       badgeColor: 'border-amber-200 text-amber-700 bg-amber-50/50 dark:border-amber-900/40 dark:text-amber-450 dark:bg-amber-955/20',
       cta: 'Check Eligibility',
@@ -60,9 +60,9 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       features: ['Up to ₹5 Crore loan amount', 'Tenure up to 30 years', 'Balance transfer facility', 'Part prepayment option'],
       rate: 'Starting from 8.5% p.a.',
       bgColor: 'bg-emerald-50/50 dark:bg-emerald-955/10',
-      iconColor: 'text-emerald-600 dark:text-emerald-455 bg-emerald-50 dark:bg-emerald-900/30',
+      iconColor: 'text-emerald-400 bg-emerald-900/20',
       borderColor: 'border-emerald-100 dark:border-emerald-900/30 hover:border-emerald-500/55 hover:shadow-emerald-500/5',
-      badgeColor: 'border-emerald-200 text-emerald-700 bg-emerald-50/50 dark:border-emerald-900/40 dark:text-emerald-455 dark:bg-emerald-955/20',
+      badgeColor: 'border-emerald-900/40 text-emerald-400 bg-emerald-950/20',
       cta: 'Apply Now',
       ctaAction: () => onPageChange && onPageChange('loan-application-home')
     },
@@ -74,9 +74,9 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       features: ['Up to 85% financing', 'Flexible tenure options', 'New & used cars', 'Quick processing'],
       rate: 'Starting from 9.5% p.a.',
       bgColor: 'bg-orange-50/50 dark:bg-orange-955/10',
-      iconColor: 'text-orange-600 dark:text-orange-455 bg-orange-50 dark:bg-orange-900/30',
+      iconColor: 'text-orange-400 bg-orange-900/20',
       borderColor: 'border-orange-100 dark:border-orange-900/30 hover:border-orange-500/55 hover:shadow-orange-500/5',
-      badgeColor: 'border-orange-200 text-orange-700 bg-orange-50/50 dark:border-orange-900/40 dark:text-orange-450 dark:bg-orange-955/20',
+      badgeColor: 'border-orange-900/40 text-orange-400 bg-orange-950/20',
       cta: 'Apply Now',
       ctaAction: () => onPageChange && onPageChange('loan-application-car')
     },
@@ -88,9 +88,9 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       features: ['Up to ₹50 Lakh', 'No collateral required', 'Flexible repayment', 'Digital process'],
       rate: 'Starting from 11% p.a.',
       bgColor: 'bg-primary/5 dark:bg-primary/10',
-      iconColor: 'text-primary bg-primary/10 dark:bg-primary/20',
+      iconColor: 'text-primary bg-primary/20',
       borderColor: 'border-primary/20 dark:border-primary/30 hover:border-primary/50 hover:shadow-primary/5',
-      badgeColor: 'border-primary/20 text-primary bg-primary/5 dark:border-primary/40 dark:text-primary dark:bg-primary/20',
+      badgeColor: 'border-primary/40 text-primary bg-primary/20',
       cta: 'Apply Now',
       ctaAction: () => onPageChange && onPageChange('loan-application-personal')
     },
@@ -102,9 +102,9 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       features: ['Up to 8.50% p.a. returns', 'Compounded quarterly', '0.50% extra for seniors', 'Flexible tenure 12-60 mo'],
       rate: 'Interest up to 9.0% p.a.',
       bgColor: 'bg-pink-50/50 dark:bg-pink-955/10',
-      iconColor: 'text-pink-600 dark:text-pink-450 bg-pink-50 dark:bg-pink-900/30',
+      iconColor: 'text-pink-400 bg-pink-900/20',
       borderColor: 'border-pink-100 dark:border-pink-900/30 hover:border-pink-500/55 hover:shadow-pink-500/5',
-      badgeColor: 'border-pink-200 text-pink-700 bg-pink-50/50 dark:border-pink-900/40 dark:text-pink-455 dark:bg-pink-955/20',
+      badgeColor: 'border-pink-900/40 text-pink-400 bg-pink-950/20',
       cta: 'Calculate Returns',
       ctaAction: () => onNavigateToCalculator('fd')
     },
@@ -116,9 +116,9 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       features: ['Mutual funds', 'SIP planning', 'Tax-saving investments', 'Goal-based planning'],
       rate: 'Expert advisory',
       bgColor: 'bg-violet-50/50 dark:bg-violet-955/10',
-      iconColor: 'text-violet-600 dark:text-violet-455 bg-violet-50 dark:bg-violet-900/30',
+      iconColor: 'text-violet-400 bg-violet-900/20',
       borderColor: 'border-violet-100 dark:border-violet-900/30 hover:border-violet-500/55 hover:shadow-violet-500/5',
-      badgeColor: 'border-violet-200 text-violet-700 bg-violet-50/55 dark:border-violet-900/40 dark:text-violet-450 dark:bg-violet-955/20',
+      badgeColor: 'border-violet-900/40 text-violet-400 bg-violet-955/20',
       cta: 'Start Planning',
       ctaAction: () => onGetStarted && onGetStarted()
     }
@@ -129,19 +129,19 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       icon: Shield,
       title: 'Secure & Trusted',
       description: 'Bank-level 256-bit encryption and regulatory compliance for all your assets.',
-      color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20'
+      color: 'text-emerald-400 bg-emerald-950/20'
     },
     {
       icon: Clock,
       title: 'Quick Processing',
       description: 'Fast approval process with fully digital documentation and paperless flow.',
-      color: 'text-primary bg-primary/10 dark:bg-primary/20'
+      color: 'text-primary bg-primary/20'
     },
     {
       icon: CheckCircle,
       title: 'Transparent Terms',
       description: 'Zero hidden charges, clear schedules, and straightforward repayment guidelines.',
-      color: 'text-purple-600 bg-purple-50 dark:bg-purple-955/20'
+      color: 'text-purple-400 bg-purple-955/20'
     }
   ];
 
@@ -161,10 +161,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
           </Button>
         )}
         <div className="space-y-2 flex-1 text-left">
-          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+          <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
             Our Financial Services
           </h1>
-          <p className="text-lg text-slate-500 dark:text-slate-400 max-w-3xl leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">
             Comprehensive financial solutions designed to meet all your monetary needs. 
             From loans to investments, we've got you covered with competitive rates and expert guidance.
           </p>
@@ -186,8 +186,8 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
                   <Icon className="h-6 w-6" />
                 </div>
                 <div className="text-left space-y-1.5">
-                  <CardTitle className="text-xl font-bold text-slate-850 dark:text-slate-100">{service.title}</CardTitle>
-                  <CardDescription className="text-xs text-slate-500 dark:text-slate-400 leading-normal min-h-[40px]">
+                  <CardTitle className="text-xl font-bold text-foreground">{service.title}</CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground leading-normal min-h-[40px]">
                     {service.description}
                   </CardDescription>
                 </div>
@@ -208,7 +208,7 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
                     {service.features.map((feature, index) => (
                       <div key={index} className="flex items-center gap-2.5 text-xs">
                         <CheckCircle className="h-4 w-4 text-emerald-500 dark:text-emerald-450 shrink-0" />
-                        <span className="text-slate-600 dark:text-slate-300 font-medium">{feature}</span>
+                        <span className="text-muted-foreground font-medium">{feature}</span>
                       </div>
                     ))}
                   </div>
@@ -239,10 +239,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       {/* Benefits Section */}
       <div className="bg-gradient-to-br from-muted/50 to-muted/20 rounded-3xl p-10 border border-border shadow-inner">
         <div className="text-center mb-10 max-w-2xl mx-auto space-y-2">
-          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+          <h2 className="text-3xl font-extrabold text-foreground tracking-tight">
             Why Choose Bhalchandra Finance?
           </h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
+          <p className="text-sm text-muted-foreground font-medium leading-relaxed">
             We are committed to providing the best financial services with transparency and trust.
           </p>
         </div>
@@ -256,8 +256,8 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
                   <Icon className="h-6 w-6" />
                 </div>
                 <div className="space-y-1.5">
-                  <h3 className="text-lg font-bold text-slate-850 dark:text-slate-100">{benefit.title}</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-normal">{benefit.description}</p>
+                  <h3 className="text-lg font-bold text-foreground">{benefit.title}</h3>
+                  <p className="text-xs text-muted-foreground leading-normal">{benefit.description}</p>
                 </div>
               </div>
             );
