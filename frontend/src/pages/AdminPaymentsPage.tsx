@@ -129,7 +129,7 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
               size="icon"
               onClick={onBack}
               data-testid="page-back-button"
-              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-primary hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -154,11 +154,11 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
               <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Revenue</span>
               <div className="text-3xl font-bold text-foreground dark:text-white">{formatCurrency(liveStats.totalRevenue)}</div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-100 dark:shadow-none">
+            <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100 dark:shadow-none">
               <DollarSign className="h-5 w-5" />
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-cyan-500" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500" />
         </Card>
 
         {/* Metric 2: Outstanding Portfolio */}
@@ -180,13 +180,13 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
               <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Collection Recovery Rate</span>
-              <div className="text-3xl font-bold text-cyan-605 dark:text-cyan-400">86.8%</div>
+              <div className="text-3xl font-bold text-purple-605 dark:text-purple-400">86.8%</div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
+            <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100 dark:shadow-none">
               <TrendingUp className="h-5 w-5" />
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-purple-500" />
         </Card>
       </div>
 

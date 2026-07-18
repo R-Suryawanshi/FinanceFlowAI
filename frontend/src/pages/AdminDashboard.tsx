@@ -541,7 +541,7 @@ export function AdminDashboard({ user, onPageChange }: any) {
                 Live Database
               </Badge>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
+            <div className="h-10 w-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md">
               <Users className="h-5 w-5" />
             </div>
           </div>
@@ -554,7 +554,7 @@ export function AdminDashboard({ user, onPageChange }: any) {
                 {liveUsers.filter(u => new Date(u.createdAt).toDateString() === new Date().toDateString()).length}
               </div>
               <span className="text-[10px] text-muted-foreground dark:text-muted-foreground flex items-center gap-1 font-medium">
-                <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" /> Awaiting action
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" /> Awaiting action
               </span>
             </div>
             <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100 dark:shadow-none">
@@ -569,17 +569,17 @@ export function AdminDashboard({ user, onPageChange }: any) {
                 variant="ghost"
                 size="sm"
                 onClick={() => onPageChange && onPageChange("admin-users")}
-                className="text-xs text-blue-700 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950/30 p-0 h-auto font-bold flex items-center gap-1"
+                className="text-xs text-primary hover:text-primary/80 hover:bg-primary/10 p-0 h-auto font-bold flex items-center gap-1"
               >
                 Manage Users Directory &rarr;
               </Button>
             </div>
             <div className="flex justify-between text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
               <span>Verification Rate</span>
-              <span className="text-primary dark:text-blue-400 font-bold">{verificationRate}%</span>
+              <span className="text-primary font-bold">{verificationRate}%</span>
             </div>
             <div className="h-1.5 w-full bg-muted dark:bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" style={{ width: `${verificationRate}%` }} />
+              <div className="h-full bg-gradient-to-r from-primary to-indigo-500 rounded-full" style={{ width: `${verificationRate}%` }} />
             </div>
           </div>
           {/* Accent bottom border */}
@@ -767,7 +767,7 @@ export function AdminDashboard({ user, onPageChange }: any) {
                   </div>
                   <div className="text-right">
                     <span className="text-xs font-bold text-muted-foreground block uppercase">July Volume</span>
-                    <span className="text-xl font-extrabold text-blue-600 dark:text-blue-450">
+                    <span className="text-xl font-extrabold text-primary">
                       {monthlyRevenue.length > 0 ? formatCurrency(monthlyRevenue[monthlyRevenue.length - 1].amount) : "₹0"}
                     </span>
                   </div>
@@ -778,8 +778,8 @@ export function AdminDashboard({ user, onPageChange }: any) {
                   <AreaChart data={monthlyRevenue} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                     <defs>
                       <linearGradient id="colorMonthly" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.25} />
-                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                        <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.25} />
+                        <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0} />
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.08)" />
@@ -795,7 +795,7 @@ export function AdminDashboard({ user, onPageChange }: any) {
                       }}
                       formatter={(v) => [formatCurrency(Number(v)), "Revenue"]}
                     />
-                    <Area type="monotone" dataKey="amount" stroke="#3B82F6" strokeWidth={2.5} fillOpacity={1} fill="url(#colorMonthly)" activeDot={{ r: 6 }} />
+                    <Area type="monotone" dataKey="amount" stroke="#8B5CF6" strokeWidth={2.5} fillOpacity={1} fill="url(#colorMonthly)" activeDot={{ r: 6 }} />
                   </AreaChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -930,7 +930,7 @@ export function AdminDashboard({ user, onPageChange }: any) {
               <div className="flex justify-between items-start">
                 <div>
                   <CardTitle className="flex items-center gap-2 text-foreground dark:text-white text-lg font-bold">
-                    <Brain className="h-5 w-5 text-blue-600 dark:text-blue-400" /> AI Revenue Forecast
+                    <Brain className="h-5 w-5 text-primary" /> AI Revenue Forecast
                   </CardTitle>
                   <CardDescription className="text-xs">Next 3 months predicted volume based on regression algorithms</CardDescription>
                 </div>
@@ -981,7 +981,7 @@ export function AdminDashboard({ user, onPageChange }: any) {
               </CardHeader>
               <CardContent className="space-y-3">
                 {aiInsights.map((insight, idx) => (
-                  <div key={idx} className="p-3 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100/50 dark:border-blue-900/30 rounded-xl text-foreground dark:text-slate-250 text-sm font-medium">
+                  <div key={idx} className="p-3 bg-primary/10 border border-primary/20 rounded-xl text-foreground text-sm font-medium">
                     {insight}
                   </div>
                 ))}

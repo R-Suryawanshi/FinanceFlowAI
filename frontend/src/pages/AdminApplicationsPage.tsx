@@ -171,7 +171,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
               size="icon"
               onClick={onBack}
               data-testid="page-back-button"
-              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-primary hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -196,11 +196,11 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
               <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Applications</span>
               <div className="text-3xl font-bold text-foreground dark:text-white">{liveApplications.length}</div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100 dark:shadow-none">
+            <div className="h-10 w-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md">
               <FileText className="h-5 w-5" />
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary" />
         </Card>
 
         {/* Metric 2: Pending Reviews */}
@@ -224,7 +224,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
               <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Approval Success Rate</span>
-              <div className="text-3xl font-bold text-indigo-650 dark:text-indigo-400">{approvalSuccessRate}%</div>
+              <div className="text-3xl font-bold text-primary">{approvalSuccessRate}%</div>
             </div>
             <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100 dark:shadow-none">
               <CheckCircle className="h-5 w-5" />
@@ -281,7 +281,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
                 <tbody className="bg-card dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredPending.map((app) => (
                     <tr key={app.userService.id} className="hover:bg-muted/30/40 dark:hover:bg-slate-800/40 text-sm">
-                      <td className="px-6 py-4 font-semibold text-primary dark:text-blue-400">{app.userService.applicationNumber}</td>
+                      <td className="px-6 py-4 font-semibold text-primary">{app.userService.applicationNumber}</td>
                       <td className="px-6 py-4 font-medium text-foreground dark:text-slate-200">{app.user.name}</td>
                       <td className="px-6 py-4 text-muted-foreground dark:text-muted-foreground">{app.user.email}</td>
                       <td className="px-6 py-4 font-medium text-muted-foreground dark:text-slate-300 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
@@ -291,7 +291,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
                         <Button 
                           variant="outline" 
                           size="sm" 
-                          className="border-primary/20 dark:border-blue-800 text-primary dark:text-blue-400 hover:bg-primary/5 dark:hover:bg-blue-955/20 flex items-center gap-1 font-medium text-xs rounded-lg"
+                          className="border-primary/20 text-primary hover:bg-primary/5 flex items-center gap-1 font-medium text-xs rounded-lg"
                           onClick={() => setSelectedApp(app)}
                         >
                           <FileText className="h-3.5 w-3.5" />
@@ -347,7 +347,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
               <tbody className="bg-card dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredProcessed.map((app) => (
                   <tr key={app.userService.id} className="hover:bg-muted/30/40 dark:hover:bg-slate-800/40 text-sm">
-                    <td className="px-6 py-4 font-semibold text-primary dark:text-blue-400">{app.userService.applicationNumber}</td>
+                    <td className="px-6 py-4 font-semibold text-primary">{app.userService.applicationNumber}</td>
                     <td className="px-6 py-4 font-medium text-foreground dark:text-slate-200">{app.user.name}</td>
                     <td className="px-6 py-4 font-medium text-muted-foreground dark:text-slate-300 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
                     <td className="px-6 py-4 font-bold text-foreground dark:text-white">{formatCurrency(Number(app.userService.amount))}</td>
@@ -359,7 +359,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
                         app.userService.status === "completed" 
                           ? "bg-green-100 text-green-800 dark:bg-green-950/30 dark:text-green-400 border-none hover:bg-green-100" 
                           : app.userService.status === "active" 
-                          ? "bg-blue-100 text-blue-800 dark:bg-blue-955/30 dark:text-blue-400 border-none hover:bg-blue-100" 
+                          ? "bg-primary/10 text-primary border border-primary/20 hover:bg-primary/10" 
                           : "bg-red-100 text-red-800 dark:bg-red-950/30 dark:text-red-400 border-none hover:bg-red-100"
                       }>
                         {app.userService.status}
@@ -377,7 +377,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
       <Dialog open={!!selectedApp} onOpenChange={(open) => !open && setSelectedApp(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-card dark:bg-slate-900 text-foreground dark:text-slate-100 border border-border dark:border-border shadow-2xl rounded-2xl p-6">
           <DialogHeader className="border-b border-border dark:border-border/80 pb-4">
-            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-primary dark:text-blue-400">
+            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-primary">
               <ShieldCheck className="h-6 w-6 text-green-650 animate-pulse" />
               Underwriting Sheet & KYC Audit
             </DialogTitle>
@@ -430,7 +430,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-muted/30 dark:bg-slate-950/20 p-4 rounded-xl border border-border dark:border-border">
                   <div className="space-y-3">
                     <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
-                      <User className="h-4 w-4 text-primary dark:text-blue-400" /> Applicant Details
+                      <User className="h-4 w-4 text-primary" /> Applicant Details
                     </h3>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <span className="text-muted-foreground dark:text-muted-foreground">Full Name:</span>
@@ -454,7 +454,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
 
                   <div className="space-y-3">
                     <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-primary dark:text-blue-400" /> Address Details
+                      <MapPin className="h-4 w-4 text-primary" /> Address Details
                     </h3>
                     <div className="text-xs space-y-1">
                       <p className="font-semibold text-foreground dark:text-slate-200">{address}</p>
@@ -469,7 +469,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-3 border border-border dark:border-border p-4 rounded-xl">
                     <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
-                      <Briefcase className="h-4 w-4 text-primary dark:text-blue-400" /> Employment & Income
+                      <Briefcase className="h-4 w-4 text-primary" /> Employment & Income
                     </h3>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <span className="text-muted-foreground dark:text-muted-foreground">Occupation:</span>
@@ -481,13 +481,13 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
                         {monthlyIncome ? formatCurrency(parseFloat(monthlyIncome)) : "—"}
                       </span>
                       <span className="text-muted-foreground dark:text-muted-foreground">Credit Score:</span>
-                      <span className="font-bold text-primary dark:text-blue-400">{creditScore}</span>
+                      <span className="font-bold text-primary">{creditScore}</span>
                     </div>
                   </div>
 
                   <div className="space-y-3 border border-border dark:border-border p-4 rounded-xl">
                     <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
-                      <DollarSign className="h-4 w-4 text-primary dark:text-blue-400" /> Loan Terms
+                      <DollarSign className="h-4 w-4 text-primary" /> Loan Terms
                     </h3>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <span className="text-muted-foreground dark:text-muted-foreground">Scheme Name:</span>
@@ -507,7 +507,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
                 {/* Row 2.5: Bank Account Details */}
                 <div className="space-y-3 border border-border dark:border-border p-4 rounded-xl bg-muted/30/50 dark:bg-slate-950/10">
                   <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
-                    <Building className="h-4 w-4 text-primary dark:text-blue-400" /> Disbursement Bank Account Details
+                    <Building className="h-4 w-4 text-primary" /> Disbursement Bank Account Details
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                     <div>
@@ -560,14 +560,14 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
                 {/* Row 4: KYC Files checklist */}
                 <div className="space-y-3 border border-border dark:border-border p-4 rounded-xl">
                   <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-primary dark:text-blue-400" /> Submitted KYC Verification Documents
+                    <FileText className="h-4 w-4 text-primary" /> Submitted KYC Verification Documents
                   </h3>
                   {selectedApp.userService?.documents && Object.keys(selectedApp.userService.documents).length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {Object.entries(selectedApp.userService.documents).map(([key, val]: any) => (
                         <div key={key} className="flex justify-between items-center p-2.5 rounded-lg border border-border dark:border-border bg-muted/30 dark:bg-slate-955/20 text-xs">
                           <div className="space-y-0.5">
-                            <span className="font-bold text-[10px] text-primary dark:text-blue-400 uppercase tracking-wider block">
+                            <span className="font-bold text-[10px] text-primary uppercase tracking-wider block">
                               {key.replace(/([A-Z])/g, ' $1')}
                             </span>
                             <span className="font-semibold text-slate-755 dark:text-slate-205 truncate max-w-[180px] block" title={val.name}>
