@@ -195,6 +195,20 @@ function App() {
     setCurrentPage("home");
   };
 
+  const navigatePage = (page: string) => {
+    if (page === "home") {
+      setCurrentPage("home");
+      return;
+    }
+
+    if (!user) {
+      setAuthModalOpen(true);
+      return;
+    }
+
+    setCurrentPage(page);
+  };
+
   const handleGetStarted = () => {
     if (user) {
       setCurrentPage(user.role === "admin" ? "admin-dashboard" : "user-dashboard");
@@ -206,7 +220,7 @@ function App() {
   const renderCurrentPage = () => {
     switch (currentPage) {
       case "home":
-        return <Hero onGetStarted={handleGetStarted} onLearnMore={() => setCurrentPage("about")} />;
+        return <Hero onGetStarted={handleGetStarted} onLearnMore={() => navigatePage("about")} />;
       case "services":
         return (
           <ServicesPage
@@ -270,7 +284,7 @@ function App() {
       case "loan-application-car": return <LoanApplicationForm loanType="car" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} onBack={handleBack} user={user} />;
       case "loan-application-personal": return <LoanApplicationForm loanType="personal" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} onBack={handleBack} user={user} />;
       case "loan-application-gold": return <LoanApplicationForm loanType="gold" onPageChange={setCurrentPage} defaultAmount={prefilledAmount} defaultTenure={prefilledTenure} onBack={handleBack} user={user} />;
-      default: return <Hero onGetStarted={handleGetStarted} onLearnMore={() => setCurrentPage("about")} />;
+      default: return <Hero onGetStarted={handleGetStarted} onLearnMore={() => navigatePage("about")} />;
     }
   };
 
@@ -293,7 +307,7 @@ function App() {
             <div className={`flex-1 flex flex-col min-w-0 ${isAdminPage ? "bg-muted/10" : ""}`}>
               <Header
                 currentPage={currentPage}
-                onPageChange={setCurrentPage}
+                onPageChange={navigatePage}
                 isLoggedIn={!!user}
                 userRole={user?.role}
                 user={user}
@@ -305,7 +319,7 @@ function App() {
 
               <main className="flex-1">{renderCurrentPage()}</main>
 
-              {!isAdminPage && <Footer onPageChange={setCurrentPage} />}
+              {!isAdminPage && <Footer onPageChange={navigatePage} />}
 
               <ChatBot
                 currentPage={currentPage}
