@@ -102,17 +102,17 @@ export function AdminUsersPage({ user, onBack }: AdminUsersPageProps) {
               size="icon"
               onClick={onBack}
               data-testid="page-back-button"
-              className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           )}
           <div className="space-y-1 flex-1 text-left">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Registered Users</h1>
+            <h1 className="text-3xl font-bold text-foreground dark:text-white">Registered Users</h1>
             <p className="text-muted-foreground">Monitor and manage registered user accounts in the Bhalchandra Finance portal</p>
           </div>
         </div>
-        <Button variant="outline" size="sm" className="w-full sm:w-auto border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850" onClick={fetchLiveUsersData} disabled={loading}>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto border-border dark:border-border hover:bg-muted dark:hover:bg-slate-850" onClick={fetchLiveUsersData} disabled={loading}>
           <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh Data
         </Button>
@@ -121,11 +121,11 @@ export function AdminUsersPage({ user, onBack }: AdminUsersPageProps) {
       {/* KPI Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Metric 1: Total Active Users */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Active Users</span>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">{liveStats.totalUsers}</div>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Active Users</span>
+              <div className="text-3xl font-bold text-foreground dark:text-white">{liveStats.totalUsers}</div>
             </div>
             <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
               <Users className="h-5 w-5" />
@@ -135,11 +135,11 @@ export function AdminUsersPage({ user, onBack }: AdminUsersPageProps) {
         </Card>
 
         {/* Metric 2: New Signups Today */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">New Signups (Today)</span>
-              <div className="text-3xl font-bold text-slate-800 dark:text-slate-200">
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">New Signups (Today)</span>
+              <div className="text-3xl font-bold text-foreground dark:text-slate-200">
                 {liveUsers.filter(u => new Date(u.createdAt).toDateString() === new Date().toDateString()).length}
               </div>
             </div>
@@ -151,10 +151,10 @@ export function AdminUsersPage({ user, onBack }: AdminUsersPageProps) {
         </Card>
 
         {/* Metric 3: Verification Rate */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Verification Rate</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Verification Rate</span>
               <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-450">{verificationRate}%</div>
             </div>
             <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100 dark:shadow-none">
@@ -166,14 +166,14 @@ export function AdminUsersPage({ user, onBack }: AdminUsersPageProps) {
       </div>
 
       {/* Search Input */}
-      <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
-        <h2 className="font-semibold text-lg text-slate-850 dark:text-slate-200">Users Accounts Directory</h2>
+      <div className="bg-muted/30 dark:bg-slate-900/30 p-4 rounded-xl border border-border dark:border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h2 className="font-semibold text-lg text-foreground dark:text-slate-200">Users Accounts Directory</h2>
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search by name, email, username or role..."
-            className="border border-slate-200 dark:border-slate-800 pl-8 pr-3 py-2 w-full rounded-md text-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-ring"
+            className="border border-border dark:border-border pl-8 pr-3 py-2 w-full rounded-md text-sm bg-card dark:bg-slate-900 text-foreground dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-ring"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -181,31 +181,31 @@ export function AdminUsersPage({ user, onBack }: AdminUsersPageProps) {
       </div>
 
       {/* Users List Table */}
-      <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden bg-white dark:bg-slate-900">
-        <CardHeader className="bg-slate-50/50 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800/80">
-          <CardTitle className="text-lg text-slate-900 dark:text-white font-bold">Registered User Accounts</CardTitle>
+      <Card className="rounded-2xl border border-border dark:border-border shadow-md overflow-hidden bg-card dark:bg-slate-900">
+        <CardHeader className="bg-muted/30/50 dark:bg-slate-950/20 border-b border-border dark:border-border/80">
+          <CardTitle className="text-lg text-foreground dark:text-white font-bold">Registered User Accounts</CardTitle>
           <CardDescription>Live users registered in the Bhalchandra Finance portal</CardDescription>
         </CardHeader>
         <CardContent className="p-0 overflow-auto max-h-[500px]">
           {filteredUsers.length === 0 ? (
-            <div className="text-center text-slate-450 dark:text-slate-500 py-12 text-sm font-medium">No registered user accounts found.</div>
+            <div className="text-center text-slate-450 dark:text-muted-foreground py-12 text-sm font-medium">No registered user accounts found.</div>
           ) : (
             <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
-              <thead className="bg-slate-50 dark:bg-slate-950/30">
+              <thead className="bg-muted/30 dark:bg-slate-950/30">
                 <tr>
                   {["Name", "Username", "Email", "Role", "Status"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="bg-card dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredUsers.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/40 text-sm">
-                    <td className="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">{u.name}</td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{u.username}</td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{u.email}</td>
+                  <tr key={u.id} className="hover:bg-muted/30/40 dark:hover:bg-slate-800/40 text-sm">
+                    <td className="px-6 py-4 font-semibold text-foreground dark:text-slate-200">{u.name}</td>
+                    <td className="px-6 py-4 text-muted-foreground dark:text-muted-foreground">{u.username}</td>
+                    <td className="px-6 py-4 text-muted-foreground dark:text-muted-foreground">{u.email}</td>
                     <td className="px-6 py-4 font-semibold capitalize text-primary dark:text-blue-400">{u.role}</td>
                     <td className="px-6 py-4">
                       <Badge className={

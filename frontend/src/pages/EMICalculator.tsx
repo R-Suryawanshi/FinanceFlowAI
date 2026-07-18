@@ -71,7 +71,7 @@ export function EMICalculator({ onApply, onBack }: EMICalculatorProps) {
             size="icon"
             onClick={onBack}
             data-testid="page-back-button"
-            className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+            className="h-10 w-10 rounded-lg border border-border bg-card text-primary hover:bg-muted transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>

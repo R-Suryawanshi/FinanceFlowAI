@@ -251,7 +251,7 @@ export function ChatBot({ currentPage, isOpen, onToggle }: ChatBotProps) {
             : "opacity-0 scale-95 translate-y-4 pointer-events-none h-0 w-0 overflow-hidden border-none shadow-none"
         }`}
       >
-        <div className="p-4 border-b flex flex-row justify-between items-center shrink-0 bg-slate-50/50 dark:bg-black/20 rounded-t-2xl">
+        <div className="p-4 border-b border-border flex flex-row justify-between items-center shrink-0 bg-muted/20 rounded-t-2xl">
           <div className="flex items-center gap-2">
             <div className="p-2 bg-primary/10 rounded-full">
               <Bot className="h-4 w-4 text-primary" />
@@ -352,7 +352,7 @@ export function ChatBot({ currentPage, isOpen, onToggle }: ChatBotProps) {
                       className={`h-5 px-1.5 text-[8px] font-bold rounded-md transition-all ${
                         micLang === lang 
                           ? "bg-primary text-primary-foreground hover:bg-primary shadow-2xs" 
-                          : "bg-slate-50 dark:bg-slate-900 text-muted-foreground border hover:bg-slate-100"
+                          : "bg-muted/30 text-muted-foreground border-border border hover:bg-muted"
                       }`}
                       onClick={() => setMicLang(lang)}
                     >
@@ -371,7 +371,7 @@ export function ChatBot({ currentPage, isOpen, onToggle }: ChatBotProps) {
                   className={`h-10 w-10 rounded-xl shrink-0 transition-all ${
                     isListening 
                       ? "bg-red-500 hover:bg-red-600 text-white border-red-500 animate-pulse shadow-md shadow-red-200" 
-                      : "border-gray-200 hover:bg-slate-50 text-gray-500 hover:text-primary"
+                      : "border-border hover:bg-muted text-muted-foreground hover:text-primary"
                   }`}
                   title={isListening ? "Stop listening" : "Start speaking"}
                 >
@@ -391,7 +391,7 @@ export function ChatBot({ currentPage, isOpen, onToggle }: ChatBotProps) {
                       ? "ऋण, ब्याजदर या EMI बद्दल विचारा..."
                       : "कर्ज, व्याज किंवा EMI बद्दल विचारा..."
                   }
-                  className="flex-1 bg-white/50 dark:bg-black/50 h-10 text-xs rounded-xl"
+                  className="flex-1 bg-background/50 h-10 text-xs rounded-xl"
                   disabled={isTyping || isListening}
                 />
                 <Button
@@ -405,7 +405,7 @@ export function ChatBot({ currentPage, isOpen, onToggle }: ChatBotProps) {
               </div>
 
               <div className="flex justify-center mt-2">
-                <Badge variant="outline" className="text-[10px] bg-white/30 dark:bg-black/30 backdrop-blur-xs">
+                <Badge variant="outline" className="text-[10px] bg-muted/30 backdrop-blur-xs">
                   Powered by OpenAI • Context-aware
                 </Badge>
               </div>

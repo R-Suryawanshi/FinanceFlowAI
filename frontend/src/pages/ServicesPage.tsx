@@ -87,10 +87,10 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       icon: CreditCard,
       features: ['Up to ₹50 Lakh', 'No collateral required', 'Flexible repayment', 'Digital process'],
       rate: 'Starting from 11% p.a.',
-      bgColor: 'bg-blue-50/50 dark:bg-blue-955/10',
-      iconColor: 'text-blue-600 dark:text-blue-455 bg-blue-50 dark:bg-blue-900/30',
-      borderColor: 'border-blue-100 dark:border-blue-900/30 hover:border-blue-500/55 hover:shadow-blue-500/5',
-      badgeColor: 'border-blue-200 text-blue-700 bg-blue-50/55 dark:border-blue-900/40 dark:text-blue-450 dark:bg-blue-955/20',
+      bgColor: 'bg-primary/5 dark:bg-primary/10',
+      iconColor: 'text-primary bg-primary/10 dark:bg-primary/20',
+      borderColor: 'border-primary/20 dark:border-primary/30 hover:border-primary/50 hover:shadow-primary/5',
+      badgeColor: 'border-primary/20 text-primary bg-primary/5 dark:border-primary/40 dark:text-primary dark:bg-primary/20',
       cta: 'Apply Now',
       ctaAction: () => onPageChange && onPageChange('loan-application-personal')
     },
@@ -135,7 +135,7 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       icon: Clock,
       title: 'Quick Processing',
       description: 'Fast approval process with fully digital documentation and paperless flow.',
-      color: 'text-blue-600 bg-blue-50 dark:bg-blue-955/20'
+      color: 'text-primary bg-primary/10 dark:bg-primary/20'
     },
     {
       icon: CheckCircle,
@@ -155,7 +155,7 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
             size="icon"
             onClick={onBack}
             data-testid="page-back-button"
-            className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1.5"
+            className="h-10 w-10 rounded-lg border border-border bg-card text-primary hover:bg-muted transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1.5"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -178,7 +178,7 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
           return (
             <Card 
               key={service.id} 
-              className={`hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900/50 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-lg ${service.borderColor}`}
+              className={`hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-border/70 dark:border-slate-800 bg-card flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-lg ${service.borderColor}`}
               data-testid={`card-service-${service.id}`}
             >
               <CardHeader className="space-y-4">
@@ -237,7 +237,7 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       </div>
 
       {/* Benefits Section */}
-      <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 dark:from-slate-900/60 dark:to-slate-955/20 rounded-3xl p-10 border border-slate-200/50 dark:border-slate-800/80 shadow-inner">
+      <div className="bg-gradient-to-br from-muted/50 to-muted/20 rounded-3xl p-10 border border-border shadow-inner">
         <div className="text-center mb-10 max-w-2xl mx-auto space-y-2">
           <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Why Choose Bhalchandra Finance?
@@ -251,7 +251,7 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
-              <div key={index} className="bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/80 rounded-2xl p-6 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 text-center space-y-4" data-testid={`benefit-${index}`}>
+              <div key={index} className="bg-card border border-border rounded-2xl p-6 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 text-center space-y-4" data-testid={`benefit-${index}`}>
                 <div className={`p-4 rounded-full w-fit mx-auto shadow-sm border border-slate-100/50 dark:border-slate-800/50 ${benefit.color}`}>
                   <Icon className="h-6 w-6" />
                 </div>
@@ -266,16 +266,16 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
       </div>
 
       {/* CTA Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-blue-700 to-indigo-850 dark:from-blue-800 dark:to-indigo-950 text-white rounded-3xl p-12 shadow-xl text-center space-y-6">
+      <div className="relative overflow-hidden bg-gradient-to-r from-primary to-purple-850 dark:from-primary dark:to-purple-950 text-white rounded-3xl p-12 shadow-xl text-center space-y-6">
         {/* Glow/blur details */}
-        <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-blue-500/25 blur-3xl" />
-        <div className="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-indigo-500/25 blur-3xl" />
+        <div className="absolute -top-24 -left-24 w-48 h-48 rounded-full bg-primary/25 blur-3xl" />
+        <div className="absolute -bottom-24 -right-24 w-48 h-48 rounded-full bg-purple-500/25 blur-3xl" />
 
         <div className="relative z-10 space-y-3 max-w-2xl mx-auto">
           <h2 className="text-3xl font-extrabold sm:text-4xl tracking-tight">
             Ready to Get Started?
           </h2>
-          <p className="text-sm text-blue-100/80 leading-relaxed font-medium">
+          <p className="text-sm text-purple-100/80 leading-relaxed font-medium">
             Let our financial experts help you choose the right service for your needs. 
             Contact us today for a personalized consultation.
           </p>
@@ -288,7 +288,7 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
               onGetStarted();
             }}
             data-testid="button-services-get-started"
-            className="flex items-center justify-center gap-2 bg-white text-blue-700 hover:bg-slate-50 font-bold px-8 py-6 rounded-full shadow-lg"
+            className="flex items-center justify-center gap-2 bg-foreground text-background hover:bg-foreground/90 font-bold px-8 py-6 rounded-full shadow-lg"
           >
             Get Started Today
             <ArrowRight className="h-5 w-5" />

@@ -114,49 +114,49 @@ export function AdminAddEmployeePage({ user, onPageChange, onBack }: AdminAddEmp
           size="icon"
           onClick={onBack || (() => onPageChange && onPageChange("admin-employees"))}
           data-testid="page-back-button"
-          className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0"
+          className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Add New Employee</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-foreground dark:text-white tracking-tight">Add New Employee</h1>
       </div>
 
       {/* Main Form Card Container */}
-      <Card className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-md rounded-2xl overflow-hidden p-6 sm:p-8">
+      <Card className="bg-card dark:bg-slate-900 border border-border dark:border-border shadow-md rounded-2xl overflow-hidden p-6 sm:p-8">
         <form onSubmit={handleSubmitEmployee} className="space-y-6">
           
           {/* Row 1: Name, Email, Password */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-semibold text-muted-foreground dark:text-slate-300">
                 Name <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
                 required
                 placeholder="Enter Full Name"
-                className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full text-sm border border-border dark:border-border rounded-lg p-2.5 bg-card dark:bg-slate-950 text-foreground dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 value={newEmployee.name}
                 onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-semibold text-muted-foreground dark:text-slate-300">
                 Email <span className="text-rose-500">*</span>
               </label>
               <input
                 type="email"
                 required
                 placeholder="Enter Email Address"
-                className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 bg-white dark:bg-slate-955 text-slate-850 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full text-sm border border-border dark:border-border rounded-lg p-2.5 bg-card dark:bg-slate-955 text-foreground dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 value={newEmployee.email}
                 onChange={(e) => setNewEmployee({ ...newEmployee, email: e.target.value })}
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-semibold text-muted-foreground dark:text-slate-300">
                 Password <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
@@ -164,14 +164,14 @@ export function AdminAddEmployeePage({ user, onPageChange, onBack }: AdminAddEmp
                   type={showPassword ? "text" : "password"}
                   required
                   placeholder="Enter Password"
-                  className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 pr-10 bg-white dark:bg-slate-955 text-slate-850 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full text-sm border border-border dark:border-border rounded-lg p-2.5 pr-10 bg-card dark:bg-slate-955 text-foreground dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   value={newEmployee.password}
                   onChange={(e) => setNewEmployee({ ...newEmployee, password: e.target.value })}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-slate-400 dark:text-slate-500 hover:text-slate-600"
+                  className="absolute right-3 top-3 text-muted-foreground dark:text-muted-foreground hover:text-muted-foreground"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -182,18 +182,18 @@ export function AdminAddEmployeePage({ user, onPageChange, onBack }: AdminAddEmp
           {/* Row 2: Primary Phone, Secondary Phone, Role */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-semibold text-muted-foreground dark:text-slate-300">
                 Primary Phone <span className="text-rose-500">*</span>
               </label>
-              <div className="relative flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 focus-within:ring-1 focus-within:ring-blue-500">
-                <span className="inline-flex items-center px-3 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <div className="relative flex rounded-lg overflow-hidden border border-border dark:border-border focus-within:ring-1 focus-within:ring-blue-500">
+                <span className="inline-flex items-center px-3 border-r border-border dark:border-border bg-muted/30 dark:bg-slate-950 text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
                   🇮🇳 +91
                 </span>
                 <input
                   type="tel"
                   required
                   placeholder="Phone number"
-                  className="flex-1 text-sm p-2.5 bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-200 focus:outline-none"
+                  className="flex-1 text-sm p-2.5 bg-card dark:bg-slate-950 text-foreground dark:text-slate-200 focus:outline-none"
                   value={newEmployee.primaryPhone}
                   onChange={(e) => setNewEmployee({ ...newEmployee, primaryPhone: e.target.value })}
                 />
@@ -201,18 +201,18 @@ export function AdminAddEmployeePage({ user, onPageChange, onBack }: AdminAddEmp
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-semibold text-muted-foreground dark:text-slate-300">
                 Secondary Phone <span className="text-rose-500">*</span>
               </label>
-              <div className="relative flex rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800 focus-within:ring-1 focus-within:ring-blue-500">
-                <span className="inline-flex items-center px-3 border-r border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-955 text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <div className="relative flex rounded-lg overflow-hidden border border-border dark:border-border focus-within:ring-1 focus-within:ring-blue-500">
+                <span className="inline-flex items-center px-3 border-r border-border dark:border-border bg-muted/30 dark:bg-slate-955 text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
                   🇮🇳 +91
                 </span>
                 <input
                   type="tel"
                   required
                   placeholder="Secondary phone"
-                  className="flex-1 text-sm p-2.5 bg-white dark:bg-slate-955 text-slate-850 dark:text-slate-200 focus:outline-none"
+                  className="flex-1 text-sm p-2.5 bg-card dark:bg-slate-955 text-foreground dark:text-slate-200 focus:outline-none"
                   value={newEmployee.secondaryPhone}
                   onChange={(e) => setNewEmployee({ ...newEmployee, secondaryPhone: e.target.value })}
                 />
@@ -220,11 +220,11 @@ export function AdminAddEmployeePage({ user, onPageChange, onBack }: AdminAddEmp
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-305">
+              <label className="text-xs font-semibold text-muted-foreground dark:text-slate-305">
                 Role <span className="text-rose-500">*</span>
               </label>
               <select
-                className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 bg-white dark:bg-slate-955 text-slate-850 dark:text-slate-200 focus:outline-none"
+                className="w-full text-sm border border-border dark:border-border rounded-lg p-2.5 bg-card dark:bg-slate-955 text-foreground dark:text-slate-200 focus:outline-none"
                 value={newEmployee.role}
                 onChange={(e) => setNewEmployee({ ...newEmployee, role: e.target.value })}
               >
@@ -245,11 +245,11 @@ export function AdminAddEmployeePage({ user, onPageChange, onBack }: AdminAddEmp
               <div className="relative">
                 <input
                   type="date"
-                  className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 pl-10 bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full text-sm border border-border dark:border-border rounded-lg p-2.5 pl-10 bg-card dark:bg-slate-950 text-foreground dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   value={newEmployee.joiningDate}
                   onChange={(e) => setNewEmployee({ ...newEmployee, joiningDate: e.target.value })}
                 />
-                <Calendar className="absolute left-3 top-3.5 h-4 w-4 text-slate-400 pointer-events-none" />
+                <Calendar className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground pointer-events-none" />
               </div>
             </div>
 
@@ -263,7 +263,7 @@ export function AdminAddEmployeePage({ user, onPageChange, onBack }: AdminAddEmp
                 </button>
               </div>
               <select
-                className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 bg-white dark:bg-slate-950 text-slate-850 dark:text-slate-200 focus:outline-none"
+                className="w-full text-sm border border-border dark:border-border rounded-lg p-2.5 bg-card dark:bg-slate-950 text-foreground dark:text-slate-200 focus:outline-none"
                 value={newEmployee.status}
                 onChange={(e) => setNewEmployee({ ...newEmployee, status: e.target.value })}
               >
@@ -277,11 +277,11 @@ export function AdminAddEmployeePage({ user, onPageChange, onBack }: AdminAddEmp
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex justify-end gap-3 pt-6 border-t border-border dark:border-border">
             <Button
               type="button"
               variant="outline"
-              className="px-6 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-250 font-semibold"
+              className="px-6 border-border dark:border-border text-muted-foreground dark:text-slate-250 font-semibold"
               onClick={() => onPageChange && onPageChange("admin-employees")}
             >
               Cancel

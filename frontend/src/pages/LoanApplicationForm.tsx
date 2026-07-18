@@ -1173,7 +1173,7 @@ export function LoanApplicationForm({ loanType, onSubmit, onPageChange, defaultA
             size="icon"
             onClick={onBack}
             data-testid="page-back-button"
-            className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+            className="h-10 w-10 rounded-lg border border-border bg-card text-primary hover:bg-muted transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -1185,7 +1185,7 @@ export function LoanApplicationForm({ loanType, onSubmit, onPageChange, defaultA
       </div>
 
       {profileLoading && (
-        <div className="flex flex-col items-center justify-center p-16 space-y-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl">
+        <div className="flex flex-col items-center justify-center p-16 space-y-4 bg-card border border-border rounded-2xl">
           <Loader2 className="h-10 w-10 text-primary animate-spin" />
           <p className="text-sm text-muted-foreground">Retrieving secure account profile details...</p>
         </div>
@@ -1234,7 +1234,7 @@ export function LoanApplicationForm({ loanType, onSubmit, onPageChange, defaultA
                   }`}
                 >
                   <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${
-                    index + 1 <= currentStep ? 'bg-white text-black' : ''
+                    index + 1 <= currentStep ? 'bg-background text-foreground' : ''
                   }`}>
                     {index + 1 < currentStep ? <CheckCircle className="h-4 w-4" /> : index + 1}
                   </div>
