@@ -184,6 +184,95 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
     }
   };
 
+  // Set up dotted cursor trail following animation
+  useEffect(() => {
+    // Only run on desktop/devices with pointer inputs (skip touch screens)
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
+    const NUM_DOTS = 14;
+    const dots: HTMLDivElement[] = [];
+    const positions = Array.from({ length: NUM_DOTS }, () => ({ x: 0, y: 0 }));
+    let mouseX = 0;
+    let mouseY = 0;
+    let isMoving = false;
+    let fadeTimeout: number;
+
+    // Create container
+    const container = document.createElement("div");
+    container.className = "pointer-events-none fixed inset-0 z-[9999] overflow-hidden";
+    document.body.appendChild(container);
+
+    // Create trail dots
+    for (let i = 0; i < NUM_DOTS; i++) {
+      const dot = document.createElement("div");
+      dot.className = "absolute rounded-full pointer-events-none transition-opacity duration-300 opacity-0 bg-primary/80";
+      
+      const size = Math.max(2, 8 - i * 0.5);
+      dot.style.width = `${size}px`;
+      dot.style.height = `${size}px`;
+      dot.style.boxShadow = "0 0 6px 1.5px hsl(var(--primary) / 0.4)";
+      
+      container.appendChild(dot);
+      dots.push(dot);
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      isMoving = true;
+      
+      dots.forEach((dot) => {
+        dot.style.opacity = "1";
+      });
+
+      window.clearTimeout(fadeTimeout);
+      
+      fadeTimeout = window.setTimeout(() => {
+        isMoving = false;
+        dots.forEach((dot) => {
+          dot.style.opacity = "0";
+        });
+      }, 1000);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    // Coordinate update loop
+    let animationFrameId: number;
+    const updatePositions = () => {
+      if (isMoving) {
+        // Leader dot tracks mouse directly
+        positions[0].x += (mouseX - positions[0].x) * 0.35;
+        positions[0].y += (mouseY - positions[0].y) * 0.35;
+
+        // Following dots track the preceding dot with lag
+        for (let i = 1; i < NUM_DOTS; i++) {
+          positions[i].x += (positions[i - 1].x - positions[i].x) * 0.35;
+          positions[i].y += (positions[i - 1].y - positions[i].y) * 0.35;
+        }
+
+        // Center and translate
+        for (let i = 0; i < NUM_DOTS; i++) {
+          const size = Math.max(2, 8 - i * 0.5);
+          dots[i].style.transform = `translate(${positions[i].x - size / 2}px, ${positions[i].y - size / 2}px)`;
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(updatePositions);
+    };
+
+    animationFrameId = requestAnimationFrame(updatePositions);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+      window.clearTimeout(fadeTimeout);
+      if (document.body.contains(container)) {
+        document.body.removeChild(container);
+      }
+    };
+  }, []);
+
   // Set up intersection observer for scroll reveal animations
   useEffect(() => {
     const observer = new IntersectionObserver(
