@@ -322,7 +322,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-muted/30 dark:bg-slate-950">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3 text-muted-foreground">
           <Loader2 className="h-10 w-10 animate-spin text-primary" />
           <p className="text-sm font-medium">Loading profile details...</p>
@@ -332,7 +332,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30 dark:bg-slate-955 pb-16 px-4 md:px-8 pt-32 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-background pb-16 px-4 md:px-8 pt-24 max-w-7xl mx-auto">
       {/* Header section */}
       <div className="mb-8 flex items-start gap-5">
         <Button
@@ -388,7 +388,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
           </Card>
 
           {/* Credit Score visual gauge card */}
-          <Card className="border-border/60 dark:border-border shadow-md relative overflow-hidden bg-gradient-to-br from-white to-primary/5 dark:from-slate-900 dark:to-slate-950/20">
+          <Card className="border-border/60 dark:border-border shadow-md relative overflow-hidden bg-gradient-to-br from-card to-primary/5">
             <div className="absolute top-0 right-0 p-2 opacity-10">
               <Sparkles className="h-16 w-16 text-primary" />
             </div>
