@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { 
@@ -141,7 +141,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
               </div>
             </div>
             <div className="flex gap-1.5 border-t border-slate-800 pt-2">
-              <div className="flex-1 bg-slate-900 rounded-md border border-slate-800 px-2 py-1 text-[9px] text-slate-500">
+              <div className="flex-1 bg-slate-900 rounded-md border border-slate-800 px-2 py-1 text-[9px] text-muted-foreground">
                 Type a message...
               </div>
               <div className="w-6 h-6 bg-primary rounded-md flex items-center justify-center text-white text-[10px] font-bold">
@@ -178,31 +178,141 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
                 </div>
               </div>
             </div>
-            <span className="text-center text-[8px] text-slate-500">Updating live...</span>
+            <span className="text-center text-[8px] text-muted-foreground">Updating live...</span>
           </div>
         );
     }
   };
 
+  // Set up dotted cursor trail following animation
+  useEffect(() => {
+    // Only run on desktop/devices with pointer inputs (skip touch screens)
+    if (window.matchMedia("(pointer: coarse)").matches) return;
+
+    const NUM_DOTS = 14;
+    const dots: HTMLDivElement[] = [];
+    const positions = Array.from({ length: NUM_DOTS }, () => ({ x: 0, y: 0 }));
+    let mouseX = 0;
+    let mouseY = 0;
+    let isMoving = false;
+    let fadeTimeout: number;
+
+    // Create container
+    const container = document.createElement("div");
+    container.className = "pointer-events-none fixed inset-0 z-[9999] overflow-hidden";
+    document.body.appendChild(container);
+
+    // Create trail dots
+    for (let i = 0; i < NUM_DOTS; i++) {
+      const dot = document.createElement("div");
+      dot.className = "absolute rounded-full pointer-events-none transition-opacity duration-300 opacity-0 bg-primary/80";
+      
+      const size = Math.max(2, 8 - i * 0.5);
+      dot.style.width = `${size}px`;
+      dot.style.height = `${size}px`;
+      dot.style.boxShadow = "0 0 6px 1.5px hsl(var(--primary) / 0.4)";
+      
+      container.appendChild(dot);
+      dots.push(dot);
+    }
+
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      isMoving = true;
+      
+      dots.forEach((dot) => {
+        dot.style.opacity = "1";
+      });
+
+      window.clearTimeout(fadeTimeout);
+      
+      fadeTimeout = window.setTimeout(() => {
+        isMoving = false;
+        dots.forEach((dot) => {
+          dot.style.opacity = "0";
+        });
+      }, 1000);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+
+    // Coordinate update loop
+    let animationFrameId: number;
+    const updatePositions = () => {
+      if (isMoving) {
+        // Leader dot tracks mouse directly
+        positions[0].x += (mouseX - positions[0].x) * 0.35;
+        positions[0].y += (mouseY - positions[0].y) * 0.35;
+
+        // Following dots track the preceding dot with lag
+        for (let i = 1; i < NUM_DOTS; i++) {
+          positions[i].x += (positions[i - 1].x - positions[i].x) * 0.35;
+          positions[i].y += (positions[i - 1].y - positions[i].y) * 0.35;
+        }
+
+        // Center and translate
+        for (let i = 0; i < NUM_DOTS; i++) {
+          const size = Math.max(2, 8 - i * 0.5);
+          dots[i].style.transform = `translate(${positions[i].x - size / 2}px, ${positions[i].y - size / 2}px)`;
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(updatePositions);
+    };
+
+    animationFrameId = requestAnimationFrame(updatePositions);
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(animationFrameId);
+      window.clearTimeout(fadeTimeout);
+      if (document.body.contains(container)) {
+        document.body.removeChild(container);
+      }
+    };
+  }, []);
+
+  // Set up intersection observer for scroll reveal animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
+    );
+
+    const revealElements = document.querySelectorAll(".reveal-on-scroll");
+    revealElements.forEach((el) => observer.observe(el));
+
+    return () => {
+      revealElements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+
   return (
     <div className="overflow-x-hidden bg-background text-foreground min-h-screen">
       
-      <section className="relative pt-32 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
+      <section className="relative pt-8 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="absolute top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary/10 dark:bg-primary/10 rounded-full filter blur-3xl" />
         <div className="absolute top-20 left-10 -z-10 w-[300px] h-[300px] bg-purple-500/10 dark:bg-purple-900/10 rounded-full filter blur-3xl" />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="space-y-8 lg:col-span-7">
+          <div className="space-y-8 lg:col-span-7 animate-fade-in-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 border border-border bg-primary/10 rounded-full text-xs font-semibold text-primary">
               <Shield className="h-3 w-3 text-primary" />
               <span>Bhalchandra Finance • Your Success Partner</span>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-955 dark:text-white leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-foreground leading-tight">
               Take Control of Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600 dark:from-primary dark:to-purple-400">Financial Future</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-slate-655 dark:text-slate-350 max-w-xl">
+            <p className="text-base sm:text-lg text-muted-foreground max-w-xl">
               Expert financial services with AI-powered guidance. From EMI calculations to gold loans, we provide comprehensive solutions tailored to your financial goals.
             </p>
 
@@ -228,7 +338,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
 
             {/* Trust partners */}
             <div className="pt-6 border-t border-border/60">
-              <div className="flex items-center gap-2 text-sm text-slate-500">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Shield className="h-4 w-4 text-green-600" />
                 <span>Bank-level Security</span>
               </div>
@@ -236,13 +346,13 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
           </div>
 
           {/* Right Column - Mockup image */}
-          <div className="relative lg:col-span-5 flex justify-center">
+          <div className="relative lg:col-span-5 flex justify-center animate-fade-in-right">
             <div className="relative w-full max-w-[420px]">
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-3xl filter blur-xl opacity-70" />
               <img 
                 src={heroPhoneMockups} 
                 alt="Bhalchandra Finance App Mockup" 
-                className="w-full relative drop-shadow-2xl z-10 select-none animate-fade-in-up"
+                className="w-full relative drop-shadow-2xl z-10 select-none animate-float"
               />
             </div>
           </div>
@@ -250,7 +360,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 2. FEATURES SECTION */}
-      <section className="py-24 bg-muted/20 border-y border-border/50">
+      <section className="py-24 bg-muted/20 border-y border-border/50 reveal-on-scroll">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-16">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="px-3 py-1 border border-border bg-primary/10 rounded-full text-xs font-semibold text-primary">
@@ -271,8 +381,8 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
                 <div className="w-10 h-10 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl flex items-center justify-center border border-primary/20">
                   <Calculator className="h-5 w-5" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">EMI Calculator</h3>
-                <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed">
+                <h3 className="text-xl font-bold text-foreground">EMI Calculator</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Calculate your monthly payments instantly with our advanced calculator for Home, Car, and Personal loans.
                 </p>
               </div>
@@ -291,8 +401,8 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
                 <div className="w-10 h-10 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl flex items-center justify-center border border-primary/20">
                   <CreditCard className="h-5 w-5" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Gold Loans</h3>
-                <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed">
+                <h3 className="text-xl font-bold text-foreground">Gold Loans</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Get instant loan approvals against your gold jewelry with competitive interest rates and secure vaults.
                 </p>
               </div>
@@ -311,8 +421,8 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
                 <div className="w-10 h-10 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl flex items-center justify-center border border-primary/20">
                   <Sparkles className="h-5 w-5" />
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">AI Financial Assistant</h3>
-                <p className="text-sm text-slate-650 dark:text-slate-400 leading-relaxed">
+                <h3 className="text-xl font-bold text-foreground">AI Financial Assistant</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   Receive personalized, automated advice regarding your loan planning, EMIs, and document requirements.
                 </p>
               </div>
@@ -339,7 +449,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 3. HOW IT WORKS SECTION */}
-      <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto">
+      <section className="py-20 px-4 md:px-8 max-w-7xl mx-auto reveal-on-scroll">
         <div className="bg-slate-900 dark:bg-slate-900/60 text-white rounded-3xl p-8 lg:p-16 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 -z-10 w-[400px] h-[400px] bg-primary/15 rounded-full filter blur-3xl" />
           
@@ -413,7 +523,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 4. WHY CHOOSE US SECTION */}
-      <section className="py-24 bg-muted/10 border-y border-border/50">
+      <section className="py-24 bg-muted/10 border-y border-border/50 reveal-on-scroll">
         <div className="max-w-7xl mx-auto px-4 md:px-8 space-y-16">
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="px-3 py-1 border border-border bg-primary/10 rounded-full text-xs font-semibold text-primary">
@@ -452,8 +562,8 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
               <div className="w-10 h-10 bg-primary/10 dark:bg-primary/20 text-primary rounded-xl flex items-center justify-center border border-primary/20 mb-6">
                 <Calculator className="h-5 w-5" />
               </div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3">Flexible Rates & Calculators</h3>
-              <p className="text-xs sm:text-sm text-slate-655 dark:text-slate-400 leading-relaxed">
+              <h3 className="text-lg font-bold text-foreground mb-3">Flexible Rates & Calculators</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 Leverage precise EMI, gold loan, and investment calculators. Get custom scenario results instantly with direct applying pathways.
               </p>
             </div>
@@ -472,7 +582,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 5. FAQ SECTION */}
-      <section className="py-20 bg-muted/20 border-y border-border/50">
+      <section className="py-20 bg-muted/20 border-y border-border/50 reveal-on-scroll">
         <div className="max-w-4xl mx-auto px-4 md:px-8 space-y-12">
           <div className="text-center space-y-3">
             <span className="px-3 py-1 border border-border bg-primary/10 rounded-full text-xs font-semibold text-primary">
@@ -516,7 +626,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
       </section>
 
       {/* 6. SUBSCRIPTION BANNER */}
-      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8">
+      <section className="py-24 max-w-7xl mx-auto px-4 md:px-8 reveal-on-scroll">
         <div className="bg-gradient-to-br from-slate-900 to-primary/30 text-white rounded-3xl p-8 lg:p-14 shadow-2xl relative overflow-hidden">
           <div className="absolute -bottom-24 -left-24 w-[350px] h-[350px] bg-teal-500/10 rounded-full filter blur-3xl" />
           

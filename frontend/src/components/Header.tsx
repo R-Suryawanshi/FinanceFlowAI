@@ -161,7 +161,7 @@ export function Header({
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Building2 className="h-8 w-8 mr-2 text-primary" />
-            <span className="text-xl font-bold text-slate-950 dark:text-white">Bhalchandra Finance</span>
+            <span className="text-xl font-bold text-foreground">Bhalchandra Finance</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -232,7 +232,7 @@ export function Header({
                     <DropdownMenuSeparator className="bg-muted dark:bg-slate-800" />
                     <div className="max-h-[300px] overflow-y-auto space-y-1 py-1">
                       {notifications.length === 0 ? (
-                        <div className="py-6 text-center text-xs font-medium text-slate-500">
+                        <div className="py-6 text-center text-xs font-medium text-muted-foreground">
                           No notifications at this time.
                         </div>
                       ) : (
@@ -263,9 +263,9 @@ export function Header({
                               )}
                             </div>
                             <div className="space-y-0.5 pr-4 flex-1">
-                              <p className="font-bold leading-tight text-slate-900 dark:text-white">{n.title}</p>
-                              <p className="text-[11px] leading-snug break-words text-slate-600 dark:text-slate-350">{n.message}</p>
-                              <span className="text-[9px] block font-semibold pt-0.5 text-slate-400">
+                              <p className="font-bold leading-tight text-foreground">{n.title}</p>
+                              <p className="text-[11px] leading-snug break-words text-muted-foreground">{n.message}</p>
+                              <span className="text-[9px] block font-semibold pt-0.5 text-muted-foreground">
                                 {formatTimeAgo(n.createdAt)}
                               </span>
                             </div>
@@ -401,8 +401,8 @@ export function Header({
                 {isLoggedIn ? (
                   <>
                     <div className="px-3 py-2 mb-2 border-b border-slate-100 dark:border-slate-800">
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">{user?.name || "Member"}</p>
-                      <p className="text-xs text-slate-500">{user?.email || ""}</p>
+                      <p className="text-sm font-semibold text-foreground">{user?.name || "Member"}</p>
+                      <p className="text-xs text-muted-foreground">{user?.email || ""}</p>
                     </div>
                     <Button
                       variant="ghost"
