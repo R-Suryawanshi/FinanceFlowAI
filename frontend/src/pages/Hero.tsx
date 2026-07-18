@@ -187,7 +187,7 @@ export function Hero({ onGetStarted, onLearnMore }: HeroProps) {
   return (
     <div className="overflow-x-hidden bg-background text-foreground min-h-screen">
       
-      <section className="relative pt-24 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
+      <section className="relative pt-8 pb-20 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="absolute top-0 right-0 -z-10 w-[500px] h-[500px] bg-primary/10 dark:bg-primary/10 rounded-full filter blur-3xl" />
         <div className="absolute top-20 left-10 -z-10 w-[300px] h-[300px] bg-purple-500/10 dark:bg-purple-900/10 rounded-full filter blur-3xl" />
 
