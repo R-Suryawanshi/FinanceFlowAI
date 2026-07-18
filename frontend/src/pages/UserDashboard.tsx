@@ -46,7 +46,8 @@ import {
   HelpCircle,
   Send,
   MessageSquare,
-  LifeBuoy
+  LifeBuoy,
+  History
 } from "lucide-react";
 import {
   Dialog,
@@ -186,6 +187,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
   const [vaultDocCategory, setVaultDocCategory] = useState("Aadhaar / Photo Identity Proof");
   const [isVaultUploading, setIsVaultUploading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  // History states
+  const [historyFilter, setHistoryFilter] = useState<"all" | "fd" | "loan">("all");
+  const [historySearch, setHistorySearch] = useState("");
+  const [selectedHistoryApp, setSelectedHistoryApp] = useState<any | null>(null);
   const [emiSchedule, setEmiSchedule] = useState<any[]>([]);
   const [paymentStage, setPaymentStage] = useState<"input" | "details" | "otp" | "processing" | "success">("input");
   const [isForeclosure, setIsForeclosure] = useState(false);
@@ -1038,6 +1044,25 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
     vaultDocs.push(doc);
   });
 
+  // Filter history items
+  const filteredHistory = userServices.filter((s) => {
+    const isFd = s.serviceType.name.toLowerCase().includes("fd") || s.serviceType.name.toLowerCase().includes("fixed");
+    
+    // Filter type
+    if (historyFilter === "fd" && !isFd) return false;
+    if (historyFilter === "loan" && isFd) return false;
+    
+    // Filter search by application number or scheme name
+    if (historySearch) {
+      const q = historySearch.toLowerCase();
+      const appNum = (s.userService.applicationNumber || "").toLowerCase();
+      const schemeName = (s.serviceType.displayName || s.serviceType.name || "").toLowerCase();
+      return appNum.includes(q) || schemeName.includes(q);
+    }
+    
+    return true;
+  });
+
   return (
     <div className="max-w-[1600px] mx-auto p-6 space-y-8">
       <div className="text-center space-y-4">
@@ -1061,6 +1086,10 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
           <TabsTrigger value="investments" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
             <PiggyBank className="h-4 w-4" />
             FDs & Investments
+          </TabsTrigger>
+          <TabsTrigger value="history" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
+            <History className="h-4 w-4" />
+            History Ledger
           </TabsTrigger>
         </TabsList>
 
@@ -2420,7 +2449,317 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
           </div>
         </div>
       </TabsContent>
-      </Tabs>
+
+      {/* Tab 4: History Ledger */}
+      <TabsContent value="history" className="space-y-6 text-left">
+        <Card className="border-border/60 dark:border-border shadow-sm bg-card dark:bg-slate-900">
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-border/40">
+            <div className="text-left space-y-1">
+              <CardTitle className="text-xl font-bold flex items-center gap-2">
+                <History className="h-5 w-5 text-primary" />
+                Service Applications History
+              </CardTitle>
+              <CardDescription className="text-xs">
+                View status ledger, parameters, and details of all your Fixed Deposit and Loan requests.
+              </CardDescription>
+            </div>
+            
+            {/* Filter Toggle and Search */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+              <div className="flex bg-muted p-1 rounded-lg border border-border/40">
+                <button
+                  type="button"
+                  onClick={() => setHistoryFilter("all")}
+                  className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${
+                    historyFilter === "all" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  All History
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setHistoryFilter("fd")}
+                  className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${
+                    historyFilter === "fd" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Fixed Deposits
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setHistoryFilter("loan")}
+                  className={`px-3 py-1 rounded-md text-[10px] font-bold transition-all ${
+                    historyFilter === "loan" ? "bg-card text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  Loans
+                </button>
+              </div>
+
+              <div className="relative w-full sm:w-56">
+                <input
+                  type="text"
+                  placeholder="Search by App # or Scheme..."
+                  value={historySearch}
+                  onChange={(e) => setHistorySearch(e.target.value)}
+                  className="w-full h-8 px-8 border border-border rounded-lg text-xs font-semibold bg-card focus:outline-none focus:ring-1 focus:ring-primary"
+                />
+                <span className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground">🔍</span>
+              </div>
+            </div>
+          </CardHeader>
+          
+          <CardContent className="p-0 overflow-x-auto">
+            {filteredHistory.length === 0 ? (
+              <div className="py-16 text-center space-y-3">
+                <div className="p-4 bg-muted/40 rounded-full w-fit mx-auto text-muted-foreground">
+                  <History className="h-8 w-8" />
+                </div>
+                <div className="space-y-1">
+                  <p className="font-bold text-foreground">No records found</p>
+                  <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+                    There are no applications matching your search query or selected filter criteria.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="bg-muted/30 border-b border-border/40 text-muted-foreground font-bold uppercase tracking-wider text-[10px]">
+                    <th className="py-3 px-4">Application #</th>
+                    <th className="py-3 px-4">Type</th>
+                    <th className="py-3 px-4">Requested Value</th>
+                    <th className="py-3 px-4">Interest Rate</th>
+                    <th className="py-3 px-4">Tenure</th>
+                    <th className="py-3 px-4">Submission Date</th>
+                    <th className="py-3 px-4">Status</th>
+                    <th className="py-3 px-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/20">
+                  {filteredHistory.map((s) => {
+                    const isFd = s.serviceType.name.toLowerCase().includes("fd") || s.serviceType.name.toLowerCase().includes("fixed");
+                    return (
+                      <tr key={s.userService.id} className="hover:bg-muted/10 transition-colors">
+                        <td className="py-3.5 px-4 font-mono font-bold text-primary">{s.userService.applicationNumber}</td>
+                        <td className="py-3.5 px-4 font-semibold">{isFd ? "Fixed Deposit" : s.serviceType.displayName || s.serviceType.name}</td>
+                        <td className="py-3.5 px-4 font-black">₹{parseFloat(s.userService.amount).toLocaleString("en-IN")}</td>
+                        <td className="py-3.5 px-4 font-bold text-emerald-500">{s.userService.interestRate}% P.A.</td>
+                        <td className="py-3.5 px-4 font-medium text-muted-foreground">{s.userService.tenureMonths || s.userService.tenure} Months</td>
+                        <td className="py-3.5 px-4 text-muted-foreground">{new Date(s.userService.applicationDate).toLocaleDateString("en-IN")}</td>
+                        <td className="py-3.5 px-4">
+                          <Badge className={`border-none text-[10px] font-bold py-0.5 px-2 uppercase hover:opacity-90 ${
+                            s.userService.status === "completed" || s.userService.status === "active"
+                              ? "bg-emerald-500/15 text-emerald-400"
+                              : s.userService.status === "pending"
+                              ? "bg-amber-500/15 text-amber-400"
+                              : "bg-red-500/15 text-red-400"
+                          }`}>
+                            {s.userService.status}
+                          </Badge>
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 text-[10px] font-bold border-primary/20 text-primary hover:bg-primary/5 rounded-lg"
+                            onClick={() => setSelectedHistoryApp(s)}
+                          >
+                            View Details
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      {/* Dialog for History Details */}
+      <Dialog open={!!selectedHistoryApp} onOpenChange={(open) => !open && setSelectedHistoryApp(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-card dark:bg-slate-900 border-border dark:border-border text-left">
+          <DialogHeader className="border-b border-border/40 pb-4">
+            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-foreground dark:text-white">
+              <History className="h-5 w-5 text-primary" />
+              Application Parameters Audit
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Review parameters, files uploaded, and bank coordinates for Application #<strong>{selectedHistoryApp?.userService?.applicationNumber}</strong>
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedHistoryApp && (() => {
+            const isFd = selectedHistoryApp.serviceType.name.toLowerCase().includes("fd") || selectedHistoryApp.serviceType.name.toLowerCase().includes("fixed");
+            
+            // Try to parse notes JSON
+            let details: any = null;
+            if (selectedHistoryApp.userService?.notes) {
+              try {
+                details = JSON.parse(selectedHistoryApp.userService.notes);
+               } catch (e) {}
+             }
+
+             return (
+               <div className="space-y-6 pt-4 text-xs">
+                 {/* Section 1: Overview */}
+                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-muted/20 p-4 rounded-xl border border-border/40">
+                   <div>
+                     <span className="text-[10px] text-muted-foreground uppercase font-bold block mb-1">Status</span>
+                     <Badge className={`border-none text-[9px] font-bold py-0.5 px-2 uppercase hover:opacity-90 ${
+                       selectedHistoryApp.userService.status === "completed" || selectedHistoryApp.userService.status === "active"
+                         ? "bg-emerald-500/15 text-emerald-400"
+                         : selectedHistoryApp.userService.status === "pending"
+                         ? "bg-amber-500/15 text-amber-400"
+                         : "bg-red-500/15 text-red-400"
+                     }`}>
+                       {selectedHistoryApp.userService.status}
+                     </Badge>
+                   </div>
+                   <div>
+                     <span className="text-[10px] text-muted-foreground uppercase font-bold block mb-1">Value</span>
+                     <span className="font-extrabold text-foreground text-sm">₹{parseFloat(selectedHistoryApp.userService.amount).toLocaleString("en-IN")}</span>
+                   </div>
+                   <div>
+                     <span className="text-[10px] text-muted-foreground uppercase font-bold block mb-1">Rate</span>
+                     <span className="font-bold text-emerald-500 text-sm">{selectedHistoryApp.userService.interestRate}% P.A.</span>
+                   </div>
+                   <div>
+                     <span className="text-[10px] text-muted-foreground uppercase font-bold block mb-1">Tenure</span>
+                     <span className="font-semibold text-foreground text-sm">{selectedHistoryApp.userService.tenureMonths || selectedHistoryApp.userService.tenure} Months</span>
+                   </div>
+                 </div>
+
+                 {/* Section 2: Detailed Parameters */}
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   {/* Left: Scheme particulars */}
+                   <div className="space-y-3 border border-border/40 p-4 rounded-xl">
+                     <h4 className="font-bold text-foreground text-[11px] border-b border-border/40 pb-1.5 uppercase tracking-wider flex items-center gap-1.5">
+                       <Lock className="h-3.5 w-3.5 text-primary" />
+                       Scheme Particulars
+                     </h4>
+                     <div className="grid grid-cols-2 gap-2">
+                       <span className="text-muted-foreground">Category:</span>
+                       <span className="font-semibold text-right capitalize">{isFd ? "Fixed Deposit" : "Loan Service"}</span>
+                       
+                       <span className="text-muted-foreground">Scheme Name:</span>
+                       <span className="font-semibold text-right capitalize">{selectedHistoryApp.serviceType.displayName || selectedHistoryApp.serviceType.name}</span>
+                       
+                       <span className="text-muted-foreground">Submission Date:</span>
+                       <span className="font-semibold text-right">{new Date(selectedHistoryApp.userService.applicationDate).toLocaleDateString("en-IN")}</span>
+
+                       {isFd ? (
+                         <>
+                           <span className="text-muted-foreground">Maturity Date:</span>
+                           <span className="font-semibold text-right">
+                             {(() => {
+                               const booking = new Date(selectedHistoryApp.userService.applicationDate);
+                               const tenure = parseInt(selectedHistoryApp.userService.tenureMonths || selectedHistoryApp.userService.tenure || "12");
+                               booking.setMonth(booking.getMonth() + tenure);
+                               return booking.toLocaleDateString("en-IN");
+                             })()}
+                           </span>
+                         </>
+                       ) : (
+                         <>
+                           <span className="text-muted-foreground">Monthly EMI:</span>
+                           <span className="font-bold text-right text-rose-500">₹{parseFloat(selectedHistoryApp.userService.emi || "0").toLocaleString("en-IN")}</span>
+                         </>
+                       )}
+                     </div>
+                   </div>
+
+                   {/* Right: Bank Disbursement Account */}
+                   <div className="space-y-3 border border-border/40 p-4 rounded-xl">
+                     <h4 className="font-bold text-foreground text-[11px] border-b border-border/40 pb-1.5 uppercase tracking-wider flex items-center gap-1.5">
+                       <Building className="h-3.5 w-3.5 text-primary" />
+                       Bank Account Details
+                     </h4>
+                     <div className="grid grid-cols-2 gap-2">
+                       <span className="text-muted-foreground">Bank Name:</span>
+                       <span className="font-semibold text-right">{details?.bankName || "—"}</span>
+                       
+                       <span className="text-muted-foreground">Account Number:</span>
+                       <span className="font-semibold text-right font-mono">{details?.accountNumber || "—"}</span>
+                       
+                       <span className="text-muted-foreground">IFSC Code:</span>
+                       <span className="font-semibold text-right font-mono">{details?.ifscCode || "—"}</span>
+
+                       <span className="text-muted-foreground">Holder Name:</span>
+                       <span className="font-semibold text-right truncate">{details?.fullName || user.name}</span>
+                     </div>
+                   </div>
+                 </div>
+
+                 {/* Section 3: Extra Info (Purpose/Collateral/Occupation) */}
+                 {details && (
+                   <div className="space-y-3 border border-border/40 p-4 rounded-xl bg-muted/10">
+                     <h4 className="font-bold text-foreground text-[11px] border-b border-border/40 pb-1.5 uppercase tracking-wider">
+                       Additional Application Metadata
+                     </h4>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                       <div className="space-y-1">
+                         <span className="text-muted-foreground block font-bold text-[9px] uppercase">Occupation & Income</span>
+                         <span className="font-semibold block capitalize">{details.occupation || "—"} ({details.monthlyIncome ? `₹${parseFloat(details.monthlyIncome).toLocaleString("en-IN")}/Mo` : "—"})</span>
+                       </div>
+                       <div className="space-y-1">
+                         <span className="text-muted-foreground block font-bold text-[9px] uppercase">Purpose of Funds</span>
+                         <span className="font-semibold block italic">"{details.purpose || "General Purpose"}"</span>
+                       </div>
+                       {details.collateralDetails && (
+                         <div className="space-y-1 sm:col-span-2">
+                           <span className="text-muted-foreground block font-bold text-[9px] uppercase">Collateral Details</span>
+                           <span className="font-semibold block">{details.collateralDetails}</span>
+                         </div>
+                       )}
+                       {details.goldWeight && (
+                         <div className="space-y-1 sm:col-span-2">
+                           <span className="text-muted-foreground block font-bold text-[9px] uppercase">Gold Pledged weight</span>
+                           <span className="font-semibold block">{details.goldWeight} Grams ({details.goldPurity || "22"} Carat purity)</span>
+                         </div>
+                       )}
+                     </div>
+                   </div>
+                 )}
+
+                 {/* Section 4: Uploaded Files Checklist */}
+                 <div className="space-y-3 border border-border/40 p-4 rounded-xl">
+                   <h4 className="font-bold text-foreground text-[11px] border-b border-border/40 pb-1.5 uppercase tracking-wider flex items-center gap-1.5">
+                     <FileText className="h-3.5 w-3.5 text-primary" />
+                     Submitted Verification Documents
+                   </h4>
+                   {selectedHistoryApp.userService?.documents && Object.keys(selectedHistoryApp.userService.documents).length > 0 ? (
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                       {Object.entries(selectedHistoryApp.userService.documents).map(([key, val]: any) => (
+                         <div key={key} className="flex justify-between items-center p-2 rounded-lg border border-border/20 bg-muted/20 text-[10px]">
+                           <span className="font-bold text-primary capitalize">{key.replace(/([A-Z])/g, " $1")}</span>
+                           <span className="text-muted-foreground truncate max-w-[150px]" title={val.name}>{val.name}</span>
+                         </div>
+                       ))}
+                     </div>
+                   ) : (
+                     <p className="text-muted-foreground italic text-center py-2">No verification documents attached to this record.</p>
+                   )}
+                 </div>
+
+                 {/* Close Button */}
+                 <div className="flex justify-end pt-2">
+                   <Button
+                     type="button"
+                     onClick={() => setSelectedHistoryApp(null)}
+                     className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-9 text-xs rounded-xl px-6"
+                   >
+                     Close Inspection
+                   </Button>
+                 </div>
+               </div>
+             );
+           })()}
+         </DialogContent>
+       </Dialog>
+     </Tabs>
 
       {/* Dialog for Profile Details Pop-up */}
       <Dialog open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen}>
