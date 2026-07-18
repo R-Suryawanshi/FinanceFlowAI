@@ -19,7 +19,8 @@ import {
   AlertTriangle,
   FileText,
   DollarSign,
-  Search
+  Search,
+  HelpCircle
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -144,6 +145,9 @@ export function Header({
     { name: "Services", id: "services", icon: Calculator },
     { name: "About", id: "about", icon: Users },
     { name: "Contact", id: "contact", icon: Phone },
+    ...(isLoggedIn && userRole !== "admin"
+      ? [{ name: "Support Desk", id: "support-desk", icon: HelpCircle }]
+      : []),
   ];
 
 

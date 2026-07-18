@@ -71,6 +71,7 @@ interface UserDashboardProps {
     role: string;
     createdAt?: string;
   };
+  defaultTab?: string;
 }
 
 interface UserService {
@@ -134,13 +135,20 @@ const formatJoinDate = (dateString?: string) => {
   return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
 };
 
-export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }: UserDashboardProps) {
+export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, defaultTab }: UserDashboardProps) {
   const { toast } = useToast();
   const [userServices, setUserServices] = useState<UserService[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState(defaultTab || "overview");
+
+  useEffect(() => {
+    if (defaultTab) {
+      setActiveTab(defaultTab);
+    }
+  }, [defaultTab]);
   
   // Profile popup state
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -1029,7 +1037,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-xl flex gap-1 w-fit border border-border">
           <TabsTrigger value="overview" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
             <LayoutDashboard className="h-4 w-4" />
@@ -1042,10 +1050,6 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
           <TabsTrigger value="investments" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
             <PiggyBank className="h-4 w-4" />
             FDs & Investments
-          </TabsTrigger>
-          <TabsTrigger value="support" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
-            <HelpCircle className="h-4 w-4" />
-            Support Desk
           </TabsTrigger>
         </TabsList>
 

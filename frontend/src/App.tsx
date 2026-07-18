@@ -24,6 +24,7 @@ import { AdminSidebar } from "./pages/AdminSidebar";
 import { UserDashboard } from "./pages/UserDashboard";
 import { LoanApplicationForm } from "./pages/LoanApplicationForm";
 import { ChatBot } from "./components/ChatBot";
+import { SupportDeskPage } from "./pages/SupportDeskPage";
 import ProfilePage from "./pages/ProfilePage";
 import { Footer } from "./components/Footer";
 import { AuthModal } from "./components/AuthModal";
@@ -275,6 +276,12 @@ function App() {
       case "admin-employees": return user?.role === "admin" ? <AdminEmployeesPage user={user} onPageChange={setCurrentPage} onBack={handleBack} /> : <>Access Denied</>;
       case "admin-add-employee": return user?.role === "admin" ? <AdminAddEmployeePage user={user} onPageChange={setCurrentPage} onBack={handleBack} /> : <>Access Denied</>;
       case "admin-customers": return user?.role === "admin" ? <AdminCustomersPage user={user} onBack={handleBack} /> : <>Access Denied</>;
+      case "support-desk": return user ? (
+        <SupportDeskPage
+          onBack={handleBack}
+          user={user}
+        />
+      ) : <>Please login</>;
       case "user-dashboard": return user ? (
         <UserDashboard
           user={user}
