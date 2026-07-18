@@ -150,7 +150,7 @@ export function Header({
 
   return (
     <header 
-      className={`sticky z-50 transition-all duration-300 bg-white/80 dark:bg-slate-950/85 backdrop-blur-lg border border-slate-200/50 dark:border-slate-800/60 ${
+      className={`sticky z-50 transition-all duration-300 bg-background/80 backdrop-blur-lg border border-border/55 ${
         isAdminPage 
           ? "w-full rounded-none border-b border-t-0 border-x-0 top-0 shadow-sm" 
           : "rounded-full shadow-lg w-[calc(100%-2rem)] max-w-7xl mx-auto top-4 mt-4"
@@ -160,7 +160,7 @@ export function Header({
         <div className="flex justify-between items-center h-14 px-4">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Building2 className="h-8 w-8 mr-2 text-blue-700" />
+            <Building2 className="h-8 w-8 mr-2 text-primary" />
             <span className="text-xl font-bold text-slate-950 dark:text-white">Bhalchandra Finance</span>
           </div>
 
@@ -170,20 +170,20 @@ export function Header({
               {navigation.map((item) => {
                  const Icon = item.icon;
                  return (
-                   <Button
-                     key={item.id}
-                     variant={currentPage === item.id ? "default" : "ghost"}
-                     onClick={() => {
-                       onPageChange(item.id);
-                       console.log('Navigated to:', item.name);
-                     }}
-                     data-testid={`nav-${item.id}`}
-                     className={`flex items-center gap-2 transition-all duration-205 rounded-full px-4 ${
-                       currentPage === item.id
-                         ? "bg-blue-700 hover:bg-blue-800 text-white font-bold shadow-sm"
-                         : "text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
-                     }`}
-                   >
+                    <Button
+                      key={item.id}
+                      variant={currentPage === item.id ? "default" : "ghost"}
+                      onClick={() => {
+                        onPageChange(item.id);
+                        console.log('Navigated to:', item.name);
+                      }}
+                      data-testid={`nav-${item.id}`}
+                      className={`flex items-center gap-2 transition-all duration-205 rounded-full px-4 ${
+                        currentPage === item.id
+                          ? "bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-sm"
+                          : "text-muted-foreground dark:text-slate-200 hover:text-primary hover:bg-muted/50 dark:hover:bg-slate-800/50"
+                      }`}
+                    >
                      <Icon className="h-4 w-4" />
                      {item.name}
                    </Button>
@@ -197,7 +197,7 @@ export function Header({
             {isLoggedIn ? (
               <>
                 {userRole === 'admin' && (
-                  <Badge variant="secondary" data-testid="admin-badge" className="font-semibold border-none bg-blue-105 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200">
+                  <Badge variant="secondary" data-testid="admin-badge" className="font-semibold border-none bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground">
                     Admin
                   </Badge>
                 )}
@@ -207,7 +207,7 @@ export function Header({
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="relative h-9 w-9 rounded-full flex items-center justify-center border focus-visible:ring-0 bg-slate-100/80 dark:bg-slate-900/80 border-slate-250/30 dark:border-slate-850 text-slate-700 dark:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/80"
+                      className="relative h-9 w-9 rounded-full flex items-center justify-center border focus-visible:ring-0 bg-muted/80 border-border/30 text-foreground hover:bg-accent/80"
                     >
                       <Bell className="h-4 w-4" />
                       {unreadCount > 0 && (
@@ -217,19 +217,19 @@ export function Header({
                       )}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-80 border p-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-slate-200/60 dark:border-slate-800" align="end" forceMount>
+                  <DropdownMenuContent className="w-80 border p-2 bg-popover text-popover-foreground border-border" align="end" forceMount>
                     <div className="flex items-center justify-between px-2 py-1.5 border-b border-slate-100 dark:border-slate-800">
                       <span className="text-sm font-bold">Notifications</span>
                       {unreadCount > 0 && (
                         <button
                           onClick={markAllAsRead}
-                          className="text-[10px] font-semibold hover:underline text-blue-700 dark:text-blue-400"
+                          className="text-[10px] font-semibold hover:underline text-primary"
                         >
                           Mark all as read
                         </button>
                       )}
                     </div>
-                    <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
+                    <DropdownMenuSeparator className="bg-muted dark:bg-slate-800" />
                     <div className="max-h-[300px] overflow-y-auto space-y-1 py-1">
                       {notifications.length === 0 ? (
                         <div className="py-6 text-center text-xs font-medium text-slate-500">
@@ -252,7 +252,7 @@ export function Header({
                                 ? "bg-green-500/20 text-green-400" 
                                 : n.type === "destructive" 
                                 ? "bg-red-500/20 text-red-400" 
-                                : "bg-blue-500/20 text-blue-400"
+                                : "bg-primary/20 text-primary"
                             }`}>
                               {n.type === "success" ? (
                                 <Check className="h-4 w-4" />
@@ -270,7 +270,7 @@ export function Header({
                               </span>
                             </div>
                             {!n.isRead && (
-                              <span className="absolute right-3 top-4 h-2 w-2 rounded-full bg-blue-500" />
+                              <span className="absolute right-3 top-4 h-2 w-2 rounded-full bg-primary" />
                             )}
                           </div>
                         ))
@@ -283,24 +283,24 @@ export function Header({
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="relative h-9 w-9 rounded-full flex items-center justify-center border focus-visible:ring-0 bg-slate-100/80 dark:bg-slate-900/80 border-slate-250/30 dark:border-slate-850 text-slate-700 dark:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-slate-800/80"
+                      className="relative h-9 w-9 rounded-full flex items-center justify-center border focus-visible:ring-0 bg-muted/80 border-border/30 text-foreground hover:bg-accent/80"
                     >
                       <User className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 border bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-slate-200/60 dark:border-slate-800" align="end" forceMount>
+                  <DropdownMenuContent className="w-56 border bg-popover text-popover-foreground border-border" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal border-b border-slate-105 dark:border-slate-800">
                       <div className="flex flex-col space-y-1">
                         <p className="text-sm font-semibold leading-none">{user?.name || "Member"}</p>
                         <p className="text-xs leading-none opacity-60">{user?.email || ""}</p>
                       </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
+                    <DropdownMenuSeparator className="bg-muted dark:bg-slate-800" />
                     <DropdownMenuItem
                       onClick={() => {
                         onPageChange("profile");
                       }}
-                      className="cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800 focus:bg-blue-50 dark:focus:bg-slate-800"
+                      className="cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20 focus:bg-primary/10 dark:focus:bg-primary/20"
                     >
                       <User className="mr-2 h-4 w-4" />
                       <span>Profile</span>
@@ -310,13 +310,13 @@ export function Header({
                         onClick={() => {
                           onPageChange("home");
                         }}
-                        className="cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-800 focus:bg-blue-50 dark:focus:bg-slate-800"
+                        className="cursor-pointer hover:bg-primary/10 dark:hover:bg-primary/20 focus:bg-primary/10 dark:focus:bg-primary/20"
                       >
                         <Building2 className="mr-2 h-4 w-4" />
                         <span>View Public Website</span>
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuSeparator className="bg-slate-100 dark:bg-slate-800" />
+                    <DropdownMenuSeparator className="bg-muted dark:bg-slate-800" />
                     <DropdownMenuItem
                       onClick={() => {
                         onLogout();
@@ -337,7 +337,7 @@ export function Header({
                   variant="ghost"
                   onClick={onLogin}
                   data-testid="button-login"
-                  className="flex items-center gap-2 rounded-full text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
+                  className="flex items-center gap-2 rounded-full text-muted-foreground dark:text-slate-200 hover:text-primary hover:bg-muted/50 dark:hover:bg-slate-800/50"
                 >
                   <LogIn className="h-4 w-4" />
                   Login
@@ -345,7 +345,7 @@ export function Header({
                 <Button
                   onClick={onSignup}
                   data-testid="button-signup"
-                  className="flex items-center gap-2 rounded-full bg-blue-700 hover:bg-blue-800 text-white font-semibold shadow-sm"
+                  className="flex items-center gap-2 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm"
                 >
                   <UserPlus className="h-4 w-4" />
                   Sign Up
@@ -361,7 +361,7 @@ export function Header({
               size="icon"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               data-testid="button-mobile-menu"
-              className="text-slate-800 dark:text-white"
+              className="text-foreground dark:text-white"
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>
@@ -370,7 +370,7 @@ export function Header({
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 rounded-2xl shadow-xl mt-2 space-y-1 border border-slate-200/50 dark:border-slate-800/60 w-[calc(100%-1rem)] mx-auto absolute left-2 right-2 z-50">
+          <div className="md:hidden border-t border-border bg-card p-3 rounded-2xl shadow-xl mt-2 space-y-1 border w-[calc(100%-1rem)] mx-auto absolute left-2 right-2 z-50">
             <div className="space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
@@ -386,8 +386,8 @@ export function Header({
                     data-testid={`mobile-nav-${item.id}`}
                     className={`w-full justify-start flex items-center gap-2 rounded-lg ${
                       currentPage === item.id 
-                        ? "bg-blue-700 text-white font-bold shadow-sm" 
-                        : "text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50"
+                        ? "bg-primary text-primary-foreground font-bold shadow-sm" 
+                        : "text-muted-foreground dark:text-slate-200 hover:text-primary hover:bg-muted/50 dark:hover:bg-slate-800/50"
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -410,7 +410,7 @@ export function Header({
                         onPageChange("profile");
                         setMobileMenuOpen(false);
                       }}
-                      className="w-full text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 flex items-center justify-center gap-2 rounded-lg mb-2"
+                      className="w-full text-muted-foreground dark:text-slate-200 hover:text-primary hover:bg-muted/50 dark:hover:bg-slate-800/50 flex items-center justify-center gap-2 rounded-lg mb-2"
                     >
                       <User className="h-4 w-4" />
                       View Profile
@@ -434,7 +434,7 @@ export function Header({
                       variant="ghost"
                       onClick={onLogin}
                       data-testid="mobile-button-login"
-                      className="w-full mb-2 justify-start flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:text-blue-700 hover:bg-slate-100/50 dark:hover:bg-slate-800/50 rounded-lg"
+                      className="w-full mb-2 justify-start flex items-center gap-2 text-muted-foreground dark:text-slate-200 hover:text-primary hover:bg-muted/50 dark:hover:bg-slate-800/50 rounded-lg"
                     >
                       <LogIn className="h-4 w-4" />
                       Login
@@ -442,7 +442,7 @@ export function Header({
                     <Button
                       onClick={onSignup}
                       data-testid="mobile-button-signup"
-                      className="w-full mb-2 justify-start flex items-center gap-2 bg-blue-700 hover:bg-blue-800 text-white font-semibold rounded-lg"
+                      className="w-full mb-2 justify-start flex items-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-lg"
                     >
                       <UserPlus className="h-4 w-4" />
                       Sign Up

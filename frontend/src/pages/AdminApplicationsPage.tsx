@@ -171,17 +171,17 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
               size="icon"
               onClick={onBack}
               data-testid="page-back-button"
-              className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           )}
           <div className="space-y-1 flex-1 text-left">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Applications Ledger</h1>
+            <h1 className="text-3xl font-bold text-foreground dark:text-white">Applications Ledger</h1>
             <p className="text-muted-foreground">Manage and review incoming customer finance applications</p>
           </div>
         </div>
-        <Button variant="outline" size="sm" className="w-full sm:w-auto border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850" onClick={fetchLiveApplicationsData} disabled={loading}>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto border-border dark:border-border hover:bg-muted dark:hover:bg-slate-850" onClick={fetchLiveApplicationsData} disabled={loading}>
           <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh Data
         </Button>
@@ -190,11 +190,11 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
       {/* KPI Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Metric 1: Total Applications */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Applications</span>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">{liveApplications.length}</div>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Applications</span>
+              <div className="text-3xl font-bold text-foreground dark:text-white">{liveApplications.length}</div>
             </div>
             <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100 dark:shadow-none">
               <FileText className="h-5 w-5" />
@@ -204,10 +204,10 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
         </Card>
 
         {/* Metric 2: Pending Reviews */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Pending Reviews</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Pending Reviews</span>
               <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">
                 {liveApplications.filter(a => a.userService.status === "pending").length}
               </div>
@@ -220,10 +220,10 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
         </Card>
 
         {/* Metric 3: Approval Rate */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Approval Success Rate</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Approval Success Rate</span>
               <div className="text-3xl font-bold text-indigo-650 dark:text-indigo-400">{approvalSuccessRate}%</div>
             </div>
             <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100 dark:shadow-none">
@@ -235,10 +235,10 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
       </div>
 
       {/* Filter and Search */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
-        <h2 className="font-semibold text-lg text-slate-850 dark:text-slate-200">Review Board</h2>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-muted/30 dark:bg-slate-900/30 p-4 rounded-xl border border-border dark:border-border">
+        <h2 className="font-semibold text-lg text-foreground dark:text-slate-200">Review Board</h2>
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-          <select className="border border-slate-200 dark:border-slate-800 p-2 rounded-md text-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 shrink-0 focus:outline-none focus:ring-1 focus:ring-ring" value={filter} onChange={(e) => setFilter(e.target.value)}>
+          <select className="border border-border dark:border-border p-2 rounded-md text-sm bg-card dark:bg-slate-900 text-foreground dark:text-slate-200 shrink-0 focus:outline-none focus:ring-1 focus:ring-ring" value={filter} onChange={(e) => setFilter(e.target.value)}>
             <option value="All">All Statuses</option>
             <option value="Pending">Pending Only</option>
             <option value="Approved">Approved Only</option>
@@ -249,7 +249,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
             <input
               type="text"
               placeholder="Search user or service..."
-              className="border border-slate-200 dark:border-slate-800 pl-8 pr-3 py-2 w-full rounded-md text-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-ring"
+              className="border border-border dark:border-border pl-8 pr-3 py-2 w-full rounded-md text-sm bg-card dark:bg-slate-900 text-foreground dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-ring"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -259,34 +259,34 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
 
       {/* Pending Approvals Table */}
       {(filter === "All" || filter === "Pending") && (
-        <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden bg-white dark:bg-slate-900">
-          <CardHeader className="bg-slate-50/50 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800/80">
-            <CardTitle className="text-lg text-slate-900 dark:text-white font-bold">Pending Loan Applications</CardTitle>
+        <Card className="rounded-2xl border border-border dark:border-border shadow-md overflow-hidden bg-card dark:bg-slate-900">
+          <CardHeader className="bg-muted/30/50 dark:bg-slate-950/20 border-b border-border dark:border-border/80">
+            <CardTitle className="text-lg text-foreground dark:text-white font-bold">Pending Loan Applications</CardTitle>
             <CardDescription>Verify user documents and underwrite requested loans</CardDescription>
           </CardHeader>
           <CardContent className="p-0 overflow-auto max-h-[400px]">
             {filteredPending.length === 0 ? (
-              <div className="text-center text-slate-400 dark:text-slate-500 py-12 text-sm font-medium">No pending applications found.</div>
+              <div className="text-center text-muted-foreground dark:text-muted-foreground py-12 text-sm font-medium">No pending applications found.</div>
             ) : (
               <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
-                <thead className="bg-slate-50 dark:bg-slate-950/30">
+                <thead className="bg-muted/30 dark:bg-slate-950/30">
                   <tr>
                     {["App #", "Customer", "Email", "Loan Name", "Requested", "Tenure", "Details", "Action"].map((h) => (
-                      <th key={h} className="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      <th key={h} className="px-6 py-3 text-left text-xs font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
+                <tbody className="bg-card dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredPending.map((app) => (
-                    <tr key={app.userService.id} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/40 text-sm">
+                    <tr key={app.userService.id} className="hover:bg-muted/30/40 dark:hover:bg-slate-800/40 text-sm">
                       <td className="px-6 py-4 font-semibold text-primary dark:text-blue-400">{app.userService.applicationNumber}</td>
-                      <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{app.user.name}</td>
-                      <td className="px-6 py-4 text-slate-650 dark:text-slate-400">{app.user.email}</td>
-                      <td className="px-6 py-4 font-medium text-slate-700 dark:text-slate-300 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
-                      <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">{formatCurrency(Number(app.userService.amount))}</td>
-                      <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{app.userService.tenureMonths} Months</td>
+                      <td className="px-6 py-4 font-medium text-foreground dark:text-slate-200">{app.user.name}</td>
+                      <td className="px-6 py-4 text-muted-foreground dark:text-muted-foreground">{app.user.email}</td>
+                      <td className="px-6 py-4 font-medium text-muted-foreground dark:text-slate-300 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
+                      <td className="px-6 py-4 font-bold text-foreground dark:text-white">{formatCurrency(Number(app.userService.amount))}</td>
+                      <td className="px-6 py-4 text-muted-foreground dark:text-muted-foreground">{app.userService.tenureMonths} Months</td>
                       <td className="px-6 py-4">
                         <Button 
                           variant="outline" 
@@ -325,33 +325,33 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
       )}
 
       {/* Active & Closed Loans Ledger */}
-      <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden bg-white dark:bg-slate-900">
-        <CardHeader className="bg-slate-50/50 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800/80">
-          <CardTitle className="text-lg text-slate-900 dark:text-white font-bold">Active & Closed Loans Ledger</CardTitle>
+      <Card className="rounded-2xl border border-border dark:border-border shadow-md overflow-hidden bg-card dark:bg-slate-900">
+        <CardHeader className="bg-muted/30/50 dark:bg-slate-950/20 border-b border-border dark:border-border/80">
+          <CardTitle className="text-lg text-foreground dark:text-white font-bold">Active & Closed Loans Ledger</CardTitle>
           <CardDescription>Repayment tracking and balances ledger for verified loans</CardDescription>
         </CardHeader>
         <CardContent className="p-0 overflow-auto max-h-[400px]">
           {filteredProcessed.length === 0 ? (
-            <div className="text-center text-slate-450 dark:text-slate-500 py-12 text-sm font-medium">No processed applications found matching search criteria.</div>
+            <div className="text-center text-slate-450 dark:text-muted-foreground py-12 text-sm font-medium">No processed applications found matching search criteria.</div>
           ) : (
             <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
-              <thead className="bg-slate-50 dark:bg-slate-950/30">
+              <thead className="bg-muted/30 dark:bg-slate-950/30">
                 <tr>
                   {["App #", "Customer", "Loan Name", "Approved Amount", "Monthly EMI", "Outstanding", "Paid", "Status"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="bg-card dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredProcessed.map((app) => (
-                  <tr key={app.userService.id} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/40 text-sm">
+                  <tr key={app.userService.id} className="hover:bg-muted/30/40 dark:hover:bg-slate-800/40 text-sm">
                     <td className="px-6 py-4 font-semibold text-primary dark:text-blue-400">{app.userService.applicationNumber}</td>
-                    <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{app.user.name}</td>
-                    <td className="px-6 py-4 font-medium text-slate-700 dark:text-slate-300 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
-                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">{formatCurrency(Number(app.userService.amount))}</td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{formatCurrency(Number(app.userService.emi || "0"))}</td>
+                    <td className="px-6 py-4 font-medium text-foreground dark:text-slate-200">{app.user.name}</td>
+                    <td className="px-6 py-4 font-medium text-muted-foreground dark:text-slate-300 capitalize">{app.serviceType.displayName || app.serviceType.name}</td>
+                    <td className="px-6 py-4 font-bold text-foreground dark:text-white">{formatCurrency(Number(app.userService.amount))}</td>
+                    <td className="px-6 py-4 text-muted-foreground dark:text-muted-foreground">{formatCurrency(Number(app.userService.emi || "0"))}</td>
                     <td className="px-6 py-4 font-semibold text-amber-600 dark:text-amber-400">{formatCurrency(Number(app.userService.outstandingAmount || "0"))}</td>
                     <td className="px-6 py-4 font-semibold text-green-600 dark:text-green-400">{formatCurrency(Number(app.userService.totalPaidAmount || "0"))}</td>
                     <td className="px-6 py-4">
@@ -375,13 +375,13 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
 
       {/* UNDERWRITING & KYC VERIFICATION DIALOG */}
       <Dialog open={!!selectedApp} onOpenChange={(open) => !open && setSelectedApp(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl p-6">
-          <DialogHeader className="border-b border-slate-100 dark:border-slate-800/80 pb-4">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-card dark:bg-slate-900 text-foreground dark:text-slate-100 border border-border dark:border-border shadow-2xl rounded-2xl p-6">
+          <DialogHeader className="border-b border-border dark:border-border/80 pb-4">
             <DialogTitle className="text-xl font-bold flex items-center gap-2 text-primary dark:text-blue-400">
               <ShieldCheck className="h-6 w-6 text-green-650 animate-pulse" />
               Underwriting Sheet & KYC Audit
             </DialogTitle>
-            <DialogDescription className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+            <DialogDescription className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
               Verify income proofs, documentation lists, and collateral metrics for Application <strong>{selectedApp?.userService?.applicationNumber}</strong>
             </DialogDescription>
           </DialogHeader>
@@ -427,38 +427,38 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
               <div className="space-y-6 pt-4 text-sm">
                 
                 {/* Row 1: Profile & Contacts */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-950/20 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-muted/30 dark:bg-slate-950/20 p-4 rounded-xl border border-border dark:border-border">
                   <div className="space-y-3">
-                    <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                    <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
                       <User className="h-4 w-4 text-primary dark:text-blue-400" /> Applicant Details
                     </h3>
                     <div className="grid grid-cols-2 gap-2 text-xs">
-                      <span className="text-slate-400 dark:text-slate-500">Full Name:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{name}</span>
-                      <span className="text-slate-400 dark:text-slate-500">Gender:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{gender}</span>
-                      <span className="text-slate-400 dark:text-slate-500">Email:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{email}</span>
-                      <span className="text-slate-400 dark:text-slate-500">Phone:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{phone}</span>
-                      <span className="text-slate-400 dark:text-slate-500">Date of Birth:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">
+                      <span className="text-muted-foreground dark:text-muted-foreground">Full Name:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{name}</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Gender:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{gender}</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Email:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{email}</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Phone:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{phone}</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Date of Birth:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">
                         {dob ? new Date(dob).toLocaleDateString("en-IN") : "—"}
                       </span>
-                      <span className="text-slate-400 dark:text-slate-500">Aadhaar Number:</span>
-                      <span className="font-semibold text-slate-850 dark:text-slate-200">{aadhar}</span>
-                      <span className="text-slate-400 dark:text-slate-500">PAN Number:</span>
-                      <span className="font-semibold text-slate-850 dark:text-slate-200">{pan}</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Aadhaar Number:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{aadhar}</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">PAN Number:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{pan}</span>
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                    <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-primary dark:text-blue-400" /> Address Details
                     </h3>
                     <div className="text-xs space-y-1">
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">{address}</p>
-                      <p className="text-slate-650 dark:text-slate-400">
+                      <p className="font-semibold text-foreground dark:text-slate-200">{address}</p>
+                      <p className="text-muted-foreground dark:text-muted-foreground">
                         {[city, state, pincode].filter(Boolean).join(", ") || "—"}
                       </p>
                     </div>
@@ -467,105 +467,105 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
 
                 {/* Row 2: Financial Auditing */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
-                    <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                  <div className="space-y-3 border border-border dark:border-border p-4 rounded-xl">
+                    <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
                       <Briefcase className="h-4 w-4 text-primary dark:text-blue-400" /> Employment & Income
                     </h3>
                     <div className="grid grid-cols-2 gap-2 text-xs">
-                      <span className="text-slate-400 dark:text-slate-500">Occupation:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200 capitalize">{occupation}</span>
-                      <span className="text-slate-400 dark:text-slate-500">Company Name:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{companyName}</span>
-                      <span className="text-slate-400 dark:text-slate-550">Monthly Income:</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Occupation:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200 capitalize">{occupation}</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Company Name:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{companyName}</span>
+                      <span className="text-muted-foreground dark:text-slate-550">Monthly Income:</span>
                       <span className="font-bold text-green-600 dark:text-green-400">
                         {monthlyIncome ? formatCurrency(parseFloat(monthlyIncome)) : "—"}
                       </span>
-                      <span className="text-slate-400 dark:text-slate-500">Credit Score:</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Credit Score:</span>
                       <span className="font-bold text-primary dark:text-blue-400">{creditScore}</span>
                     </div>
                   </div>
 
-                  <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
-                    <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                  <div className="space-y-3 border border-border dark:border-border p-4 rounded-xl">
+                    <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
                       <DollarSign className="h-4 w-4 text-primary dark:text-blue-400" /> Loan Terms
                     </h3>
                     <div className="grid grid-cols-2 gap-2 text-xs">
-                      <span className="text-slate-400 dark:text-slate-500">Scheme Name:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200 capitalize">{selectedApp.serviceType?.displayName || selectedApp.serviceType?.name}</span>
-                      <span className="text-slate-400 dark:text-slate-500">Requested Principal:</span>
-                      <span className="font-bold text-slate-900 dark:text-white">{formatCurrency(parseFloat(selectedApp.userService?.amount))}</span>
-                      <span className="text-slate-400 dark:text-slate-500">Tenure Requested:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.userService?.tenureMonths || selectedApp.userService?.tenure} Months</span>
-                      <span className="text-slate-400 dark:text-slate-500">Base Interest Rate:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{selectedApp.userService?.interestRate}% p.a.</span>
-                      <span className="text-slate-400 dark:text-slate-500">Purpose of Loan:</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200 italic col-span-1 break-words">{selectedApp.userService?.purpose || "General Purpose"}</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Scheme Name:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200 capitalize">{selectedApp.serviceType?.displayName || selectedApp.serviceType?.name}</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Requested Principal:</span>
+                      <span className="font-bold text-foreground dark:text-white">{formatCurrency(parseFloat(selectedApp.userService?.amount))}</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Tenure Requested:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{selectedApp.userService?.tenureMonths || selectedApp.userService?.tenure} Months</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Base Interest Rate:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{selectedApp.userService?.interestRate}% p.a.</span>
+                      <span className="text-muted-foreground dark:text-muted-foreground">Purpose of Loan:</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200 italic col-span-1 break-words">{selectedApp.userService?.purpose || "General Purpose"}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Row 2.5: Bank Account Details */}
-                <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl bg-slate-50/50 dark:bg-slate-950/10">
-                  <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                <div className="space-y-3 border border-border dark:border-border p-4 rounded-xl bg-muted/30/50 dark:bg-slate-950/10">
+                  <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
                     <Building className="h-4 w-4 text-primary dark:text-blue-400" /> Disbursement Bank Account Details
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
                     <div>
-                      <span className="text-slate-450 dark:text-slate-500 block mb-0.5">Bank Name</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{bankName}</span>
+                      <span className="text-slate-450 dark:text-muted-foreground block mb-0.5">Bank Name</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{bankName}</span>
                     </div>
                     <div>
-                      <span className="text-slate-450 dark:text-slate-500 block mb-0.5">Account Number</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono">{accountNumber}</span>
+                      <span className="text-slate-450 dark:text-muted-foreground block mb-0.5">Account Number</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200 font-mono">{accountNumber}</span>
                     </div>
                     <div>
-                      <span className="text-slate-450 dark:text-slate-500 block mb-0.5">IFSC Code</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono">{ifscCode}</span>
+                      <span className="text-slate-450 dark:text-muted-foreground block mb-0.5">IFSC Code</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200 font-mono">{ifscCode}</span>
                     </div>
                     <div>
-                      <span className="text-slate-450 dark:text-slate-500 block mb-0.5">Account Holder & Type</span>
-                      <span className="font-semibold text-slate-800 dark:text-slate-200">{accountHolderName} ({accountType})</span>
+                      <span className="text-slate-450 dark:text-muted-foreground block mb-0.5">Account Holder & Type</span>
+                      <span className="font-semibold text-foreground dark:text-slate-200">{accountHolderName} ({accountType})</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Row 3: Co-Applicant & Collateral */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 dark:bg-slate-950/20 p-4 rounded-xl border border-slate-100 dark:border-slate-800">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-muted/30 dark:bg-slate-950/20 p-4 rounded-xl border border-border dark:border-border">
                   <div className="space-y-2">
-                    <h4 className="font-bold text-xs text-slate-450 dark:text-slate-400 uppercase tracking-wider">Guarantor / Co-Applicant</h4>
+                    <h4 className="font-bold text-xs text-slate-450 dark:text-muted-foreground uppercase tracking-wider">Guarantor / Co-Applicant</h4>
                     {selectedApp.userService?.guarantor ? (
                       <div className="text-xs space-y-1">
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">Name: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).name || "—"}</span></p>
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">Relation: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).relation || "—"}</span></p>
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">Income: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.guarantor as any).income ? formatCurrency(parseFloat((selectedApp.userService.guarantor as any).income)) : "—"}</span></p>
+                        <p className="font-semibold text-foreground dark:text-slate-200">Name: <span className="font-normal text-muted-foreground dark:text-muted-foreground">{(selectedApp.userService.guarantor as any).name || "—"}</span></p>
+                        <p className="font-semibold text-foreground dark:text-slate-200">Relation: <span className="font-normal text-muted-foreground dark:text-muted-foreground">{(selectedApp.userService.guarantor as any).relation || "—"}</span></p>
+                        <p className="font-semibold text-foreground dark:text-slate-200">Income: <span className="font-normal text-muted-foreground dark:text-muted-foreground">{(selectedApp.userService.guarantor as any).income ? formatCurrency(parseFloat((selectedApp.userService.guarantor as any).income)) : "—"}</span></p>
                       </div>
                     ) : (
-                      <p className="text-xs text-slate-400 dark:text-slate-550 italic">No co-applicant or guarantor provided.</p>
+                      <p className="text-xs text-muted-foreground dark:text-slate-550 italic">No co-applicant or guarantor provided.</p>
                     )}
                   </div>
 
                   <div className="space-y-2">
-                    <h4 className="font-bold text-xs text-slate-450 dark:text-slate-400 uppercase tracking-wider">Collateral / Security Details</h4>
+                    <h4 className="font-bold text-xs text-slate-450 dark:text-muted-foreground uppercase tracking-wider">Collateral / Security Details</h4>
                     {selectedApp.userService?.collateral ? (
                       <div className="text-xs space-y-1">
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">Existing Loan Ledger: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.collateral as any).details || "—"}</span></p>
-                        <p className="font-semibold text-slate-800 dark:text-slate-200">Value of Security: <span className="font-normal text-slate-600 dark:text-slate-400">{(selectedApp.userService.collateral as any).value ? formatCurrency(parseFloat((selectedApp.userService.collateral as any).value)) : "—"}</span></p>
+                        <p className="font-semibold text-foreground dark:text-slate-200">Existing Loan Ledger: <span className="font-normal text-muted-foreground dark:text-muted-foreground">{(selectedApp.userService.collateral as any).details || "—"}</span></p>
+                        <p className="font-semibold text-foreground dark:text-slate-200">Value of Security: <span className="font-normal text-muted-foreground dark:text-muted-foreground">{(selectedApp.userService.collateral as any).value ? formatCurrency(parseFloat((selectedApp.userService.collateral as any).value)) : "—"}</span></p>
                       </div>
                     ) : (
-                      <p className="text-xs text-slate-400 dark:text-slate-550 italic">No existing loan balance or collateral provided.</p>
+                      <p className="text-xs text-muted-foreground dark:text-slate-550 italic">No existing loan balance or collateral provided.</p>
                     )}
                   </div>
                 </div>
 
                 {/* Row 4: KYC Files checklist */}
-                <div className="space-y-3 border border-slate-100 dark:border-slate-800 p-4 rounded-xl">
-                  <h3 className="font-bold text-slate-700 dark:text-slate-350 flex items-center gap-2">
+                <div className="space-y-3 border border-border dark:border-border p-4 rounded-xl">
+                  <h3 className="font-bold text-muted-foreground dark:text-slate-350 flex items-center gap-2">
                     <FileText className="h-4 w-4 text-primary dark:text-blue-400" /> Submitted KYC Verification Documents
                   </h3>
                   {selectedApp.userService?.documents && Object.keys(selectedApp.userService.documents).length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {Object.entries(selectedApp.userService.documents).map(([key, val]: any) => (
-                        <div key={key} className="flex justify-between items-center p-2.5 rounded-lg border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-955/20 text-xs">
+                        <div key={key} className="flex justify-between items-center p-2.5 rounded-lg border border-border dark:border-border bg-muted/30 dark:bg-slate-955/20 text-xs">
                           <div className="space-y-0.5">
                             <span className="font-bold text-[10px] text-primary dark:text-blue-400 uppercase tracking-wider block">
                               {key.replace(/([A-Z])/g, ' $1')}
@@ -574,7 +574,7 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
                               {val.name}
                             </span>
                           </div>
-                          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-bold whitespace-nowrap">
+                          <span className="text-[10px] text-muted-foreground dark:text-muted-foreground font-bold whitespace-nowrap">
                             {val.size ? `${(val.size / 1024).toFixed(1)} KB` : "Document Loaded"}
                           </span>
                         </div>
@@ -591,11 +591,11 @@ export function AdminApplicationsPage({ user, onBack }: AdminApplicationsPagePro
               </div>
             );
           })()}
-          <DialogFooter className="border-t border-slate-100 dark:border-slate-800/80 pt-4 mt-6 gap-2">
+          <DialogFooter className="border-t border-border dark:border-border/80 pt-4 mt-6 gap-2">
             <Button
               variant="outline"
               onClick={() => setSelectedApp(null)}
-              className="text-slate-500 dark:text-slate-400 font-medium border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850"
+              className="text-muted-foreground dark:text-muted-foreground font-medium border-border dark:border-border hover:bg-muted dark:hover:bg-slate-850"
             >
               Close
             </Button>

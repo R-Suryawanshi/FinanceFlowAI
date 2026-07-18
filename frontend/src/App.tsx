@@ -290,7 +290,7 @@ function App() {
               />
             )}
             
-            <div className={`flex-1 flex flex-col min-w-0 ${isAdminPage ? "bg-slate-50/70 dark:bg-slate-950/40" : ""}`}>
+            <div className={`flex-1 flex flex-col min-w-0 ${isAdminPage ? "bg-muted/10" : ""}`}>
               <Header
                 currentPage={currentPage}
                 onPageChange={setCurrentPage}

@@ -270,31 +270,31 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="flex flex-col gap-5 max-h-[calc(100vh-2rem)] overflow-y-auto border-white/70 bg-white p-5 shadow-2xl sm:max-w-md sm:rounded-2xl sm:p-7">
+      <DialogContent className="flex flex-col gap-5 max-h-[calc(100vh-2rem)] overflow-y-auto border-border bg-card p-5 shadow-2xl sm:max-w-md sm:rounded-2xl sm:p-7">
         {flow === 'login-signup' && (
           <>
             <DialogHeader className="pr-8 text-left flex flex-col gap-2">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-700 to-cyan-500 text-white shadow-md shadow-blue-500/25">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-indigo-500 text-white shadow-md shadow-primary/25">
                   <Landmark className="h-5 w-5" />
                 </div>
-                <DialogTitle className="text-xl font-bold tracking-tight text-slate-900 sm:text-2xl">Welcome to Bhalchandra Finance</DialogTitle>
+                <DialogTitle className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">Welcome to Bhalchandra Finance</DialogTitle>
               </div>
-              <p className="text-sm leading-relaxed text-slate-500">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 {activeTab === 'signup' ? 'Create your account and begin managing your finances.' : 'Sign in securely to access your finance dashboard.'}
               </p>
             </DialogHeader>
 
             <Tabs defaultValue="login" className="w-full" onValueChange={(value) => { setActiveTab(value); setError(''); setShowPassword(false); setShowConfirmPassword(false); }}>
-              <TabsList className="grid h-12 w-full grid-cols-2 rounded-xl bg-slate-100 p-1">
-                <TabsTrigger value="login" className="gap-1.5 rounded-lg text-xs font-semibold text-slate-500 transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm sm:text-sm"><UserRound className="h-3.5 w-3.5" />Sign in</TabsTrigger>
-                <TabsTrigger value="signup" className="gap-1.5 rounded-lg text-xs font-semibold text-slate-500 transition-all duration-200 data-[state=active]:bg-white data-[state=active]:text-blue-700 data-[state=active]:shadow-sm sm:text-sm"><UserPlus className="h-3.5 w-3.5" />Sign Up</TabsTrigger>
+              <TabsList className="grid h-12 w-full grid-cols-2 rounded-xl bg-muted p-1">
+                <TabsTrigger value="login" className="gap-1.5 rounded-lg text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm sm:text-sm"><UserRound className="h-3.5 w-3.5" />Sign in</TabsTrigger>
+                <TabsTrigger value="signup" className="gap-1.5 rounded-lg text-xs font-semibold text-muted-foreground transition-all duration-200 data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm sm:text-sm"><UserPlus className="h-3.5 w-3.5" />Sign Up</TabsTrigger>
               </TabsList>
 
               <TabsContent value="login" className="mt-5">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="user-email" className="text-sm font-semibold text-slate-700">Email address</Label>
+                    <Label htmlFor="user-email" className="text-sm font-semibold text-foreground">Email address</Label>
                     <Input
                       id="user-email"
                       type="email"
@@ -302,13 +302,13 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                       onChange={(e) => setLoginEmail(e.target.value)}
                       placeholder="you@example.com"
                       autoComplete="email"
-                      className="h-12 rounded-xl border-slate-200 bg-slate-50/70 px-4 transition-all placeholder:text-slate-400 focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                      className="h-12 rounded-xl border-input bg-muted/50 px-4 transition-all placeholder:text-muted-foreground focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="user-password" className="text-sm font-semibold text-slate-700">Password</Label>
+                    <Label htmlFor="user-password" className="text-sm font-semibold text-foreground">Password</Label>
                     <div className="relative">
                       <Input
                         id="user-password"
@@ -316,14 +316,14 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                         value={loginPassword}
                         onChange={(e) => setLoginPassword(e.target.value)}
                         autoComplete="current-password"
-                        className="h-12 rounded-xl border-slate-200 bg-slate-50/70 px-4 pr-12 transition-all focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                        className="h-12 rounded-xl border-input bg-muted/50 px-4 pr-12 transition-all focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
                         aria-label={showPassword ? 'Hide password' : 'Show password'}
-                        className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                        className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                       >
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
@@ -334,7 +334,7 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                     <button
                       type="button"
                       onClick={() => { setFlow('forgot-request'); setError(''); }}
-                      className="text-xs font-semibold text-blue-700 hover:text-blue-800 transition-colors focus:outline-none focus:underline"
+                      className="text-xs font-semibold text-primary hover:text-primary/95 transition-colors focus:outline-none focus:underline"
                     >
                       Forgot password?
                     </button>
@@ -346,7 +346,7 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                     </Alert>
                   )}
 
-                  <Button type="submit" className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-700 to-blue-600 text-base font-semibold shadow-lg shadow-blue-700/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-blue-800 hover:to-cyan-600 hover:shadow-xl active:translate-y-0" disabled={isLoading}>
+                  <Button type="submit" className="h-12 w-full rounded-xl bg-gradient-to-r from-primary to-primary/80 text-base font-semibold shadow-lg shadow-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-primary/90 hover:to-primary/70 hover:shadow-xl active:translate-y-0 text-white" disabled={isLoading}>
                     {isLoading ? <><LoaderCircle className="animate-spin" />Signing in…</> : <>Sign in <ArrowRight /></>}
                   </Button>
                 </form>
@@ -354,61 +354,61 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
 
               <TabsContent value="signup" className="mt-5">
                 <form onSubmit={handleSignup} className="space-y-4">
-                  <Label className="text-sm font-semibold text-slate-700">Full name</Label>
+                  <Label className="text-sm font-semibold text-foreground">Full name</Label>
                   <Input
                     value={signupData.name}
                     onChange={(e) => setSignupData((p) => ({ ...p, name: e.target.value }))}
                     placeholder="Your full name"
                     autoComplete="name"
-                    className="h-11 rounded-xl border-slate-200 bg-slate-50/70 px-4 focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                    className="h-11 rounded-xl border-input bg-muted/50 px-4 focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                     required
                   />
 
-                  <Label className="text-sm font-semibold text-slate-700">Username</Label>
+                  <Label className="text-sm font-semibold text-foreground">Username</Label>
                   <Input
                     value={signupData.username}
                     onChange={(e) => setSignupData((p) => ({ ...p, username: e.target.value }))}
                     placeholder="Choose a username"
                     autoComplete="username"
-                    className="h-11 rounded-xl border-slate-200 bg-slate-50/70 px-4 focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                    className="h-11 rounded-xl border-input bg-muted/50 px-4 focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                     required
                   />
 
-                  <Label className="text-sm font-semibold text-slate-700">Email address</Label>
+                  <Label className="text-sm font-semibold text-foreground">Email address</Label>
                   <Input
                     type="email"
                     value={signupData.email}
                     onChange={(e) => setSignupData((p) => ({ ...p, email: e.target.value }))}
                     placeholder="you@example.com"
                     autoComplete="email"
-                    className="h-11 rounded-xl border-slate-200 bg-slate-50/70 px-4 focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                    className="h-11 rounded-xl border-input bg-muted/50 px-4 focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                     required
                   />
 
-                  <Label className="text-sm font-semibold text-slate-700">Password</Label>
+                  <Label className="text-sm font-semibold text-foreground">Password</Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
                       value={signupData.password}
                       onChange={(e) => setSignupData((p) => ({ ...p, password: e.target.value }))}
                       autoComplete="new-password"
-                      className="h-11 rounded-xl border-slate-200 bg-slate-50/70 px-4 pr-12 focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                      className="h-11 rounded-xl border-input bg-muted/50 px-4 pr-12 focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
-                  <p className="mt-1 text-[11px] leading-4 text-slate-500">
+                  <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
                     Password must be at least 8 characters long, with 1 uppercase letter, 1 lowercase letter, and 1 number.
                   </p>
 
-                  <Label className="text-sm font-semibold text-slate-700">Confirm password</Label>
+                  <Label className="text-sm font-semibold text-foreground">Confirm password</Label>
                   <div className="relative">
                     <Input
                       type={showConfirmPassword ? "text" : "password"}
@@ -417,14 +417,14 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                         setSignupData((p) => ({ ...p, confirmPassword: e.target.value }))
                       }
                       autoComplete="new-password"
-                      className="h-11 rounded-xl border-slate-200 bg-slate-50/70 px-4 pr-12 focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                      className="h-11 rounded-xl border-input bg-muted/50 px-4 pr-12 focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
-                      className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                     >
                       {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -436,7 +436,7 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                     </Alert>
                   )}
 
-                  <Button type="submit" className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-700 to-blue-600 text-base font-semibold shadow-lg shadow-blue-700/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-blue-800 hover:to-cyan-600 hover:shadow-xl active:translate-y-0" disabled={isLoading}>
+                  <Button type="submit" className="h-12 w-full rounded-xl bg-gradient-to-r from-primary to-primary/80 text-base font-semibold shadow-lg shadow-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-primary/90 hover:to-primary/70 hover:shadow-xl active:translate-y-0 text-white" disabled={isLoading}>
                     {isLoading ? <><LoaderCircle className="animate-spin" />Creating account…</> : <>Create account <ArrowRight /></>}
                   </Button>
                 </form>
@@ -451,28 +451,28 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => { setFlow('login-signup'); setError(''); }}
-                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+                  className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground transition-colors"
                   aria-label="Back to login"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </button>
-                <DialogTitle className="text-xl font-bold tracking-tight text-slate-900">Reset Password</DialogTitle>
+                <DialogTitle className="text-xl font-bold tracking-tight text-foreground">Reset Password</DialogTitle>
               </div>
-              <p className="text-sm leading-relaxed text-slate-500">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Enter your email address and we'll send you a 6-digit OTP code to verify your identity.
               </p>
             </DialogHeader>
 
             <form onSubmit={handleForgotRequest} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="forgot-email" className="text-sm font-semibold text-slate-700">Email address</Label>
+                <Label htmlFor="forgot-email" className="text-sm font-semibold text-foreground">Email address</Label>
                 <Input
                   id="forgot-email"
                   type="email"
                   value={resetEmail}
                   onChange={(e) => setResetEmail(e.target.value)}
                   placeholder="you@example.com"
-                  className="h-12 rounded-xl border-slate-200 bg-slate-50/70 px-4 transition-all placeholder:text-slate-400 focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                  className="h-12 rounded-xl border-input bg-muted/50 px-4 transition-all placeholder:text-muted-foreground focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                   required
                 />
               </div>
@@ -483,7 +483,7 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                 </Alert>
               )}
 
-              <Button type="submit" className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-700 to-blue-600 text-base font-semibold shadow-lg shadow-blue-700/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-blue-800 hover:to-cyan-600 hover:shadow-xl active:translate-y-0" disabled={isLoading}>
+              <Button type="submit" className="h-12 w-full rounded-xl bg-gradient-to-r from-primary to-primary/80 text-base font-semibold shadow-lg shadow-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-primary/90 hover:to-primary/70 hover:shadow-xl active:translate-y-0 text-white" disabled={isLoading}>
                 {isLoading ? <><LoaderCircle className="animate-spin" />Sending OTP…</> : <>Send OTP Code <ArrowRight /></>}
               </Button>
             </form>
@@ -496,28 +496,28 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => { setFlow('forgot-request'); setError(''); setSimulatedOtpBanner(null); }}
-                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+                  className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground transition-colors"
                   aria-label="Back to email request"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </button>
-                <DialogTitle className="text-xl font-bold tracking-tight text-slate-900">Verify Code</DialogTitle>
+                <DialogTitle className="text-xl font-bold tracking-tight text-foreground">Verify Code</DialogTitle>
               </div>
-              <p className="text-sm leading-relaxed text-slate-500">
-                We've sent a 6-digit verification code to <span className="font-semibold text-slate-900">{resetEmail}</span>.
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                We've sent a 6-digit verification code to <span className="font-semibold text-foreground">{resetEmail}</span>.
               </p>
             </DialogHeader>
 
             {simulatedOtpBanner && (
-              <div className="p-3.5 rounded-xl border border-blue-100 bg-blue-50/50 text-blue-900 flex flex-col gap-1 text-xs">
-                <span className="font-bold flex items-center gap-1.5 text-blue-800"><Landmark className="h-3.5 w-3.5" /> Simulated OTP Code (Local Testing)</span>
-                <span>Enter code <strong className="text-sm text-blue-700 font-extrabold">{simulatedOtpBanner}</strong> below to verify your password reset.</span>
+              <div className="p-3.5 rounded-xl border border-primary/20 bg-primary/5 text-primary flex flex-col gap-1 text-xs">
+                <span className="font-bold flex items-center gap-1.5 text-primary"><Landmark className="h-3.5 w-3.5" /> Simulated OTP Code (Local Testing)</span>
+                <span>Enter code <strong className="text-sm text-primary font-extrabold">{simulatedOtpBanner}</strong> below to verify your password reset.</span>
               </div>
             )}
 
             <form onSubmit={handleForgotVerify} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="reset-otp" className="text-sm font-semibold text-slate-700">6-Digit Code</Label>
+                <Label htmlFor="reset-otp" className="text-sm font-semibold text-foreground">6-Digit Code</Label>
                 <Input
                   id="reset-otp"
                   type="text"
@@ -525,7 +525,7 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                   value={resetOtp}
                   onChange={(e) => setResetOtp(e.target.value.replace(/[^0-9]/g, ''))}
                   placeholder="123456"
-                  className="h-12 text-center text-xl font-bold tracking-[0.5em] rounded-xl border-slate-200 bg-slate-50/70 focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                  className="h-12 text-center text-xl font-bold tracking-[0.5em] rounded-xl border-input bg-muted/50 focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                   required
                 />
               </div>
@@ -536,7 +536,7 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                 </Alert>
               )}
 
-              <Button type="submit" className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-700 to-blue-600 text-base font-semibold shadow-lg shadow-blue-700/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-blue-800 hover:to-cyan-600 hover:shadow-xl active:translate-y-0" disabled={isLoading}>
+              <Button type="submit" className="h-12 w-full rounded-xl bg-gradient-to-r from-primary to-primary/80 text-base font-semibold shadow-lg shadow-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-primary/90 hover:to-primary/70 hover:shadow-xl active:translate-y-0 text-white" disabled={isLoading}>
                 {isLoading ? <><LoaderCircle className="animate-spin" />Verifying…</> : <>Verify Code <ArrowRight /></>}
               </Button>
             </form>
@@ -549,58 +549,58 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => { setFlow('forgot-verify'); setError(''); }}
-                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+                  className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground transition-colors"
                   aria-label="Back to OTP verification"
                 >
                   <ArrowLeft className="h-4 w-4" />
                 </button>
-                <DialogTitle className="text-xl font-bold tracking-tight text-slate-900">Set New Password</DialogTitle>
+                <DialogTitle className="text-xl font-bold tracking-tight text-foreground">Set New Password</DialogTitle>
               </div>
-              <p className="text-sm leading-relaxed text-slate-500">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Please enter a secure new password for your Bhalchandra account.
               </p>
             </DialogHeader>
 
             <form onSubmit={handleForgotReset} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="new-password" className="text-sm font-semibold text-slate-700">New Password</Label>
+                <Label htmlFor="new-password" className="text-sm font-semibold text-foreground">New Password</Label>
                 <div className="relative">
                   <Input
                     id="new-password"
                     type={showPassword ? "text" : "password"}
                     value={resetPasswordData.password}
                     onChange={(e) => setResetPasswordData(p => ({ ...p, password: e.target.value }))}
-                    className="h-11 rounded-xl border-slate-200 bg-slate-50/70 px-4 pr-12 focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                    className="h-11 rounded-xl border-input bg-muted/50 px-4 pr-12 focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 hover:text-blue-700"
+                    className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground hover:text-primary"
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
-                <p className="mt-1 text-[11px] leading-4 text-slate-500">
+                <p className="mt-1 text-[11px] leading-4 text-muted-foreground">
                   Password must be at least 8 characters long, with 1 uppercase letter, 1 lowercase letter, and 1 number.
                 </p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirm-new-password" className="text-sm font-semibold text-slate-700">Confirm New Password</Label>
+                <Label htmlFor="confirm-new-password" className="text-sm font-semibold text-foreground">Confirm New Password</Label>
                 <div className="relative">
                   <Input
                     id="confirm-new-password"
                     type={showConfirmPassword ? "text" : "password"}
                     value={resetPasswordData.confirmPassword}
                     onChange={(e) => setResetPasswordData(p => ({ ...p, confirmPassword: e.target.value }))}
-                    className="h-11 rounded-xl border-slate-200 bg-slate-50/70 px-4 pr-12 focus-visible:border-blue-500 focus-visible:bg-white focus-visible:ring-blue-500/20"
+                    className="h-11 rounded-xl border-input bg-muted/50 px-4 pr-12 focus-visible:border-primary focus-visible:bg-card focus-visible:ring-primary/20"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 hover:text-blue-700"
+                    className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-muted-foreground hover:text-primary"
                   >
                     {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -613,7 +613,7 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                 </Alert>
               )}
 
-              <Button type="submit" className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-700 to-blue-600 text-base font-semibold shadow-lg shadow-blue-700/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-blue-800 hover:to-cyan-600 hover:shadow-xl active:translate-y-0" disabled={isLoading}>
+              <Button type="submit" className="h-12 w-full rounded-xl bg-gradient-to-r from-primary to-primary/80 text-base font-semibold shadow-lg shadow-primary/20 transition-all duration-200 hover:-translate-y-0.5 hover:from-primary/90 hover:to-primary/70 hover:shadow-xl active:translate-y-0 text-white" disabled={isLoading}>
                 {isLoading ? <><LoaderCircle className="animate-spin" />Resetting password…</> : <>Reset Password <ArrowRight /></>}
               </Button>
             </form>
@@ -624,9 +624,9 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
           <div className="mt-2 space-y-4">
             <div className="relative flex items-center justify-center">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-slate-100"></span>
+                <span className="w-full border-t border-border"></span>
               </div>
-              <span className="relative bg-white px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              <span className="relative bg-card px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 Or continue with
               </span>
             </div>
@@ -636,7 +636,7 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                 type="button"
                 variant="outline"
                 onClick={() => handleOAuthLogin('google')}
-                className="h-11 rounded-xl border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center justify-center gap-2"
+                className="h-11 rounded-xl border-border text-sm font-semibold text-foreground hover:bg-muted hover:text-foreground transition-colors flex items-center justify-center gap-2"
                 disabled={isLoading}
               >
                 <svg className="h-4.5 w-4.5" viewBox="0 0 24 24">
@@ -664,10 +664,10 @@ export function AuthModal({ isOpen, onClose, onLogin, onSignup, onOAuthSuccess }
                 type="button"
                 variant="outline"
                 onClick={() => handleOAuthLogin('apple')}
-                className="h-11 rounded-xl border-slate-200 text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center justify-center gap-2"
+                className="h-11 rounded-xl border-border text-sm font-semibold text-foreground hover:bg-muted hover:text-foreground transition-colors flex items-center justify-center gap-2"
                 disabled={isLoading}
               >
-                <svg className="h-4.5 w-4.5 fill-current text-slate-900" viewBox="0 0 24 24">
+                <svg className="h-4.5 w-4.5 fill-current text-foreground" viewBox="0 0 24 24">
                   <path d="M17.05 20.28c-.98.95-2.05 1.88-3.08 1.88-1.02 0-1.4-.62-2.58-.62-1.18 0-1.6.6-2.58.64-1.02.03-2.2-1-3.18-1.95-2-1.96-3.52-5.54-3.52-8.87 0-5.28 3.44-8.08 6.82-8.08 1.07 0 2.07.67 2.73.67.67 0 1.9-.8 3.2-.67.54.02 2.07.2 3.05 1.63-.08.05-1.82 1.05-1.82 3.16 0 2.5 2.07 3.4 2.1 3.43-.02.08-.33 1.15-1.1 2.26zM15.42 4.42c.86-1.06 1.44-2.5 1.44-3.95 0-.2-.03-.4-.06-.59-1.34.05-2.96.88-3.92 2.01-.8.95-1.5 2.4-1.5 3.85 0 .2.03.43.08.6 1.47 0 3.02-.85 3.96-1.92z" />
                 </svg>
                 Apple

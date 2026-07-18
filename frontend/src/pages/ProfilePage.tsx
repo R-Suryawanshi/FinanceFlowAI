@@ -313,7 +313,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
   // Get credit score styling and comments
   const getCreditScoreText = (score: number) => {
     if (score >= 800) return { label: "Excellent", color: "text-green-600 dark:text-green-400", bg: "bg-green-100 dark:bg-green-955/30" };
-    if (score >= 700) return { label: "Very Good", color: "text-blue-600 dark:text-blue-400", bg: "bg-blue-100 dark:bg-blue-900/30" };
+    if (score >= 700) return { label: "Very Good", color: "text-primary", bg: "bg-primary/10" };
     if (score >= 650) return { label: "Good", color: "text-yellow-600 dark:text-yellow-400", bg: "bg-yellow-100 dark:bg-yellow-955/30" };
     return { label: "Needs Review", color: "text-red-600 dark:text-red-400", bg: "bg-red-100 dark:bg-red-955/30" };
   };
@@ -322,9 +322,9 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950">
-        <div className="flex flex-col items-center gap-3 text-slate-500">
-          <Loader2 className="h-10 w-10 animate-spin text-blue-700" />
+      <div className="min-h-screen flex items-center justify-center bg-muted/30 dark:bg-slate-950">
+        <div className="flex flex-col items-center gap-3 text-muted-foreground">
+          <Loader2 className="h-10 w-10 animate-spin text-primary" />
           <p className="text-sm font-medium">Loading profile details...</p>
         </div>
       </div>
@@ -332,7 +332,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-955 pb-16 px-4 md:px-8 pt-32 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-muted/30 dark:bg-slate-955 pb-16 px-4 md:px-8 pt-32 max-w-7xl mx-auto">
       {/* Header section */}
       <div className="mb-8 flex items-start gap-5">
         <Button
@@ -340,15 +340,15 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
           size="icon"
           onClick={onBack}
           data-testid="page-back-button"
-          className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+          className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-primary hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div className="space-y-1 flex-1 text-left">
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground dark:text-white flex items-center gap-2">
             My Account Profile
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-muted-foreground">
             View, edit, and keep your Bhalchandra Finance account information up-to-date.
           </p>
         </div>
@@ -358,16 +358,16 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
         {/* Left Column - Summary Card & Credit Rating */}
         <div className="lg:col-span-4 space-y-6">
           {/* User overview card */}
-          <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-            <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
+          <Card className="border-border/60 dark:border-border shadow-md">
+            <CardHeader className="pb-4 border-b border-border dark:border-border">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-blue-50 dark:bg-blue-950 flex items-center justify-center border border-blue-100 dark:border-blue-900">
-                  <User className="h-7 w-7 text-blue-700 dark:text-blue-450" />
+                <div className="w-14 h-14 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center border border-primary/20">
+                  <User className="h-7 w-7 text-primary" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white leading-tight">{user.name}</h2>
-                  <p className="text-xs text-slate-500 leading-snug">{user.email}</p>
-                  <span className="inline-block px-2.5 py-0.5 mt-1.5 text-[10px] font-bold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300 border border-blue-200/30">
+                  <h2 className="text-lg font-bold text-foreground dark:text-white leading-tight">{user.name}</h2>
+                  <p className="text-xs text-muted-foreground leading-snug">{user.email}</p>
+                  <span className="inline-block px-2.5 py-0.5 mt-1.5 text-[10px] font-bold rounded-full bg-primary/10 text-primary border border-primary/20">
                     {user.role === "admin" ? "Administrator" : "Bank Member"}
                   </span>
                 </div>
@@ -375,11 +375,11 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
             </CardHeader>
             <CardContent className="pt-5 space-y-4">
               <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-500 font-medium">Account ID</span>
-                <span className="text-slate-700 dark:text-slate-300 font-mono text-[10px]">{user.id.substring(0, 18)}...</span>
+                <span className="text-muted-foreground font-medium">Account ID</span>
+                <span className="text-muted-foreground dark:text-slate-300 font-mono text-[10px]">{user.id.substring(0, 18)}...</span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-slate-500 font-medium">Security Status</span>
+                <span className="text-muted-foreground font-medium">Security Status</span>
                 <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold">
                   <ShieldCheck className="h-4 w-4" /> Verified
                 </span>
@@ -388,12 +388,12 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
           </Card>
 
           {/* Credit Score visual gauge card */}
-          <Card className="border-slate-200/60 dark:border-slate-850 shadow-md relative overflow-hidden bg-gradient-to-br from-white to-blue-50/20 dark:from-slate-900 dark:to-slate-950/20">
+          <Card className="border-border/60 dark:border-border shadow-md relative overflow-hidden bg-gradient-to-br from-white to-primary/5 dark:from-slate-900 dark:to-slate-950/20">
             <div className="absolute top-0 right-0 p-2 opacity-10">
-              <Sparkles className="h-16 w-16 text-blue-700" />
+              <Sparkles className="h-16 w-16 text-primary" />
             </div>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-bold text-slate-700 dark:text-slate-350">Credit Rating Gauge</CardTitle>
+              <CardTitle className="text-sm font-bold text-muted-foreground dark:text-slate-350">Credit Rating Gauge</CardTitle>
               <CardDescription className="text-xs">Based on financial history & calculations</CardDescription>
             </CardHeader>
             <CardContent className="pt-2 flex flex-col items-center">
@@ -412,7 +412,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     cx="56"
                     cy="56"
                     r="48"
-                    className="stroke-blue-700 dark:stroke-blue-500 transition-all duration-1000"
+                    className="stroke-primary transition-all duration-1000"
                     strokeWidth="8"
                     fill="transparent"
                     strokeDasharray={2 * Math.PI * 48}
@@ -421,30 +421,30 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                   />
                 </svg>
                 <div className="absolute flex flex-col items-center">
-                  <span className="text-2xl font-black text-slate-900 dark:text-white leading-tight">{profile.credit_score}</span>
-                  <span className="text-[10px] text-slate-500 font-bold">Max 900</span>
+                  <span className="text-2xl font-black text-foreground dark:text-white leading-tight">{profile.credit_score}</span>
+                  <span className="text-[10px] text-muted-foreground font-bold">Max 900</span>
                 </div>
               </div>
               
-              <div className={`px-4 py-1.5 rounded-full text-xs font-bold ${scoreMeta.bg} ${scoreMeta.color} border border-blue-200/20`}>
+              <div className={`px-4 py-1.5 rounded-full text-xs font-bold ${scoreMeta.bg} ${scoreMeta.color} border border-primary/20`}>
                 Rating: {scoreMeta.label}
               </div>
-              <p className="text-[10px] text-center text-slate-500 mt-3 max-w-[200px]">
+              <p className="text-[10px] text-center text-muted-foreground mt-3 max-w-[200px]">
                 A higher score helps secure lower interest rates and faster loan approvals.
               </p>
             </CardContent>
           </Card>
 
           {/* Navigation Card */}
-          <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
+          <Card className="border-border/60 dark:border-border shadow-md">
             <CardContent className="p-2 space-y-1">
               <button
                 type="button"
                 onClick={() => setActiveTab('profile')}
                 className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2.5 transition-colors ${
                   activeTab === 'profile'
-                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-450'
-                    : 'text-slate-650 hover:bg-slate-105/50 dark:text-slate-400 dark:hover:bg-slate-900'
+                    ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary'
+                    : 'text-muted-foreground hover:bg-slate-105/50 dark:text-muted-foreground dark:hover:bg-slate-900'
                 }`}
               >
                 <User className="h-4 w-4" />
@@ -455,8 +455,8 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                 onClick={() => setActiveTab('security')}
                 className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2.5 transition-colors ${
                   activeTab === 'security'
-                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-950/50 dark:text-blue-450'
-                    : 'text-slate-650 hover:bg-slate-105/50 dark:text-slate-400 dark:hover:bg-slate-900'
+                    ? 'bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary'
+                    : 'text-muted-foreground hover:bg-slate-105/50 dark:text-muted-foreground dark:hover:bg-slate-900'
                 }`}
               >
                 <ShieldCheck className="h-4 w-4" />
@@ -471,10 +471,10 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
           {activeTab === 'profile' && (
             <form onSubmit={handleSave} className="space-y-6">
               {/* Personal Details */}
-              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
-                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                    <User className="h-5 w-5 text-blue-700" />
+              <Card className="border-border/60 dark:border-border shadow-md">
+                <CardHeader className="pb-4 border-b border-border dark:border-border">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-foreground dark:text-white">
+                    <User className="h-5 w-5 text-primary" />
                     Personal Information
                   </CardTitle>
                   <CardDescription className="text-xs">Primary contact details and personal status.</CardDescription>
@@ -484,24 +484,24 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="fullName" className="text-xs font-bold">Full Name (From Account)</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="fullName" 
                           value={user.name} 
                           disabled 
-                          className="pl-9 bg-slate-100/60 text-slate-500 dark:bg-slate-900/50" 
+                          className="pl-9 bg-muted/60 text-muted-foreground dark:bg-slate-900/50" 
                         />
                       </div>
                     </div>
                     <div className="space-y-1.5">
                       <Label htmlFor="email" className="text-xs font-bold">Email Address (From Account)</Label>
                       <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="email" 
                           value={user.email} 
                           disabled 
-                          className="pl-9 bg-slate-100/60 text-slate-500 dark:bg-slate-900/50" 
+                          className="pl-9 bg-muted/60 text-muted-foreground dark:bg-slate-900/50" 
                         />
                       </div>
                     </div>
@@ -511,7 +511,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="phone_number" className="text-xs font-bold">Phone Number</Label>
                       <div className="relative">
-                        <Phone className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="phone_number" 
                           name="phone_number"
@@ -525,7 +525,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="date_of_birth" className="text-xs font-bold">Date of Birth</Label>
                       <div className="relative">
-                        <Calendar className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="date_of_birth" 
                           name="date_of_birth"
@@ -543,7 +543,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                         name="gender"
                         value={profile.gender}
                         onChange={handleChange}
-                        className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                        className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-border"
                       >
                         <option value="" disabled>Select Gender</option>
                         <option value="Male">Male</option>
@@ -561,7 +561,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                         name="marital_status"
                         value={profile.marital_status}
                         onChange={handleChange}
-                        className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                        className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-border"
                       >
                         <option value="" disabled>Select Marital Status</option>
                         <option value="Single">Single</option>
@@ -575,10 +575,10 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
               </Card>
 
               {/* Professional & Financial Information */}
-              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
-                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                    <Briefcase className="h-5 w-5 text-blue-700" />
+              <Card className="border-border/60 dark:border-border shadow-md">
+                <CardHeader className="pb-4 border-b border-border dark:border-border">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-foreground dark:text-white">
+                    <Briefcase className="h-5 w-5 text-primary" />
                     Professional & Financial Details
                   </CardTitle>
                   <CardDescription className="text-xs">Income data and identity verification criteria.</CardDescription>
@@ -588,7 +588,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="occupation" className="text-xs font-bold">Occupation</Label>
                       <div className="relative">
-                        <Briefcase className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Briefcase className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="occupation" 
                           name="occupation"
@@ -602,7 +602,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="company_name" className="text-xs font-bold">Company Name</Label>
                       <div className="relative">
-                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="company_name" 
                           name="company_name"
@@ -616,7 +616,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="monthly_income" className="text-xs font-bold">Monthly Income (₹)</Label>
                       <div className="relative">
-                        <DollarSign className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="monthly_income" 
                           name="monthly_income"
@@ -634,7 +634,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="pan_number" className="text-xs font-bold">PAN Card Number</Label>
                       <div className="relative">
-                        <CreditCard className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <CreditCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="pan_number" 
                           name="pan_number"
@@ -648,7 +648,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="aadhar_number" className="text-xs font-bold">Aadhaar Card Number</Label>
                       <div className="relative">
-                        <CreditCard className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <CreditCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="aadhar_number" 
                           name="aadhar_number"
@@ -664,10 +664,10 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
               </Card>
 
               {/* Address Details */}
-              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
-                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                    <MapPin className="h-5 w-5 text-blue-700" />
+              <Card className="border-border/60 dark:border-border shadow-md">
+                <CardHeader className="pb-4 border-b border-border dark:border-border">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-foreground dark:text-white">
+                    <MapPin className="h-5 w-5 text-primary" />
                     Resident Address Details
                   </CardTitle>
                   <CardDescription className="text-xs">Physical address for documentation and KYC.</CardDescription>
@@ -676,7 +676,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                   <div className="space-y-1.5">
                     <Label htmlFor="address" className="text-xs font-bold">Street Address</Label>
                     <div className="relative">
-                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                      <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input 
                         id="address" 
                         name="address"
@@ -724,10 +724,10 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
               </Card>
 
               {/* Bank Account Details */}
-              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
-                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                    <Building2 className="h-5 w-5 text-blue-700" />
+              <Card className="border-border/60 dark:border-border shadow-md">
+                <CardHeader className="pb-4 border-b border-border dark:border-border">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-foreground dark:text-white">
+                    <Building2 className="h-5 w-5 text-primary" />
                     Bank Account Details
                   </CardTitle>
                   <CardDescription className="text-xs">Configure your payout bank account for loan disbursements and auto-repayments.</CardDescription>
@@ -737,7 +737,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="bank_name" className="text-xs font-bold">Bank Name</Label>
                       <div className="relative">
-                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="bank_name" 
                           name="bank_name"
@@ -751,7 +751,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="account_holder_name" className="text-xs font-bold">Account Holder Name</Label>
                       <div className="relative">
-                        <User className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="account_holder_name" 
                           name="account_holder_name"
@@ -768,7 +768,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="account_number" className="text-xs font-bold">Account Number</Label>
                       <div className="relative">
-                        <CreditCard className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <CreditCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="account_number" 
                           name="account_number"
@@ -782,7 +782,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <div className="space-y-1.5">
                       <Label htmlFor="ifsc_code" className="text-xs font-bold">IFSC Code</Label>
                       <div className="relative">
-                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                        <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input 
                           id="ifsc_code" 
                           name="ifsc_code"
@@ -800,7 +800,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                         name="account_type"
                         value={profile.account_type}
                         onChange={handleChange}
-                        className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                        className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-border"
                       >
                         <option value="" disabled>Select Account Type</option>
                         <option value="Savings">Savings Account</option>
@@ -825,7 +825,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                 <Button 
                   type="submit" 
                   disabled={saving}
-                  className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-8 flex items-center gap-2 border border-transparent shadow-md"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 flex items-center gap-2 border border-transparent shadow-md"
                 >
                   {saving ? (
                     <>
@@ -846,10 +846,10 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
           {activeTab === 'security' && (
             <div className="space-y-6">
               {/* Change Password Card */}
-              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
-                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                    <Lock className="h-5 w-5 text-blue-700" />
+              <Card className="border-border/60 dark:border-border shadow-md">
+                <CardHeader className="pb-4 border-b border-border dark:border-border">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-foreground dark:text-white">
+                    <Lock className="h-5 w-5 text-primary" />
                     Change Password
                   </CardTitle>
                   <CardDescription className="text-xs">Update your password to keep your account secure.</CardDescription>
@@ -870,7 +870,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                         <button
                           type="button"
                           onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                          className="absolute right-3 top-3 text-slate-400 hover:text-blue-750"
+                          className="absolute right-3 top-3 text-muted-foreground hover:text-primary"
                           aria-label={showCurrentPassword ? "Hide password" : "Show password"}
                         >
                           {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -892,13 +892,13 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                         <button
                           type="button"
                           onClick={() => setShowNewPassword(!showNewPassword)}
-                          className="absolute right-3 top-3 text-slate-400 hover:text-blue-750"
+                          className="absolute right-3 top-3 text-muted-foreground hover:text-primary"
                           aria-label={showNewPassword ? "Hide password" : "Show password"}
                         >
                           {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
-                      <p className="text-[10px] text-slate-500 text-left">
+                      <p className="text-[10px] text-muted-foreground text-left">
                         Password must be at least 8 characters long, and contain at least one uppercase letter, one lowercase letter, and one number.
                       </p>
                     </div>
@@ -917,7 +917,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                         <button
                           type="button"
                           onClick={() => setShowConfirmNewPassword(!showConfirmNewPassword)}
-                          className="absolute right-3 top-3 text-slate-400 hover:text-blue-750"
+                          className="absolute right-3 top-3 text-muted-foreground hover:text-primary"
                           aria-label={showConfirmNewPassword ? "Hide password" : "Show password"}
                         >
                           {showConfirmNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -935,7 +935,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                       <Button
                         type="submit"
                         disabled={passwordLoading}
-                        className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-6 flex items-center gap-2 border border-transparent shadow-md"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6 flex items-center gap-2 border border-transparent shadow-md"
                       >
                         {passwordLoading ? (
                           <>
@@ -955,19 +955,19 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
               </Card>
 
               {/* Notification Preferences Card */}
-              <Card className="border-slate-200/60 dark:border-slate-850 shadow-md">
-                <CardHeader className="pb-4 border-b border-slate-100 dark:border-slate-850">
-                  <CardTitle className="text-md font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-                    <Bell className="h-5 w-5 text-blue-700" />
+              <Card className="border-border/60 dark:border-border shadow-md">
+                <CardHeader className="pb-4 border-b border-border dark:border-border">
+                  <CardTitle className="text-md font-bold flex items-center gap-2 text-foreground dark:text-white">
+                    <Bell className="h-5 w-5 text-primary" />
                     Notification Preferences
                   </CardTitle>
                   <CardDescription className="text-xs">Manage how you receive alerts and communications.</CardDescription>
                 </CardHeader>
                 <CardContent className="pt-6 space-y-6">
-                  <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center justify-between py-2 border-b border-border dark:border-border">
                     <div className="space-y-0.5 text-left">
-                      <Label className="text-sm font-semibold text-slate-900 dark:text-white">Email Notifications</Label>
-                      <p className="text-xs text-slate-500">Receive loan approval letters, receipts, and account statements via email.</p>
+                      <Label className="text-sm font-semibold text-foreground dark:text-white">Email Notifications</Label>
+                      <p className="text-xs text-muted-foreground">Receive loan approval letters, receipts, and account statements via email.</p>
                     </div>
                     <Switch
                       checked={profile.email_notifications}
@@ -975,10 +975,10 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between py-2 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center justify-between py-2 border-b border-border dark:border-border">
                     <div className="space-y-0.5 text-left">
-                      <Label className="text-sm font-semibold text-slate-900 dark:text-white">SMS & Phone Alerts</Label>
-                      <p className="text-xs text-slate-500">Receive SMS verification codes and urgent due date reminders on your phone.</p>
+                      <Label className="text-sm font-semibold text-foreground dark:text-white">SMS & Phone Alerts</Label>
+                      <p className="text-xs text-muted-foreground">Receive SMS verification codes and urgent due date reminders on your phone.</p>
                     </div>
                     <Switch
                       checked={profile.sms_notifications}
@@ -990,7 +990,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                     <Button
                       onClick={handleSave}
                       disabled={saving}
-                      className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-8 flex items-center gap-2 border border-transparent shadow-md"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-8 flex items-center gap-2 border border-transparent shadow-md"
                     >
                       {saving ? (
                         <>
@@ -1019,8 +1019,8 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
                 </CardHeader>
                 <CardContent className="pt-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                   <div className="text-left space-y-1">
-                    <h3 className="text-sm font-bold text-slate-900 dark:text-white">Deactivate Account</h3>
-                    <p className="text-xs text-slate-500">Permanently deactivate your Bhalchandra Finance account. This action cannot be undone.</p>
+                    <h3 className="text-sm font-bold text-foreground dark:text-white">Deactivate Account</h3>
+                    <p className="text-xs text-muted-foreground">Permanently deactivate your Bhalchandra Finance account. This action cannot be undone.</p>
                   </div>
                   <Button
                     type="button"
@@ -1036,13 +1036,13 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
 
               {/* Deactivation Confirmation Dialog */}
               <Dialog open={deactivateOpen} onOpenChange={setDeactivateOpen}>
-                <DialogContent className="max-w-md bg-white border border-slate-200 shadow-2xl rounded-2xl p-6">
+                <DialogContent className="max-w-md bg-card border border-border shadow-2xl rounded-2xl p-6">
                   <DialogHeader className="text-left flex flex-col gap-2">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-700">
                       <ShieldAlert className="h-6 w-6" />
                     </div>
-                    <DialogTitle className="text-lg font-bold text-slate-900">Are you absolutely sure?</DialogTitle>
-                    <DialogDescription className="text-sm text-slate-500 leading-relaxed">
+                    <DialogTitle className="text-lg font-bold text-foreground">Are you absolutely sure?</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
                       This action will permanently deactivate your account. You will be logged out instantly and will no longer be able to sign in or access your loan history.
                     </DialogDescription>
                   </DialogHeader>

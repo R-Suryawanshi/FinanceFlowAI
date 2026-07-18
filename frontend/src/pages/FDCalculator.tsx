@@ -144,7 +144,7 @@ export function FDCalculator({ onBack }: FDCalculatorProps) {
             size="icon"
             onClick={onBack}
             data-testid="page-back-button"
-            className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-950 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+            className="h-10 w-10 rounded-lg border border-border bg-card text-primary hover:bg-muted transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
@@ -251,18 +251,18 @@ export function FDCalculator({ onBack }: FDCalculatorProps) {
 
             {/* Financial Breakdown */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-white dark:bg-card border rounded-lg">
+              <div className="p-4 bg-card border border-border rounded-lg">
                 <div className="text-xs text-muted-foreground mb-0.5">Principal Invested</div>
                 <div className="text-xl font-bold text-foreground">{formatCurrency(depositAmount)}</div>
               </div>
-              <div className="p-4 bg-white dark:bg-card border rounded-lg">
+              <div className="p-4 bg-card border border-border rounded-lg">
                 <div className="text-xs text-muted-foreground mb-0.5">Interest Earned</div>
-                <div className="text-xl font-bold text-green-600">{formatCurrency(interestEarned)}</div>
+                <div className="text-xl font-bold text-green-605">{formatCurrency(interestEarned)}</div>
               </div>
             </div>
 
             {/* Interest Rate & Maturity Date Info */}
-            <div className="p-4 bg-white dark:bg-card border rounded-lg space-y-2.5 text-sm">
+            <div className="p-4 bg-card border border-border rounded-lg space-y-2.5 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground flex items-center gap-1.5">
                   <Percent className="h-4 w-4 text-primary" />

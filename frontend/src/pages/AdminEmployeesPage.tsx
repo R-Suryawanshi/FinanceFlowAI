@@ -131,18 +131,18 @@ export function AdminEmployeesPage({ user, onPageChange, onBack }: AdminEmployee
               size="icon"
               onClick={onBack}
               data-testid="page-back-button"
-              className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           )}
           <div className="space-y-1 flex-1 text-left">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Employee Management</h1>
+            <h1 className="text-3xl font-bold text-foreground dark:text-white">Employee Management</h1>
             <p className="text-muted-foreground">Manage administrative access, underwriters, and loan officer accounts</p>
           </div>
         </div>
         <div className="flex gap-3 w-full sm:w-auto">
-          <Button variant="outline" size="sm" className="flex-1 sm:flex-initial border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850" onClick={fetchLiveUsersData} disabled={loading}>
+          <Button variant="outline" size="sm" className="flex-1 sm:flex-initial border-border dark:border-border hover:bg-muted dark:hover:bg-slate-850" onClick={fetchLiveUsersData} disabled={loading}>
             <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh Directory
           </Button>
@@ -154,11 +154,11 @@ export function AdminEmployeesPage({ user, onPageChange, onBack }: AdminEmployee
 
       {/* KPI Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Active Staff</span>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Active Staff</span>
+              <div className="text-3xl font-bold text-foreground dark:text-white">
                 {allEmployees.filter(e => e.isActive).length}
               </div>
             </div>
@@ -169,10 +169,10 @@ export function AdminEmployeesPage({ user, onPageChange, onBack }: AdminEmployee
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Underwriter Officers</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Underwriter Officers</span>
               <div className="text-3xl font-bold text-slate-855 dark:text-slate-200">
                 {allEmployees.filter(e => e.role === "underwriter").length}
               </div>
@@ -184,10 +184,10 @@ export function AdminEmployeesPage({ user, onPageChange, onBack }: AdminEmployee
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-indigo-500" />
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Administrative Admins</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Administrative Admins</span>
               <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-450">
                 {allEmployees.filter(e => e.role === "admin").length}
               </div>
@@ -201,14 +201,14 @@ export function AdminEmployeesPage({ user, onPageChange, onBack }: AdminEmployee
       </div>
 
       {/* Search Input */}
-      <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
-        <h2 className="font-semibold text-lg text-slate-850 dark:text-slate-200">Staff Accounts Directory</h2>
+      <div className="bg-muted/30 dark:bg-slate-900/30 p-4 rounded-xl border border-border dark:border-border flex flex-col sm:flex-row justify-between items-center gap-4">
+        <h2 className="font-semibold text-lg text-foreground dark:text-slate-200">Staff Accounts Directory</h2>
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search by name, email, username or role..."
-            className="border border-slate-200 dark:border-slate-800 pl-8 pr-3 py-2 w-full rounded-md text-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none"
+            className="border border-border dark:border-border pl-8 pr-3 py-2 w-full rounded-md text-sm bg-card dark:bg-slate-900 text-foreground dark:text-slate-200 focus:outline-none"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -216,35 +216,35 @@ export function AdminEmployeesPage({ user, onPageChange, onBack }: AdminEmployee
       </div>
 
       {/* Employees Table */}
-      <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden bg-white dark:bg-slate-900">
-        <CardHeader className="bg-slate-50/50 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800/80">
-          <CardTitle className="text-lg text-slate-900 dark:text-white font-bold">Registered Staff Accounts</CardTitle>
+      <Card className="rounded-2xl border border-border dark:border-border shadow-md overflow-hidden bg-card dark:bg-slate-900">
+        <CardHeader className="bg-muted/30/50 dark:bg-slate-950/20 border-b border-border dark:border-border/80">
+          <CardTitle className="text-lg text-foreground dark:text-white font-bold">Registered Staff Accounts</CardTitle>
           <CardDescription>Review employee credentials, assigned system roles, and status</CardDescription>
         </CardHeader>
         <CardContent className="p-0 overflow-auto max-h-[500px]">
           {filteredEmployees.length === 0 ? (
-            <div className="text-center text-slate-455 dark:text-slate-500 py-12 text-sm font-medium">No employee records match the search.</div>
+            <div className="text-center text-slate-455 dark:text-muted-foreground py-12 text-sm font-medium">No employee records match the search.</div>
           ) : (
             <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
-              <thead className="bg-slate-50 dark:bg-slate-955/30">
+              <thead className="bg-muted/30 dark:bg-slate-955/30">
                 <tr>
                   {["Name", "Username", "Assigned Role", "Status", "Actions"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="bg-card dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredEmployees.map((emp) => (
-                  <tr key={emp.id} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/40 text-sm">
-                    <td className="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">
+                  <tr key={emp.id} className="hover:bg-muted/30/40 dark:hover:bg-slate-800/40 text-sm">
+                    <td className="px-6 py-4 font-semibold text-foreground dark:text-slate-200">
                       <div>
                         <p className="leading-tight">{emp.name}</p>
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-none mt-1">{emp.email}</p>
+                        <p className="text-[10px] text-muted-foreground dark:text-muted-foreground font-medium leading-none mt-1">{emp.email}</p>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{emp.username}</td>
+                    <td className="px-6 py-4 text-muted-foreground dark:text-muted-foreground">{emp.username}</td>
                     <td className="px-6 py-4 capitalize font-semibold text-primary dark:text-blue-400">{emp.role.replace('-', ' ')}</td>
                     <td className="px-6 py-4">
                       <Badge className={

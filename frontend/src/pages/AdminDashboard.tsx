@@ -506,11 +506,11 @@ export function AdminDashboard({ user, onPageChange }: any) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Admin Dashboard</h1>
+          <h1 className="text-3xl font-bold text-foreground dark:text-white">Admin Dashboard</h1>
           <p className="text-muted-foreground">Real-time Finance Insights & AI Forecast</p>
         </div>
         <div className="flex gap-2 w-full sm:w-auto" data-html2canvas-ignore="true">
-          <Button variant="outline" className="flex-1 sm:flex-none border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-850" onClick={handleExportData}>
+          <Button variant="outline" className="flex-1 sm:flex-none border-border dark:border-border hover:bg-muted dark:hover:bg-slate-850" onClick={handleExportData}>
             <FileDown className="mr-2 h-4 w-4" /> Export CSV
           </Button>
           <Button className="flex-1 sm:flex-none" onClick={handleGenerateReport} disabled={loading}>
@@ -531,12 +531,12 @@ export function AdminDashboard({ user, onPageChange }: any) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
         {/* Card 1: Users & Signups */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
           {/* Top section */}
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-border dark:border-border/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Active Users</span>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">{liveStats.totalUsers}</div>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Active Users</span>
+              <div className="text-2xl font-bold text-foreground dark:text-white">{liveStats.totalUsers}</div>
               <Badge className="bg-green-50 text-green-700 hover:bg-green-50 dark:bg-green-950/30 dark:text-green-400 border-none text-[10px] py-0.5 px-2 font-semibold">
                 Live Database
               </Badge>
@@ -549,11 +549,11 @@ export function AdminDashboard({ user, onPageChange }: any) {
           {/* Bottom section */}
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">New Signups (Today)</span>
-              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">New Signups (Today)</span>
+              <div className="text-xl font-bold text-foreground dark:text-slate-200">
                 {liveUsers.filter(u => new Date(u.createdAt).toDateString() === new Date().toDateString()).length}
               </div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center gap-1 font-medium">
+              <span className="text-[10px] text-muted-foreground dark:text-muted-foreground flex items-center gap-1 font-medium">
                 <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" /> Awaiting action
               </span>
             </div>
@@ -574,11 +574,11 @@ export function AdminDashboard({ user, onPageChange }: any) {
                 Manage Users Directory &rarr;
               </Button>
             </div>
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="flex justify-between text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
               <span>Verification Rate</span>
               <span className="text-primary dark:text-blue-400 font-bold">{verificationRate}%</span>
             </div>
-            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-muted dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" style={{ width: `${verificationRate}%` }} />
             </div>
           </div>
@@ -587,13 +587,13 @@ export function AdminDashboard({ user, onPageChange }: any) {
         </Card>
 
         {/* Card 2: Revenue & Portfolio */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
           {/* Top section */}
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-border dark:border-border/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Revenue</span>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">{formatCurrency(liveStats.totalRevenue)}</div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">From completed EMI payments</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Revenue</span>
+              <div className="text-2xl font-bold text-foreground dark:text-white">{formatCurrency(liveStats.totalRevenue)}</div>
+              <span className="text-[10px] text-muted-foreground dark:text-muted-foreground font-medium">From completed EMI payments</span>
             </div>
             <div className="h-10 w-10 rounded-xl bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-100 dark:shadow-none">
               <DollarSign className="h-5 w-5" />
@@ -603,11 +603,11 @@ export function AdminDashboard({ user, onPageChange }: any) {
           {/* Bottom section */}
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Outstanding Portfolio</span>
-              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Outstanding Portfolio</span>
+              <div className="text-xl font-bold text-foreground dark:text-slate-200">
                 {formatCurrency(totalOutstanding)}
               </div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Total active outstanding balance</span>
+              <span className="text-[10px] text-muted-foreground dark:text-muted-foreground font-medium">Total active outstanding balance</span>
             </div>
             <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100 dark:shadow-none">
               <TrendingUp className="h-5 w-5" />
@@ -626,11 +626,11 @@ export function AdminDashboard({ user, onPageChange }: any) {
                 View Repayments Ledger &rarr;
               </Button>
             </div>
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="flex justify-between text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
               <span>Collection Recovery Rate</span>
               <span className="text-cyan-650 dark:text-cyan-400 font-bold">86.8%</span>
             </div>
-            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-muted dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-cyan-500 to-emerald-500 rounded-full" style={{ width: "86.8%" }} />
             </div>
           </div>
@@ -639,12 +639,12 @@ export function AdminDashboard({ user, onPageChange }: any) {
         </Card>
 
         {/* Card 3: Applications & Performance */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
           {/* Top section */}
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-border dark:border-border/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Applications</span>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">{liveApplications.length}</div>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Applications</span>
+              <div className="text-2xl font-bold text-foreground dark:text-white">{liveApplications.length}</div>
               <Badge className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50 dark:bg-indigo-950/30 dark:text-indigo-400 border-none text-[10px] py-0.5 px-2 font-semibold">
                 +100% Growth
               </Badge>
@@ -657,11 +657,11 @@ export function AdminDashboard({ user, onPageChange }: any) {
           {/* Bottom section */}
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Pending Reviews</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Pending Reviews</span>
               <div className="text-xl font-bold text-amber-600 dark:text-amber-400">
                 {liveApplications.filter(a => a.userService.status === "pending").length}
               </div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Awaiting administrator approval</span>
+              <span className="text-[10px] text-muted-foreground dark:text-muted-foreground font-medium">Awaiting administrator approval</span>
             </div>
             <div className="h-10 w-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-100 dark:shadow-none">
               <Clock className="h-5 w-5" />
@@ -680,11 +680,11 @@ export function AdminDashboard({ user, onPageChange }: any) {
                 Review Loan Applications &rarr;
               </Button>
             </div>
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="flex justify-between text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
               <span>Approval Success Rate</span>
               <span className="text-indigo-650 dark:text-indigo-400 font-bold">{approvalSuccessRate}%</span>
             </div>
-            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-muted dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style={{ width: `${approvalSuccessRate}%` }} />
             </div>
           </div>
@@ -693,12 +693,12 @@ export function AdminDashboard({ user, onPageChange }: any) {
         </Card>
 
         {/* Card 4: FDs & Investments */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
           {/* Top section */}
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-border dark:border-border/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Fixed Deposit Accounts</span>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">{fdAccountsCount}</div>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Fixed Deposit Accounts</span>
+              <div className="text-2xl font-bold text-foreground dark:text-white">{fdAccountsCount}</div>
               <Badge className="bg-rose-50 text-rose-700 hover:bg-rose-50 dark:bg-rose-950/30 dark:text-rose-400 border-none text-[10px] py-0.5 px-2 font-semibold">
                 High-Yield Interest
               </Badge>
@@ -711,9 +711,9 @@ export function AdminDashboard({ user, onPageChange }: any) {
           {/* Bottom section */}
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">FD Investment Volume</span>
-              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{formatCurrency(fdVolume)}</div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Total capital invested in FDs</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">FD Investment Volume</span>
+              <div className="text-xl font-bold text-foreground dark:text-slate-200">{formatCurrency(fdVolume)}</div>
+              <span className="text-[10px] text-muted-foreground dark:text-muted-foreground font-medium">Total capital invested in FDs</span>
             </div>
             <div className="h-10 w-10 rounded-xl bg-pink-500 text-white flex items-center justify-center shadow-md shadow-pink-100 dark:shadow-none">
               <TrendingUp className="h-5 w-5" />
@@ -722,11 +722,11 @@ export function AdminDashboard({ user, onPageChange }: any) {
           
           {/* Progress footer */}
           <div className="space-y-1.5 mt-auto">
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="flex justify-between text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
               <span>Target Deposit Goal</span>
               <span className="text-rose-605 dark:text-rose-400 font-bold">{fdProgress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-muted dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-full" style={{ width: `${fdProgress}%` }} />
             </div>
           </div>
@@ -738,17 +738,17 @@ export function AdminDashboard({ user, onPageChange }: any) {
 
       {/* TABS */}
       <Tabs defaultValue="analytics" className="w-full">
-        <TabsList className="bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-800/60 p-1 rounded-xl flex flex-wrap gap-1 md:inline-flex">
-          <TabsTrigger value="analytics" className="rounded-lg flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">
+        <TabsList className="bg-muted dark:bg-slate-900 border border-border/50 dark:border-border/60 p-1 rounded-xl flex flex-wrap gap-1 md:inline-flex">
+          <TabsTrigger value="analytics" className="rounded-lg flex items-center gap-2 data-[state=active]:bg-card dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">
             <TrendingUp className="h-4 w-4" /> Live Analytics
           </TabsTrigger>
-          <TabsTrigger value="forecast" className="rounded-lg flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">
+          <TabsTrigger value="forecast" className="rounded-lg flex items-center gap-2 data-[state=active]:bg-card dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">
             <Brain className="h-4 w-4" /> AI Forecast
           </TabsTrigger>
-          <TabsTrigger value="insights" className="rounded-lg flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">
+          <TabsTrigger value="insights" className="rounded-lg flex items-center gap-2 data-[state=active]:bg-card dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">
             <MessageCircle className="h-4 w-4" /> AI Insights
           </TabsTrigger>
-          <TabsTrigger value="system-settings" className="rounded-lg flex items-center gap-2 data-[state=active]:bg-white dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">
+          <TabsTrigger value="system-settings" className="rounded-lg flex items-center gap-2 data-[state=active]:bg-card dark:data-[state=active]:bg-slate-850 dark:data-[state=active]:text-white">
             <Calculator className="h-4 w-4" /> System Settings
           </TabsTrigger>
         </TabsList>
@@ -758,15 +758,15 @@ export function AdminDashboard({ user, onPageChange }: any) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* Monthly Revenue Area Chart */}
-            <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none p-4">
+            <Card className="bg-card dark:bg-slate-900 border border-border/80 dark:border-border/80 shadow-md dark:shadow-none p-4">
               <CardHeader className="p-2 pb-4">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-slate-900 dark:text-white text-lg font-bold">Live Monthly Revenue</CardTitle>
+                    <CardTitle className="text-foreground dark:text-white text-lg font-bold">Live Monthly Revenue</CardTitle>
                     <CardDescription className="text-xs">Real-time payment collections trend</CardDescription>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs font-bold text-slate-400 block uppercase">July Volume</span>
+                    <span className="text-xs font-bold text-muted-foreground block uppercase">July Volume</span>
                     <span className="text-xl font-extrabold text-blue-600 dark:text-blue-450">
                       {monthlyRevenue.length > 0 ? formatCurrency(monthlyRevenue[monthlyRevenue.length - 1].amount) : "₹0"}
                     </span>
@@ -783,8 +783,8 @@ export function AdminDashboard({ user, onPageChange }: any) {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.08)" />
-                    <XAxis dataKey="month" stroke="currentColor" className="text-[10px] text-slate-400 font-bold" />
-                    <YAxis stroke="currentColor" className="text-[10px] text-slate-400 font-bold" tickFormatter={(v) => `₹${v/1000}k`} />
+                    <XAxis dataKey="month" stroke="currentColor" className="text-[10px] text-muted-foreground font-bold" />
+                    <YAxis stroke="currentColor" className="text-[10px] text-muted-foreground font-bold" tickFormatter={(v) => `₹${v/1000}k`} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "rgba(30, 41, 59, 0.95)",
@@ -802,9 +802,9 @@ export function AdminDashboard({ user, onPageChange }: any) {
             </Card>
 
             {/* Loan Type Distribution with side Legend */}
-            <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none p-4">
+            <Card className="bg-card dark:bg-slate-900 border border-border/80 dark:border-border/80 shadow-md dark:shadow-none p-4">
               <CardHeader className="p-2 pb-4">
-                <CardTitle className="text-slate-900 dark:text-white text-lg font-bold">Live Loan Distribution</CardTitle>
+                <CardTitle className="text-foreground dark:text-white text-lg font-bold">Live Loan Distribution</CardTitle>
                 <CardDescription className="text-xs">Active schemes and credit portfolio allocations</CardDescription>
               </CardHeader>
               <CardContent className="p-2 pt-0">
@@ -835,10 +835,10 @@ export function AdminDashboard({ user, onPageChange }: any) {
                       </PieChart>
                     </ResponsiveContainer>
                     <div className="absolute flex flex-col items-center justify-center">
-                      <span className="text-2xl font-black text-slate-900 dark:text-white">
+                      <span className="text-2xl font-black text-foreground dark:text-white">
                         {loanTypes.reduce((sum, item) => sum + item.value, 0)}
                       </span>
-                      <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Active Loans</span>
+                      <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider">Active Loans</span>
                     </div>
                   </div>
                   
@@ -848,12 +848,12 @@ export function AdminDashboard({ user, onPageChange }: any) {
                       const totalVal = loanTypes.reduce((sum, l) => sum + l.value, 0);
                       const pct = totalVal > 0 ? ((item.value / totalVal) * 100).toFixed(0) : "0";
                       return (
-                        <div key={index} className="flex justify-between items-center text-xs p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/40">
+                        <div key={index} className="flex justify-between items-center text-xs p-1.5 rounded-lg hover:bg-muted/30 dark:hover:bg-slate-800/40">
                           <div className="flex items-center gap-2">
                             <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                            <span className="font-semibold text-slate-700 dark:text-slate-300 truncate max-w-[90px]">{item.name}</span>
+                            <span className="font-semibold text-muted-foreground dark:text-slate-300 truncate max-w-[90px]">{item.name}</span>
                           </div>
-                          <span className="font-bold text-slate-500 dark:text-slate-400">{item.value} ({pct}%)</span>
+                          <span className="font-bold text-muted-foreground dark:text-muted-foreground">{item.value} ({pct}%)</span>
                         </div>
                       );
                     })}
@@ -863,10 +863,10 @@ export function AdminDashboard({ user, onPageChange }: any) {
             </Card>
 
             {/* Daily Revenue Trend Area Chart */}
-            <Card className="lg:col-span-2 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none p-4">
-              <CardHeader className="flex flex-row justify-between items-center p-2 pb-4 border-b border-slate-100 dark:border-slate-800/60 mb-4">
+            <Card className="lg:col-span-2 bg-card dark:bg-slate-900 border border-border/80 dark:border-border/80 shadow-md dark:shadow-none p-4">
+              <CardHeader className="flex flex-row justify-between items-center p-2 pb-4 border-b border-border dark:border-border/60 mb-4">
                 <div>
-                  <CardTitle className="text-slate-900 dark:text-white text-lg font-bold">Daily Revenue Trend</CardTitle>
+                  <CardTitle className="text-foreground dark:text-white text-lg font-bold">Daily Revenue Trend</CardTitle>
                   <CardDescription className="text-xs">Daily collections insights for the selected duration</CardDescription>
                 </div>
                 <div className="relative z-30" data-html2canvas-ignore="true">
@@ -874,13 +874,13 @@ export function AdminDashboard({ user, onPageChange }: any) {
                     variant="outline"
                     size="sm"
                     onClick={() => setShowDatePicker(!showDatePicker)}
-                    className="bg-white dark:bg-slate-900 text-slate-750 dark:text-slate-250 flex items-center gap-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="bg-card dark:bg-slate-900 text-slate-750 dark:text-slate-250 flex items-center gap-2 border border-border dark:border-border hover:bg-muted dark:hover:bg-slate-800"
                   >
-                    <Calendar className="h-4 w-4 text-slate-500" />
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
                     {dateRange.start.toLocaleDateString("en-IN", { month: "short", day: "numeric" })} - {dateRange.end.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}
                   </Button>
                   {showDatePicker && (
-                    <div className="absolute right-0 mt-2 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 rounded-lg shadow-xl flex flex-col gap-2">
+                    <div className="absolute right-0 mt-2 border border-border dark:border-border bg-card dark:bg-slate-900 p-3 rounded-lg shadow-xl flex flex-col gap-2">
                       <DateRange
                         ranges={[{ startDate: dateRange.start, endDate: dateRange.end, key: 'selection' }]}
                         onChange={(item: any) => setDateRange({ start: item.selection.startDate, end: item.selection.endDate })}
@@ -903,8 +903,8 @@ export function AdminDashboard({ user, onPageChange }: any) {
                       </linearGradient>
                     </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.08)" />
-                    <XAxis dataKey="date" stroke="currentColor" className="text-[10px] text-slate-400 font-bold" />
-                    <YAxis stroke="currentColor" className="text-[10px] text-slate-400 font-bold" tickFormatter={(v) => `₹${v}`} />
+                    <XAxis dataKey="date" stroke="currentColor" className="text-[10px] text-muted-foreground font-bold" />
+                    <YAxis stroke="currentColor" className="text-[10px] text-muted-foreground font-bold" tickFormatter={(v) => `₹${v}`} />
                     <Tooltip
                       contentStyle={{
                         backgroundColor: "rgba(30, 41, 59, 0.95)",
@@ -925,17 +925,17 @@ export function AdminDashboard({ user, onPageChange }: any) {
 
         {/* FORECAST */}
         <TabsContent value="forecast" className="mt-6">
-          <Card className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none p-4">
+          <Card className="bg-card dark:bg-slate-900 border border-border/80 dark:border-border/80 shadow-md dark:shadow-none p-4">
             <CardHeader className="p-2 pb-4">
               <div className="flex justify-between items-start">
                 <div>
-                  <CardTitle className="flex items-center gap-2 text-slate-900 dark:text-white text-lg font-bold">
+                  <CardTitle className="flex items-center gap-2 text-foreground dark:text-white text-lg font-bold">
                     <Brain className="h-5 w-5 text-blue-600 dark:text-blue-400" /> AI Revenue Forecast
                   </CardTitle>
                   <CardDescription className="text-xs">Next 3 months predicted volume based on regression algorithms</CardDescription>
                 </div>
                 <div className="text-right">
-                  <span className="text-xs font-bold text-slate-400 block uppercase">Projected Sep Target</span>
+                  <span className="text-xs font-bold text-muted-foreground block uppercase">Projected Sep Target</span>
                   <span className="text-xl font-extrabold text-emerald-600 dark:text-emerald-450">
                     {forecastData.length > 0 ? formatCurrency(forecastData[forecastData.length - 1].amount) : "₹0"}
                   </span>
@@ -952,8 +952,8 @@ export function AdminDashboard({ user, onPageChange }: any) {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 184, 0.08)" />
-                  <XAxis dataKey="month" stroke="currentColor" className="text-[10px] text-slate-400 font-bold" />
-                  <YAxis stroke="currentColor" className="text-[10px] text-slate-400 font-bold" tickFormatter={(v) => `₹${v/1000}k`} />
+                  <XAxis dataKey="month" stroke="currentColor" className="text-[10px] text-muted-foreground font-bold" />
+                  <YAxis stroke="currentColor" className="text-[10px] text-muted-foreground font-bold" tickFormatter={(v) => `₹${v/1000}k`} />
                   <Tooltip
                     contentStyle={{
                       backgroundColor: "rgba(30, 41, 59, 0.95)",
@@ -974,31 +974,31 @@ export function AdminDashboard({ user, onPageChange }: any) {
         {/* AI INSIGHTS */}
         <TabsContent value="insights" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+            <Card className="bg-card dark:bg-slate-900 border-border/80 dark:border-border/80 shadow-md dark:shadow-none">
               <CardHeader>
-                <CardTitle className="text-slate-900 dark:text-white">AI Insights & Recommendations</CardTitle>
+                <CardTitle className="text-foreground dark:text-white">AI Insights & Recommendations</CardTitle>
                 <CardDescription>Smart suggestions generated from your data</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 {aiInsights.map((insight, idx) => (
-                  <div key={idx} className="p-3 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100/50 dark:border-blue-900/30 rounded-xl text-slate-800 dark:text-slate-250 text-sm font-medium">
+                  <div key={idx} className="p-3 bg-blue-50/50 dark:bg-blue-950/20 border border-blue-100/50 dark:border-blue-900/30 rounded-xl text-foreground dark:text-slate-250 text-sm font-medium">
                     {insight}
                   </div>
                 ))}
               </CardContent>
             </Card>
 
-            <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+            <Card className="bg-card dark:bg-slate-900 border-border/80 dark:border-border/80 shadow-md dark:shadow-none">
               <CardHeader>
-                <CardTitle className="text-slate-900 dark:text-white">Activity Log & Notifications</CardTitle>
+                <CardTitle className="text-foreground dark:text-white">Activity Log & Notifications</CardTitle>
                 <CardDescription>Recent admin actions and alerts</CardDescription>
               </CardHeader>
               <CardContent className="overflow-auto max-h-96 space-y-1">
                 {activityLog.length === 0 ? (
-                  <div className="text-gray-550 dark:text-slate-500 text-sm py-4 text-center">No recent activity.</div>
+                  <div className="text-gray-550 dark:text-muted-foreground text-sm py-4 text-center">No recent activity.</div>
                 ) : (
                   activityLog.map((act, idx) => (
-                    <div key={idx} className="text-sm py-2.5 px-3 border-b border-slate-100 dark:border-slate-800 last:border-none text-slate-700 dark:text-slate-350">
+                    <div key={idx} className="text-sm py-2.5 px-3 border-b border-border dark:border-border last:border-none text-muted-foreground dark:text-slate-350">
                       {act}
                     </div>
                   ))
@@ -1013,9 +1013,9 @@ export function AdminDashboard({ user, onPageChange }: any) {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Form for interest rates and fees */}
-            <Card className="lg:col-span-2 bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+            <Card className="lg:col-span-2 bg-card dark:bg-slate-900 border-border/80 dark:border-border/80 shadow-md dark:shadow-none">
               <CardHeader>
-                <CardTitle className="text-slate-900 dark:text-white">Loan Product Configurator</CardTitle>
+                <CardTitle className="text-foreground dark:text-white">Loan Product Configurator</CardTitle>
                 <CardDescription>Adjust base interest rates and processing fees globally for all customers</CardDescription>
               </CardHeader>
               <CardContent>
@@ -1023,47 +1023,47 @@ export function AdminDashboard({ user, onPageChange }: any) {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Rate inputs */}
                     <div className="space-y-4">
-                      <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Base Interest Rates (% p.a.)</h4>
+                      <h4 className="text-xs font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">Base Interest Rates (% p.a.)</h4>
                       
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-350">Home Loan Rate</label>
+                        <label className="text-xs font-semibold text-muted-foreground dark:text-slate-350">Home Loan Rate</label>
                         <input
                           type="number"
                           step="0.01"
-                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          className="w-full text-sm border border-border dark:border-border rounded-lg p-2 bg-muted/30 dark:bg-slate-950 text-foreground dark:text-slate-200"
                           value={interestRates.home}
                           onChange={(e) => setInterestRates({...interestRates, home: parseFloat(e.target.value)})}
                         />
                       </div>
                       
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Car Loan Rate</label>
+                        <label className="text-xs font-semibold text-muted-foreground dark:text-slate-355">Car Loan Rate</label>
                         <input
                           type="number"
                           step="0.01"
-                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          className="w-full text-sm border border-border dark:border-border rounded-lg p-2 bg-muted/30 dark:bg-slate-950 text-foreground dark:text-slate-200"
                           value={interestRates.car}
                           onChange={(e) => setInterestRates({...interestRates, car: parseFloat(e.target.value)})}
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Personal Loan Rate</label>
+                        <label className="text-xs font-semibold text-muted-foreground dark:text-slate-355">Personal Loan Rate</label>
                         <input
                           type="number"
                           step="0.01"
-                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          className="w-full text-sm border border-border dark:border-border rounded-lg p-2 bg-muted/30 dark:bg-slate-950 text-foreground dark:text-slate-200"
                           value={interestRates.personal}
                           onChange={(e) => setInterestRates({...interestRates, personal: parseFloat(e.target.value)})}
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Gold Loan Rate</label>
+                        <label className="text-xs font-semibold text-muted-foreground dark:text-slate-355">Gold Loan Rate</label>
                         <input
                           type="number"
                           step="0.01"
-                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          className="w-full text-sm border border-border dark:border-border rounded-lg p-2 bg-muted/30 dark:bg-slate-950 text-foreground dark:text-slate-200"
                           value={interestRates.gold}
                           onChange={(e) => setInterestRates({...interestRates, gold: parseFloat(e.target.value)})}
                         />
@@ -1072,47 +1072,47 @@ export function AdminDashboard({ user, onPageChange }: any) {
 
                     {/* Fee inputs */}
                     <div className="space-y-4">
-                      <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Processing Fees (%)</h4>
+                      <h4 className="text-xs font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">Processing Fees (%)</h4>
                       
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Home Loan Fee</label>
+                        <label className="text-xs font-semibold text-muted-foreground dark:text-slate-355">Home Loan Fee</label>
                         <input
                           type="number"
                           step="0.01"
-                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          className="w-full text-sm border border-border dark:border-border rounded-lg p-2 bg-muted/30 dark:bg-slate-950 text-foreground dark:text-slate-200"
                           value={processingFees.home}
                           onChange={(e) => setProcessingFees({...processingFees, home: parseFloat(e.target.value)})}
                         />
                       </div>
                       
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Car Loan Fee</label>
+                        <label className="text-xs font-semibold text-muted-foreground dark:text-slate-355">Car Loan Fee</label>
                         <input
                           type="number"
                           step="0.01"
-                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          className="w-full text-sm border border-border dark:border-border rounded-lg p-2 bg-muted/30 dark:bg-slate-950 text-foreground dark:text-slate-200"
                           value={processingFees.car}
                           onChange={(e) => setProcessingFees({...processingFees, car: parseFloat(e.target.value)})}
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Personal Loan Fee</label>
+                        <label className="text-xs font-semibold text-muted-foreground dark:text-slate-355">Personal Loan Fee</label>
                         <input
                           type="number"
                           step="0.01"
-                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          className="w-full text-sm border border-border dark:border-border rounded-lg p-2 bg-muted/30 dark:bg-slate-950 text-foreground dark:text-slate-200"
                           value={processingFees.personal}
                           onChange={(e) => setProcessingFees({...processingFees, personal: parseFloat(e.target.value)})}
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-xs font-semibold text-slate-600 dark:text-slate-355">Gold Loan Fee</label>
+                        <label className="text-xs font-semibold text-muted-foreground dark:text-slate-355">Gold Loan Fee</label>
                         <input
                           type="number"
                           step="0.01"
-                          className="w-full text-sm border border-slate-200 dark:border-slate-800 rounded-lg p-2 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200"
+                          className="w-full text-sm border border-border dark:border-border rounded-lg p-2 bg-muted/30 dark:bg-slate-950 text-foreground dark:text-slate-200"
                           value={processingFees.gold}
                           onChange={(e) => setProcessingFees({...processingFees, gold: parseFloat(e.target.value)})}
                         />
@@ -1129,16 +1129,16 @@ export function AdminDashboard({ user, onPageChange }: any) {
 
             {/* System service switches & Health stats */}
             <div className="space-y-6">
-              <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+              <Card className="bg-card dark:bg-slate-900 border-border/80 dark:border-border/80 shadow-md dark:shadow-none">
                 <CardHeader>
-                  <CardTitle className="text-slate-900 dark:text-white">Active Service Controls</CardTitle>
+                  <CardTitle className="text-foreground dark:text-white">Active Service Controls</CardTitle>
                   <CardDescription>Toggle simulation server properties</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800/60 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-muted/30 dark:bg-slate-950/20 border border-border dark:border-border/60 rounded-xl">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">Maintenance Mode</p>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Lock database inputs for users</p>
+                      <p className="text-sm font-semibold text-foreground dark:text-white">Maintenance Mode</p>
+                      <p className="text-[10px] text-muted-foreground dark:text-muted-foreground">Lock database inputs for users</p>
                     </div>
                     <Button
                       variant={systemStatus.maintenanceMode ? "destructive" : "outline"}
@@ -1154,10 +1154,10 @@ export function AdminDashboard({ user, onPageChange }: any) {
                     </Button>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800/60 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-muted/30 dark:bg-slate-950/20 border border-border dark:border-border/60 rounded-xl">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">Encrypted Tunnel (SSL)</p>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Encrypt incoming client payloads</p>
+                      <p className="text-sm font-semibold text-foreground dark:text-white">Encrypted Tunnel (SSL)</p>
+                      <p className="text-[10px] text-muted-foreground dark:text-muted-foreground">Encrypt incoming client payloads</p>
                     </div>
                     <Button
                       variant={systemStatus.secureTunnel ? "default" : "outline"}
@@ -1172,10 +1172,10 @@ export function AdminDashboard({ user, onPageChange }: any) {
                     </Button>
                   </div>
 
-                  <div className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950/20 border border-slate-100 dark:border-slate-800/60 rounded-xl">
+                  <div className="flex items-center justify-between p-3 bg-muted/30 dark:bg-slate-950/20 border border-border dark:border-border/60 rounded-xl">
                     <div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">Email Push Queue</p>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400">Notify customers of application status</p>
+                      <p className="text-sm font-semibold text-foreground dark:text-white">Email Push Queue</p>
+                      <p className="text-[10px] text-muted-foreground dark:text-muted-foreground">Notify customers of application status</p>
                     </div>
                     <Button
                       variant={systemStatus.notificationService ? "default" : "outline"}
@@ -1193,28 +1193,28 @@ export function AdminDashboard({ user, onPageChange }: any) {
               </Card>
 
               {/* Health stats */}
-              <Card className="bg-white dark:bg-slate-900 border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none">
+              <Card className="bg-card dark:bg-slate-900 border-border/80 dark:border-border/80 shadow-md dark:shadow-none">
                 <CardHeader>
-                  <CardTitle className="text-slate-900 dark:text-white">System Resource Diagnostics</CardTitle>
+                  <CardTitle className="text-foreground dark:text-white">System Resource Diagnostics</CardTitle>
                   <CardDescription>Real-time simulated engine telemetry</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-3 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/10 rounded-xl text-center">
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">CPU Core Load</span>
-                      <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">1.25%</p>
+                    <div className="p-3 border border-border dark:border-border bg-muted/30/50 dark:bg-slate-950/10 rounded-xl text-center">
+                      <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">CPU Core Load</span>
+                      <p className="text-lg font-bold text-foreground dark:text-white mt-1">1.25%</p>
                     </div>
-                    <div className="p-3 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/10 rounded-xl text-center">
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">RAM Allocation</span>
-                      <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">420 MB</p>
+                    <div className="p-3 border border-border dark:border-border bg-muted/30/50 dark:bg-slate-950/10 rounded-xl text-center">
+                      <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">RAM Allocation</span>
+                      <p className="text-lg font-bold text-foreground dark:text-white mt-1">420 MB</p>
                     </div>
-                    <div className="p-3 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/10 rounded-xl text-center">
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">API Latency</span>
+                    <div className="p-3 border border-border dark:border-border bg-muted/30/50 dark:bg-slate-950/10 rounded-xl text-center">
+                      <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">API Latency</span>
                       <p className="text-lg font-bold text-green-600 dark:text-green-455 mt-1">18 ms</p>
                     </div>
-                    <div className="p-3 border border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/10 rounded-xl text-center">
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">DB Threads</span>
-                      <p className="text-lg font-bold text-slate-900 dark:text-white mt-1">12 / 100</p>
+                    <div className="p-3 border border-border dark:border-border bg-muted/30/50 dark:bg-slate-950/10 rounded-xl text-center">
+                      <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">DB Threads</span>
+                      <p className="text-lg font-bold text-foreground dark:text-white mt-1">12 / 100</p>
                     </div>
                   </div>
                   <div className="text-center pt-2">

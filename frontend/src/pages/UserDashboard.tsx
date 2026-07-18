@@ -281,13 +281,13 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       setUserProfile(p);
       
       if (p) {
-        setModalPhone(p.phone_number || "");
-        setModalDOB(p.date_of_birth ? new Date(p.date_of_birth).toISOString().split("T")[0] : "");
+        setModalPhone(p.phoneNumber || "");
+        setModalDOB(p.dateOfBirth ? new Date(p.dateOfBirth).toISOString().split("T")[0] : "");
         setModalGender(p.gender || "");
-        setModalMarital(p.marital_status || "");
+        setModalMarital(p.maritalStatus || "");
         setModalOccupation(p.occupation || "");
-        setModalCompany(p.company_name || "");
-        setModalIncome(p.monthly_income ? String(p.monthly_income) : "");
+        setModalCompany(p.companyName || "");
+        setModalIncome(p.monthlyIncome ? String(p.monthlyIncome) : "");
         setModalAddress(p.address || "");
         setModalCity(p.city || "");
         setModalState(p.state || "");
@@ -303,7 +303,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       
       // If basic details are missing, show the popup modal
       const hasSeenPopup = localStorage.getItem(`profile_popup_seen_${user?.id}`) === "true";
-      if (!hasSeenPopup && (!p || !p.phone_number || !p.address || !p.occupation)) {
+      if (!hasSeenPopup && (!p || !p.phoneNumber || !p.address || !p.occupation)) {
         setIsProfileModalOpen(true);
       }
 
@@ -697,12 +697,12 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
     try {
       const token = localStorage.getItem("authToken");
       const submitData = {
-        phone_number: modalPhone,
+        phoneNumber: modalPhone,
         dateOfBirth: modalDOB || null,
         gender: modalGender,
-        marital_status: modalMarital,
+        maritalStatus: modalMarital,
         occupation: modalOccupation,
-        company_name: modalCompany,
+        companyName: modalCompany,
         monthlyIncome: modalIncome ? parseFloat(modalIncome) : null,
         address: modalAddress,
         city: modalCity,
@@ -774,9 +774,9 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
         return <XCircle className="h-4 w-4 text-red-500" />;
       case "active":
       case "approved":
-        return <CheckCircle className="h-4 w-4 text-blue-500" />;
+        return <CheckCircle className="h-4 w-4 text-primary" />;
       default:
-        return <AlertCircle className="h-4 w-4 text-gray-500" />;
+        return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -1030,20 +1030,20 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="bg-slate-100 p-1 rounded-xl flex gap-1 w-fit border border-slate-200">
-          <TabsTrigger value="overview" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+        <TabsList className="bg-muted p-1 rounded-xl flex gap-1 w-fit border border-border">
+          <TabsTrigger value="overview" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
             <LayoutDashboard className="h-4 w-4" />
             Account Overview
           </TabsTrigger>
-          <TabsTrigger value="vault" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+          <TabsTrigger value="vault" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
             <Lock className="h-4 w-4" />
             KYC & Document Vault
           </TabsTrigger>
-          <TabsTrigger value="investments" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+          <TabsTrigger value="investments" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
             <PiggyBank className="h-4 w-4" />
             FDs & Investments
           </TabsTrigger>
-          <TabsTrigger value="support" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+          <TabsTrigger value="support" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
             <HelpCircle className="h-4 w-4" />
             Support Desk
           </TabsTrigger>
@@ -1064,25 +1064,25 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
       {/* Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-border dark:border-border/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Active Loans</span>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">{formatCurrency(stats.activeLoanAmount)}</div>
-              <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-50 dark:bg-blue-950/30 dark:text-blue-400 border-none text-[10px] py-0.5 px-2 font-semibold">
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Active Loans</span>
+              <div className="text-2xl font-bold text-foreground dark:text-white">{formatCurrency(stats.activeLoanAmount)}</div>
+              <Badge className="bg-primary/10 text-primary hover:bg-primary/10 dark:bg-primary/20 dark:text-primary border-none text-[10px] py-0.5 px-2 font-semibold">
                 {stats.activeLoanCount} Active
               </Badge>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
+            <div className="h-10 w-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md shadow-primary/15 dark:shadow-none">
               <CreditCard className="h-5 w-5" />
             </div>
           </div>
 
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Monthly EMI Due</span>
-              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{formatCurrency(totalEmiDue)}</div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Next billing cycle</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Monthly EMI Due</span>
+              <div className="text-xl font-bold text-foreground dark:text-slate-200">{formatCurrency(totalEmiDue)}</div>
+              <span className="text-[10px] text-muted-foreground dark:text-muted-foreground font-medium">Next billing cycle</span>
             </div>
             <div className="h-10 w-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-md shadow-amber-100 dark:shadow-none">
               <Clock className="h-5 w-5" />
@@ -1090,36 +1090,36 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
           </div>
 
           <div className="space-y-1.5 mt-auto">
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="flex justify-between text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
               <span>Repayment Progress</span>
-              <span className="text-blue-600 dark:text-blue-400 font-bold">{repaymentProgress}%</span>
+              <span className="text-primary font-bold">{repaymentProgress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full" style={{ width: `${repaymentProgress}%` }} />
+            <div className="h-1.5 w-full bg-muted dark:bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full" style={{ width: `${repaymentProgress}%` }} />
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-500" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-primary/80" />
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-border dark:border-border/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Services</span>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">{stats.totalServices}</div>
-              <Badge className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50 dark:bg-indigo-950/30 dark:text-indigo-400 border-none text-[10px] py-0.5 px-2 font-semibold">
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Services</span>
+              <div className="text-2xl font-bold text-foreground dark:text-white">{stats.totalServices}</div>
+              <Badge className="bg-primary/10 text-primary hover:bg-primary/10 dark:bg-primary/20 dark:text-primary border-none text-[10px] py-0.5 px-2 font-semibold">
                 All Time
               </Badge>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-indigo-500 text-white flex items-center justify-center shadow-md shadow-indigo-100 dark:shadow-none">
+            <div className="h-10 w-10 rounded-xl bg-primary text-primary-foreground flex items-center justify-center shadow-md shadow-primary/15 dark:shadow-none">
               <FileText className="h-5 w-5" />
             </div>
           </div>
 
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Pending Reviews</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Pending Reviews</span>
               <div className="text-xl font-bold text-amber-600 dark:text-amber-400">{stats.pendingServices}</div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Awaiting approval updates</span>
+              <span className="text-[10px] text-muted-foreground dark:text-muted-foreground font-medium">Awaiting approval updates</span>
             </div>
             <div className="h-10 w-10 rounded-xl bg-purple-500 text-white flex items-center justify-center shadow-md shadow-purple-100 dark:shadow-none">
               <LayoutDashboard className="h-5 w-5" />
@@ -1127,22 +1127,22 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
           </div>
 
           <div className="space-y-1.5 mt-auto">
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="flex justify-between text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
               <span>Approval Completion</span>
-              <span className="text-indigo-600 dark:text-indigo-400 font-bold">{approvalProgress}%</span>
+              <span className="text-primary font-bold">{approvalProgress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style={{ width: `${approvalProgress}%` }} />
+            <div className="h-1.5 w-full bg-muted dark:bg-slate-800 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-primary to-purple-500 rounded-full" style={{ width: `${approvalProgress}%` }} />
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-purple-500" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-purple-500" />
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-border dark:border-border/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Credit Score</span>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">{stats.creditScore > 0 ? stats.creditScore : "----"}</div>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Credit Score</span>
+              <div className="text-2xl font-bold text-foreground dark:text-white">{stats.creditScore > 0 ? stats.creditScore : "----"}</div>
               <Badge className="bg-emerald-50 text-emerald-700 hover:bg-emerald-50 dark:bg-emerald-950/30 dark:text-emerald-400 border-none text-[10px] py-0.5 px-2 font-semibold">
                 {creditScoreLabel}
               </Badge>
@@ -1154,9 +1154,9 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Monthly Income</span>
-              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{userProfile?.monthlyIncome ? formatCurrency(userProfile.monthlyIncome) : "----"}</div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">{userProfile?.occupation || "Profile details"}</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Monthly Income</span>
+              <div className="text-xl font-bold text-foreground dark:text-slate-200">{userProfile?.monthlyIncome ? formatCurrency(userProfile.monthlyIncome) : "----"}</div>
+              <span className="text-[10px] text-muted-foreground dark:text-muted-foreground font-medium">{userProfile?.occupation || "Profile details"}</span>
             </div>
             <div className="h-10 w-10 rounded-xl bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-100 dark:shadow-none">
               <ShieldCheck className="h-5 w-5" />
@@ -1164,22 +1164,22 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
           </div>
 
           <div className="space-y-1.5 mt-auto">
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="flex justify-between text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
               <span>Score Strength</span>
               <span className="text-emerald-600 dark:text-emerald-450 font-bold">{creditScoreProgress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-muted dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-full" style={{ width: `${creditScoreProgress}%` }} />
             </div>
           </div>
           <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-cyan-500" />
         </Card>
 
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
-          <div className="flex justify-between items-start pb-4 border-b border-dashed border-slate-100 dark:border-slate-800/60">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden flex flex-col justify-between p-5 min-h-[280px]">
+          <div className="flex justify-between items-start pb-4 border-b border-dashed border-border dark:border-border/60">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Recent Payments</span>
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">{stats.recentPayments}</div>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Recent Payments</span>
+              <div className="text-2xl font-bold text-foreground dark:text-white">{stats.recentPayments}</div>
               <Badge className="bg-rose-50 text-rose-700 hover:bg-rose-50 dark:bg-rose-950/30 dark:text-rose-455 border-none text-[10px] py-0.5 px-2 font-semibold">
                 Last 30 Days
               </Badge>
@@ -1191,9 +1191,9 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
           <div className="flex justify-between items-start pt-4 pb-4">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Paid</span>
-              <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{formatCurrency(stats.totalPaidAmount)}</div>
-              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">Completed repayments</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Paid</span>
+              <div className="text-xl font-bold text-foreground dark:text-slate-200">{formatCurrency(stats.totalPaidAmount)}</div>
+              <span className="text-[10px] text-muted-foreground dark:text-muted-foreground font-medium">Completed repayments</span>
             </div>
             <div className="h-10 w-10 rounded-xl bg-pink-500 text-white flex items-center justify-center shadow-md shadow-pink-100 dark:shadow-none">
               <CheckCircle className="h-5 w-5" />
@@ -1201,11 +1201,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
           </div>
 
           <div className="space-y-1.5 mt-auto">
-            <div className="flex justify-between text-xs font-semibold text-slate-600 dark:text-slate-400">
+            <div className="flex justify-between text-xs font-semibold text-muted-foreground dark:text-muted-foreground">
               <span>Payment Activity</span>
               <span className="text-rose-600 dark:text-rose-455 font-bold">{paymentActivityProgress}%</span>
             </div>
-            <div className="h-1.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-muted dark:bg-slate-800 rounded-full overflow-hidden">
               <div className="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-full" style={{ width: `${paymentActivityProgress}%` }} />
             </div>
           </div>
@@ -1214,7 +1214,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       </div>
 
       {/* ✅ Integrated Payment Section */}
-      <Card className="rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900 overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 dark:border-border shadow-sm bg-card dark:bg-slate-900 overflow-hidden">
         <CardHeader>
           <CardTitle>Pending Payments</CardTitle>
           <CardDescription>Manage your loan repayments</CardDescription>
@@ -1226,7 +1226,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 <ShieldCheck className="h-8 w-8 animate-pulse" />
               </div>
               <div className="space-y-1">
-                <p className="font-semibold text-slate-800 dark:text-slate-200">All Caught Up!</p>
+                <p className="font-semibold text-foreground dark:text-slate-200">All Caught Up!</p>
                 <p className="text-sm text-muted-foreground max-w-sm">
                   You have no active loans or pending repayments at this time.
                 </p>
@@ -1294,26 +1294,26 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
             <div className="flex gap-2 shrink-0">
               <Button 
                 onClick={exportAmortizationCSV}
-                className="bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/50 text-xs font-bold rounded-xl h-9 flex items-center gap-1.5"
+                className="bg-muted/30 hover:bg-muted text-muted-foreground border border-border/50 text-xs font-bold rounded-xl h-9 flex items-center gap-1.5"
               >
                 <Download className="h-3.5 w-3.5" /> Export CSV
               </Button>
               <Button 
                 onClick={exportAmortizationPDF}
-                className="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200/30 text-xs font-bold rounded-xl h-9 flex items-center gap-1.5"
+                className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 text-xs font-bold rounded-xl h-9 flex items-center gap-1.5"
               >
                 <Download className="h-3.5 w-3.5" /> Export PDF
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="relative border-l border-gray-200 ml-4 pl-6 space-y-8">
+            <div className="relative border-l border-border ml-4 pl-6 space-y-8">
               {emiSchedule.map((item) => {
                 const isPaid = item.status === "paid";
 
                 return (
                   <div key={item.id} className="relative">
-                    <div className={`absolute -left-[31px] top-1 h-[14px] w-[14px] rounded-full border-2 bg-white flex items-center justify-center ${
+                    <div className={`absolute -left-[31px] top-1 h-[14px] w-[14px] rounded-full border-2 bg-card flex items-center justify-center ${
                       isPaid ? "border-green-500 bg-green-50" : "border-amber-400 bg-amber-50"
                     }`}>
                       {isPaid ? (
@@ -1354,7 +1354,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
       {/* Payment Modal */}
       <Dialog open={showPaymentUI} onOpenChange={setShowPaymentUI}>
-        <DialogContent className="sm:max-w-[480px] bg-white text-gray-900 border-none shadow-2xl rounded-2xl p-6 overflow-hidden">
+        <DialogContent className="sm:max-w-[480px] bg-card text-foreground border-none shadow-2xl rounded-2xl p-6 overflow-hidden">
           
           {/* Stage 1: Input Amount & Method Selection */}
           {paymentStage === "input" && (
@@ -1373,7 +1373,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                     </>
                   )}
                 </DialogTitle>
-                <DialogDescription className="text-sm text-gray-500 font-medium">
+                <DialogDescription className="text-sm text-muted-foreground font-medium">
                   {isForeclosure 
                     ? "Pay off your remaining principal balance to close this loan account immediately"
                     : "Pay your loan EMI or dues securely via our integrated gateway"}
@@ -1391,14 +1391,14 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   </div>
                 ) : (
                   activeLoans.length > 0 && (
-                    <div className="bg-blue-50/50 border border-blue-100 rounded-xl p-3 text-xs flex justify-between items-center text-blue-900 font-medium">
+                    <div className="bg-primary/5 border border-primary/20 rounded-xl p-3 text-xs flex justify-between items-center text-primary font-medium">
                       <span>Outstanding Active Loan EMI:</span>
                       <span className="font-bold text-sm text-primary">{formatCurrency(totalEmiDue)}</span>
                     </div>
                   )
                 )}
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Payment Amount (₹)</Label>
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Payment Amount (₹)</Label>
                   <Input
                     type="number"
                     value={paymentAmount}
@@ -1409,11 +1409,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Select Payment Method</Label>
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Select Payment Method</Label>
                   <select
                     value={paymentMethod}
                     onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-full h-11 border border-gray-200 rounded-lg p-2.5 text-sm font-medium bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="w-full h-11 border border-border rounded-lg p-2.5 text-sm font-medium bg-card focus:outline-none focus:ring-2 focus:ring-primary/20"
                   >
                     <option>UPI</option>
                     <option>Credit Card</option>
@@ -1429,7 +1429,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 )}
               </div>
               <DialogFooter className="gap-2">
-                <Button variant="outline" onClick={() => setShowPaymentUI(false)} className="text-gray-500 font-medium">
+                <Button variant="outline" onClick={() => setShowPaymentUI(false)} className="text-muted-foreground font-medium">
                   Cancel
                 </Button>
                 <Button 
@@ -1456,7 +1456,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="absolute -left-2 -top-1 h-8 w-8 text-gray-500" 
+                  className="absolute -left-2 -top-1 h-8 w-8 text-muted-foreground" 
                   onClick={() => setPaymentStage("input")}
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -1465,7 +1465,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   <Lock className="h-4 w-4 text-green-600" />
                   Secure payment gateway
                 </DialogTitle>
-                <DialogDescription className="text-xs text-gray-500 font-medium pl-7">
+                <DialogDescription className="text-xs text-muted-foreground font-medium pl-7">
                   Enter authorization credentials to complete transaction of <strong>{formatCurrency(parseFloat(paymentAmount))}</strong>
                 </DialogDescription>
               </DialogHeader>
@@ -1476,7 +1476,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 {paymentMethod === "UPI" && (
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">UPI ID / Virtual Address</Label>
+                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">UPI ID / Virtual Address</Label>
                       <Input
                         value={upiId}
                         onChange={(e) => setUpiId(e.target.value)}
@@ -1490,7 +1490,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                         <button
                           key={app}
                           type="button"
-                          className="border border-slate-100 hover:border-primary/30 p-2.5 rounded-xl text-center text-xs font-semibold text-gray-600 bg-slate-50 hover:bg-primary/5 transition-all"
+                          className="border border-border hover:border-primary/30 p-2.5 rounded-xl text-center text-xs font-semibold text-muted-foreground bg-muted/30 hover:bg-primary/5 transition-all"
                           onClick={() => setUpiId(`ritesh@${app === "Google Pay" ? "okgpay" : app === "PhonePe" ? "ybl" : "paytm"}`)}
                         >
                           {app}
@@ -1498,7 +1498,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                       ))}
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Enter 4 or 6-Digit UPI PIN</Label>
+                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Enter 4 or 6-Digit UPI PIN</Label>
                       <Input
                         type="password"
                         value={upiPin}
@@ -1515,7 +1515,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 {(paymentMethod === "Credit Card" || paymentMethod === "Debit Card") && (
                   <div className="space-y-3.5">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Cardholder Name</Label>
+                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Cardholder Name</Label>
                       <Input
                         value={cardName}
                         onChange={(e) => setCardName(e.target.value)}
@@ -1524,7 +1524,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Registered Mobile Number</Label>
+                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Registered Mobile Number</Label>
                       <Input
                         value={cardPhone}
                         maxLength={10}
@@ -1534,7 +1534,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Card Number</Label>
+                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Card Number</Label>
                       <div className="relative">
                         <Input
                           value={cardNumber}
@@ -1561,7 +1561,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Expiry Date</Label>
+                        <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Expiry Date</Label>
                         <Input
                           value={cardExpiry}
                           maxLength={5}
@@ -1578,7 +1578,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                         />
                       </div>
                       <div className="space-y-1.5">
-                        <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">CVV Code</Label>
+                        <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">CVV Code</Label>
                         <Input
                           type="password"
                           value={cardCvv}
@@ -1596,11 +1596,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 {paymentMethod === "Net Banking" && (
                   <div className="space-y-3.5">
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Select Bank</Label>
+                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Select Bank</Label>
                       <select
                         value={selectedBank}
                         onChange={(e) => setSelectedBank(e.target.value)}
-                        className="w-full h-11 border border-gray-200 rounded-lg p-2.5 text-sm font-medium bg-white"
+                        className="w-full h-11 border border-border rounded-lg p-2.5 text-sm font-medium bg-card"
                       >
                         <option>SBI</option>
                         <option>HDFC Bank</option>
@@ -1609,7 +1609,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                       </select>
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">NetBanking Username</Label>
+                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">NetBanking Username</Label>
                       <Input
                         value={bankUsername}
                         onChange={(e) => setBankUsername(e.target.value)}
@@ -1618,7 +1618,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Login Password</Label>
+                      <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Login Password</Label>
                       <Input
                         type="password"
                         value={bankPassword}
@@ -1639,7 +1639,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               </div>
 
               <DialogFooter className="gap-2">
-                <Button variant="outline" onClick={() => setShowPaymentUI(false)} className="text-gray-500 font-medium">
+                <Button variant="outline" onClick={() => setShowPaymentUI(false)} className="text-muted-foreground font-medium">
                   Cancel
                 </Button>
                 <Button 
@@ -1691,7 +1691,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="absolute -left-2 -top-1 h-8 w-8 text-gray-500" 
+                  className="absolute -left-2 -top-1 h-8 w-8 text-muted-foreground" 
                   onClick={() => setPaymentStage("details")}
                 >
                   <ArrowLeft className="h-4 w-4" />
@@ -1700,14 +1700,14 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   <Smartphone className="h-5 w-5 text-primary" />
                   SMS OTP verification
                 </DialogTitle>
-                <DialogDescription className="text-xs text-gray-500 font-medium pl-7">
+                <DialogDescription className="text-xs text-muted-foreground font-medium pl-7">
                   Enter the 6-digit transaction passcode sent to +91 *******{cardPhone.slice(-3)}. (For testing, enter <strong>123456</strong>)
                 </DialogDescription>
               </DialogHeader>
 
               <div className="py-5 space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider text-center block">Enter 6-Digit SMS Passcode</Label>
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider text-center block">Enter 6-Digit SMS Passcode</Label>
                   <Input
                     value={otpCode}
                     maxLength={6}
@@ -1737,7 +1737,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               </div>
 
               <DialogFooter className="gap-2">
-                <Button variant="outline" onClick={() => setShowPaymentUI(false)} className="text-gray-500 font-medium">
+                <Button variant="outline" onClick={() => setShowPaymentUI(false)} className="text-muted-foreground font-medium">
                   Cancel
                 </Button>
                 <Button 
@@ -1769,11 +1769,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 <Check className="h-8 w-8 stroke-[3]" />
               </div>
               <div className="space-y-1">
-                <h3 className="font-bold text-gray-900 text-lg">Repayment Success!</h3>
-                <p className="text-xs text-gray-500 font-medium">Your payment has been successfully authorized and confirmed.</p>
+                <h3 className="font-bold text-foreground text-lg">Repayment Success!</h3>
+                <p className="text-xs text-muted-foreground font-medium">Your payment has been successfully authorized and confirmed.</p>
               </div>
               
-              <div className="w-full bg-slate-50 border border-slate-100 rounded-xl p-4 text-xs text-left space-y-2 font-medium">
+              <div className="w-full bg-muted/30 border border-border rounded-xl p-4 text-xs text-left space-y-2 font-medium">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Total Paid Amount:</span>
                   <span className="font-bold text-gray-800">{formatCurrency(parseFloat(paymentAmount))}</span>
@@ -1784,7 +1784,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Ref Transaction ID:</span>
-                  <span className="font-mono text-[10px] text-gray-600">TXN{Date.now()}</span>
+                  <span className="font-mono text-[10px] text-muted-foreground">TXN{Date.now()}</span>
                 </div>
               </div>
             </div>
@@ -1795,21 +1795,21 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
       {/* Payment History Dialog */}
       <Dialog open={showPaymentHistory} onOpenChange={setShowPaymentHistory}>
-        <DialogContent className="max-w-3xl sm:rounded-2xl border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden p-6">
-          <DialogHeader className="pb-4 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between gap-4">
+        <DialogContent className="max-w-3xl sm:rounded-2xl border-border dark:border-border bg-card dark:bg-slate-900 shadow-xl overflow-hidden p-6">
+          <DialogHeader className="pb-4 border-b border-border dark:border-border flex flex-row items-center justify-between gap-4">
             <div className="space-y-1">
-              <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                <Clock className="h-5 w-5 text-blue-750" />
+              <DialogTitle className="text-xl font-bold text-foreground dark:text-white flex items-center gap-2">
+                <Clock className="h-5 w-5 text-primary" />
                 Repayment Transaction History
               </DialogTitle>
-              <DialogDescription className="text-sm text-slate-500">
+              <DialogDescription className="text-sm text-muted-foreground">
                 View your historical payment records and receipts.
               </DialogDescription>
             </div>
             {payments.length > 0 && (
               <Button 
                 onClick={exportTransactionsCSV}
-                className="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200/30 text-xs font-bold rounded-xl h-9 flex items-center gap-1.5 shrink-0"
+                className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 text-xs font-bold rounded-xl h-9 flex items-center gap-1.5 shrink-0"
               >
                 <Download className="h-3.5 w-3.5" /> Export CSV
               </Button>
@@ -1819,11 +1819,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
           <div className="py-4 overflow-x-auto max-h-[400px]">
             {payments.length === 0 ? (
               <div className="py-12 flex flex-col items-center justify-center gap-3 text-center">
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/50 text-slate-400 rounded-full">
+                <div className="p-3 bg-muted/30 dark:bg-slate-800/50 text-muted-foreground rounded-full">
                   <CreditCard className="h-8 w-8" />
                 </div>
                 <div className="space-y-1">
-                  <p className="font-semibold text-slate-800 dark:text-slate-200">No Transactions Yet</p>
+                  <p className="font-semibold text-foreground dark:text-slate-200">No Transactions Yet</p>
                   <p className="text-xs text-muted-foreground max-w-xs">
                     Once you make your first repayment or EMI, the details will appear here.
                   </p>
@@ -1832,7 +1832,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
             ) : (
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-100 dark:border-slate-800 text-slate-400 font-bold uppercase tracking-wider">
+                  <tr className="border-b border-border dark:border-border text-muted-foreground font-bold uppercase tracking-wider">
                     <th className="pb-3 pr-4">Date</th>
                     <th className="pb-3 px-4">Reference ID</th>
                     <th className="pb-3 px-4">Method</th>
@@ -1843,8 +1843,8 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50 font-medium">
                   {payments.map((p) => (
-                    <tr key={p.payment.id} className="text-slate-700 dark:text-slate-350 hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                      <td className="py-3 pr-4 text-slate-500">
+                    <tr key={p.payment.id} className="text-muted-foreground dark:text-muted-foreground hover:bg-muted/30/50 dark:hover:bg-slate-800/20 transition-colors">
+                      <td className="py-3 pr-4 text-muted-foreground">
                         {new Date(p.payment.paymentDate).toLocaleDateString("en-IN", {
                           day: "numeric",
                           month: "short",
@@ -1853,13 +1853,13 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                           minute: "2-digit"
                         })}
                       </td>
-                      <td className="py-3 px-4 font-mono text-[10px] text-slate-500">
+                      <td className="py-3 px-4 font-mono text-[10px] text-muted-foreground">
                         {p.payment.paymentReference}
                       </td>
-                      <td className="py-3 px-4 font-semibold uppercase text-slate-600 dark:text-slate-400">
+                      <td className="py-3 px-4 font-semibold uppercase text-muted-foreground dark:text-muted-foreground">
                         {p.payment.paymentMethod}
                       </td>
-                      <td className="py-3 px-4 text-right font-bold text-slate-900 dark:text-white">
+                      <td className="py-3 px-4 text-right font-bold text-foreground dark:text-white">
                         {formatCurrency(parseFloat(p.payment.amount))}
                       </td>
                       <td className="py-3 px-4 text-center">
@@ -1882,13 +1882,13 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                             onClick={() => printReceipt(p)}
                             variant="ghost"
                             size="sm"
-                            className="h-7 w-7 p-0 text-slate-400 hover:text-blue-600 rounded-lg flex items-center justify-center ml-auto"
+                            className="h-7 w-7 p-0 text-muted-foreground hover:text-primary rounded-lg flex items-center justify-center ml-auto"
                             title="Print Receipt"
                           >
                             <Download className="h-4 w-4" />
                           </Button>
                         ) : (
-                          <span className="text-[10px] text-slate-450 font-medium block text-right">—</span>
+                          <span className="text-[10px] text-muted-foreground font-medium block text-right">—</span>
                         )}
                       </td>
                     </tr>
@@ -1897,12 +1897,12 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               </table>
             )}
           </div>
-          <DialogFooter className="pt-4 border-t border-slate-100 dark:border-slate-800">
+          <DialogFooter className="pt-4 border-t border-border dark:border-border">
             <Button
               type="button"
               variant="outline"
               onClick={() => setShowPaymentHistory(false)}
-              className="border-slate-200 dark:border-slate-800"
+              className="border-border dark:border-border"
             >
               Close Window
             </Button>
@@ -1911,7 +1911,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
       </Dialog>
 
       {/* Quick Actions */}
-      <Card className="rounded-2xl border border-slate-200/60 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900 overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 dark:border-border shadow-sm bg-card dark:bg-slate-900 overflow-hidden">
         <CardHeader>
           <CardTitle>Quick Actions</CardTitle>
           <CardDescription>Access your most used financial tools</CardDescription>
@@ -1941,13 +1941,13 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                       setShowPaymentHistory(true);
                     }
                   }}
-                  className="p-5 flex items-start gap-4 rounded-xl border border-slate-200/70 dark:border-slate-800 bg-white dark:bg-slate-900 text-left hover:border-blue-500/50 hover:bg-slate-50/50 dark:hover:bg-slate-800/40 hover:shadow-md transition-all duration-200 group active:scale-[0.98]"
+                  className="p-5 flex items-start gap-4 rounded-xl border border-border/70 dark:border-border bg-card dark:bg-slate-900 text-left hover:border-primary/50 hover:bg-primary/5 dark:hover:bg-primary/10 hover:shadow-md transition-all duration-200 group active:scale-[0.98]"
                 >
-                  <div className="p-3 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 rounded-lg group-hover:scale-110 transition-transform duration-200 shrink-0">
+                  <div className="p-3 bg-primary/10 dark:bg-primary/20 text-primary rounded-lg group-hover:scale-110 transition-transform duration-200 shrink-0">
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="space-y-1 min-w-0">
-                    <p className="font-semibold text-sm text-slate-850 dark:text-slate-200 group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">{action.title}</p>
+                    <p className="font-semibold text-sm text-foreground dark:text-slate-200 group-hover:text-primary transition-colors">{action.title}</p>
                     <p className="text-xs text-muted-foreground leading-normal">{action.description}</p>
                   </div>
                 </button>
@@ -2008,59 +2008,59 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
             <div className="space-y-6">
               {/* Stats Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-blue-50/10 dark:from-slate-900 dark:to-slate-950/10">
+                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-primary/5 dark:from-slate-900 dark:to-slate-950/10">
                   <CardHeader className="pb-2">
-                    <CardDescription className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Invested Principal</CardDescription>
+                    <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Invested Principal</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-black text-slate-900 dark:text-white">
+                    <div className="text-2xl font-black text-foreground dark:text-white">
                       ₹{totalInvested.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-1">Active FD principal balances sum</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">Active FD principal balances sum</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-green-50/10 dark:from-slate-900 dark:to-slate-950/10">
+                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-green-50/10 dark:from-slate-900 dark:to-slate-950/10">
                   <CardHeader className="pb-2">
-                    <CardDescription className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Accrued Interest (Live)</CardDescription>
+                    <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Accrued Interest (Live)</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-black text-green-700 dark:text-green-400 flex items-center gap-1">
                       <TrendingUp className="h-5 w-5 animate-pulse text-green-600" />
                       ₹{totalAccrued.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-1">Interest earned elapsed to date</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">Interest earned elapsed to date</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-purple-50/10 dark:from-slate-900 dark:to-slate-950/10">
+                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-purple-50/10 dark:from-slate-900 dark:to-slate-950/10">
                   <CardHeader className="pb-2">
-                    <CardDescription className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Est. Maturity Value</CardDescription>
+                    <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Est. Maturity Value</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-black text-purple-700 dark:text-purple-400">
                       ₹{totalMaturity.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
-                    <p className="text-[10px] text-slate-400 mt-1">Total principal + maturity interest</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">Total principal + maturity interest</p>
                   </CardContent>
                 </Card>
               </div>
 
               {/* FDs List */}
               <div className="space-y-4 text-left">
-                <h3 className="text-base font-bold text-slate-900 dark:text-white">Active Fixed Deposits</h3>
+                <h3 className="text-base font-bold text-foreground dark:text-white">Active Fixed Deposits</h3>
                 {activeFds.length === 0 ? (
-                  <Card className="border-slate-200/60 dark:border-slate-800 p-8 text-center flex flex-col items-center justify-center gap-4">
-                    <div className="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-full text-slate-400">
-                      <PiggyBank className="h-10 w-10 text-slate-450" />
+                  <Card className="border-border/60 dark:border-border p-8 text-center flex flex-col items-center justify-center gap-4">
+                    <div className="p-4 bg-muted/30 dark:bg-slate-900/60 rounded-full text-muted-foreground">
+                      <PiggyBank className="h-10 w-10 text-muted-foreground" />
                     </div>
                     <div className="space-y-1">
-                      <h4 className="font-bold text-slate-900 dark:text-white">No active Fixed Deposits</h4>
-                      <p className="text-xs text-slate-500 max-w-sm">Grow your wealth with Bhalchandra Finance's high-yield Fixed Deposits. Book an FD today with interest rates up to 8.25%.</p>
+                      <h4 className="font-bold text-foreground dark:text-white">No active Fixed Deposits</h4>
+                      <p className="text-xs text-muted-foreground max-w-sm">Grow your wealth with Bhalchandra Finance's high-yield Fixed Deposits.</p>
                     </div>
                     <Button 
                       onClick={() => onNavigateToCalculator("fd")}
-                      className="bg-blue-700 hover:bg-blue-800 text-white rounded-xl px-6 font-semibold"
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl px-6 font-semibold"
                     >
                       Book a Fixed Deposit
                     </Button>
@@ -2068,51 +2068,51 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {fdsWithAccrued.map((fd) => (
-                      <Card key={fd.userService.id} className="border-slate-200/60 dark:border-slate-800 shadow-sm relative overflow-hidden bg-white dark:bg-slate-900">
-                        <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-700"></div>
-                        <CardHeader className="pb-3 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between">
+                      <Card key={fd.userService.id} className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-card dark:bg-slate-900">
+                        <div className="absolute top-0 left-0 w-1.5 h-full bg-primary"></div>
+                        <CardHeader className="pb-3 border-b border-border dark:border-border flex flex-row items-center justify-between">
                           <div>
-                            <CardTitle className="text-sm font-bold text-slate-900 dark:text-white">Fixed Deposit</CardTitle>
+                            <CardTitle className="text-sm font-bold text-foreground dark:text-white">Fixed Deposit</CardTitle>
                             <CardDescription className="text-[10px] font-mono mt-0.5">{fd.userService.applicationNumber}</CardDescription>
                           </div>
-                          <Badge className="bg-blue-50 text-blue-700 border border-blue-200/30 hover:bg-blue-50 text-[10px] font-bold">
+                          <Badge className="bg-primary/10 text-primary border border-primary/20 hover:bg-primary/10 text-[10px] font-bold">
                             {fd.userService.interestRate}% P.A.
                           </Badge>
                         </CardHeader>
                         <CardContent className="pt-4 space-y-4">
                           <div className="grid grid-cols-2 gap-4 text-left">
                             <div className="space-y-0.5">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Principal</span>
-                              <span className="text-sm font-black text-slate-900 dark:text-white">₹{parseFloat(fd.userService.amount).toLocaleString("en-IN")}</span>
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Principal</span>
+                              <span className="text-sm font-black text-foreground dark:text-white">₹{parseFloat(fd.userService.amount).toLocaleString("en-IN")}</span>
                             </div>
                             <div className="space-y-0.5">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Accrued Interest</span>
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Accrued Interest</span>
                               <span className="text-sm font-black text-green-700 dark:text-green-450">₹{fd.accrued.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             </div>
                             <div className="space-y-0.5">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Booking Date</span>
-                              <span className="text-xs font-semibold text-slate-700 dark:text-slate-350">{new Date(fd.userService.applicationDate).toLocaleDateString("en-IN")}</span>
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Booking Date</span>
+                              <span className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground">{new Date(fd.userService.applicationDate).toLocaleDateString("en-IN")}</span>
                             </div>
                             <div className="space-y-0.5">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Maturity Date</span>
-                              <span className="text-xs font-semibold text-slate-700 dark:text-slate-350">{fd.maturityDate.toLocaleDateString("en-IN")}</span>
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Maturity Date</span>
+                              <span className="text-xs font-semibold text-muted-foreground dark:text-muted-foreground">{fd.maturityDate.toLocaleDateString("en-IN")}</span>
                             </div>
                           </div>
-
+ 
                           {/* Progress Bar */}
                           <div className="space-y-1">
-                            <div className="flex justify-between text-[10px] text-slate-400 font-bold">
+                            <div className="flex justify-between text-[10px] text-muted-foreground font-bold">
                               <span>Maturity Progress</span>
                               <span>{fd.progressPercent}% ({fd.daysActive} days)</span>
                             </div>
-                            <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                              <div className="h-full bg-blue-700 rounded-full transition-all duration-500" style={{ width: `${fd.progressPercent}%` }}></div>
+                            <div className="w-full h-1.5 bg-muted dark:bg-slate-800 rounded-full overflow-hidden">
+                              <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${fd.progressPercent}%` }}></div>
                             </div>
                           </div>
 
-                          <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-4">
+                          <div className="pt-2 border-t border-border dark:border-border flex items-center justify-between gap-4">
                             <div className="space-y-0.5 text-left">
-                              <span className="text-[9px] font-bold text-slate-400 uppercase block">Est. Maturity Payout</span>
+                              <span className="text-[9px] font-bold text-muted-foreground uppercase block">Est. Maturity Payout</span>
                               <span className="text-sm font-black text-purple-700 dark:text-purple-400">₹{fd.maturityValue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             </div>
                             <Button 
@@ -2132,36 +2132,36 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
               {/* Premature Closure Modal */}
               <Dialog open={closingFd !== null} onOpenChange={(open) => { if (!open) { setClosingFd(null); setCloseFdCalcs(null); } }}>
-                <DialogContent className="max-w-md bg-white border border-slate-200 shadow-2xl rounded-2xl p-6">
+                <DialogContent className="max-w-md bg-card border border-border shadow-2xl rounded-2xl p-6">
                   <DialogHeader className="text-left flex flex-col gap-2">
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-705">
                       <ShieldAlert className="h-6 w-6" />
                     </div>
-                    <DialogTitle className="text-lg font-bold text-slate-900">Premature FD Closure</DialogTitle>
-                    <DialogDescription className="text-sm text-slate-500 leading-relaxed">
+                    <DialogTitle className="text-lg font-bold text-foreground">Premature FD Closure</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground leading-relaxed">
                       Are you sure you want to pre-close this Fixed Deposit? Premature withdrawals incur a **1.00% interest rate penalty** as per bank regulations.
                     </DialogDescription>
                   </DialogHeader>
 
                   {closeFdCalcs && (
-                    <div className="mt-4 p-4 rounded-xl border border-slate-250 dark:border-slate-800 space-y-3 bg-slate-50 text-xs text-left">
+                    <div className="mt-4 p-4 rounded-xl border border-border dark:border-border space-y-3 bg-muted/30 text-xs text-left">
                       <div className="flex justify-between font-semibold">
-                        <span className="text-slate-500">Invested Principal:</span>
-                        <span className="text-slate-900">₹{closeFdCalcs.principal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
+                        <span className="text-muted-foreground">Invested Principal:</span>
+                        <span className="text-foreground">₹{closeFdCalcs.principal.toLocaleString("en-IN", { minimumFractionDigits: 2 })}</span>
                       </div>
                       <div className="flex justify-between font-semibold">
-                        <span className="text-slate-500">Days Active:</span>
-                        <span className="text-slate-900">{closeFdCalcs.daysActive} days</span>
+                        <span className="text-muted-foreground">Days Active:</span>
+                        <span className="text-foreground">{closeFdCalcs.daysActive} days</span>
                       </div>
                       <div className="flex justify-between font-semibold">
-                        <span className="text-slate-500">Penalized Interest Rate:</span>
-                        <span className="text-slate-900">{closeFdCalcs.penalizedRate}% (was {closeFdCalcs.originalRate}%)</span>
+                        <span className="text-muted-foreground">Penalized Interest Rate:</span>
+                        <span className="text-foreground">{closeFdCalcs.penalizedRate}% (was {closeFdCalcs.originalRate}%)</span>
                       </div>
                       <div className="flex justify-between font-semibold text-green-700">
                         <span>Accrued Interest (Penalized):</span>
                         <span>+ ₹{closeFdCalcs.accruedInterest.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                       </div>
-                      <div className="border-t border-slate-200/60 pt-2 flex justify-between font-black text-sm text-blue-700">
+                      <div className="border-t border-border/60 pt-2 flex justify-between font-black text-sm text-primary">
                         <span>Total Est. Refund Payout:</span>
                         <span>₹{closeFdCalcs.totalPayout.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                       </div>
@@ -2222,8 +2222,8 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               </CardHeader>
               <CardContent>
                 {vaultDocs.length === 0 ? (
-                  <div className="text-center py-12 border border-dashed border-gray-200 rounded-xl space-y-3">
-                    <div className="h-12 w-12 rounded-full bg-slate-50 flex items-center justify-center mx-auto">
+                  <div className="text-center py-12 border border-dashed border-border rounded-xl space-y-3">
+                    <div className="h-12 w-12 rounded-full bg-muted/30 flex items-center justify-center mx-auto">
                       <FileText className="h-6 w-6 text-gray-400" />
                     </div>
                     <h3 className="font-semibold text-gray-800 text-sm">No uploaded files</h3>
@@ -2235,7 +2235,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
-                        <tr className="border-b border-gray-100 text-gray-400 font-bold uppercase tracking-wider text-[10px]">
+                        <tr className="border-b border-border text-gray-400 font-bold uppercase tracking-wider text-[10px]">
                           <th className="pb-3 pl-2">Document Details</th>
                           <th className="pb-3">Type</th>
                           <th className="pb-3">Account Reference</th>
@@ -2245,10 +2245,10 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                       </thead>
                       <tbody className="divide-y divide-gray-50">
                         {vaultDocs.map((doc, idx) => (
-                          <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                          <tr key={idx} className="hover:bg-muted/30/50 transition-colors">
                             <td className="py-3 pl-2">
                               <div className="flex items-center gap-2.5">
-                                <div className="h-8 w-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center shrink-0">
+                                <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0">
                                   <FileText className="h-4.5 w-4.5" />
                                 </div>
                                 <div className="space-y-0.5">
@@ -2260,12 +2260,12 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                               </div>
                             </td>
                             <td className="py-3">
-                              <span className="font-semibold text-gray-600 capitalize">
+                              <span className="font-semibold text-muted-foreground capitalize">
                                 {doc.docTypeKey.replace(/([A-Z])/g, " $1")}
                               </span>
                             </td>
                             <td className="py-3">
-                              <span className="font-mono text-gray-500 font-semibold">{doc.applicationNumber}</span>
+                              <span className="font-mono text-muted-foreground font-semibold">{doc.applicationNumber}</span>
                             </td>
                             <td className="py-3">
                               <Badge className={`border-none text-[10px] px-2 py-0.5 font-semibold shrink-0 ${
@@ -2289,7 +2289,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 text-gray-500 hover:text-primary rounded-lg"
+                                className="h-8 w-8 text-muted-foreground hover:text-primary rounded-lg"
                                 onClick={() => {
                                   alert(`Downloading simulated file payload: ${doc.name}`);
                                 }}
@@ -2321,8 +2321,8 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Document Category</Label>
-                  <select className="w-full h-10 border border-gray-200 rounded-lg p-2.5 text-xs font-semibold bg-white focus:outline-none">
+                  <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Document Category</Label>
+                  <select className="w-full h-10 border border-border rounded-lg p-2.5 text-xs font-semibold bg-card focus:outline-none">
                     <option>Aadhaar / Photo Identity Proof</option>
                     <option>PAN Verification Card</option>
                     <option>Recent Salary Slip</option>
@@ -2331,12 +2331,12 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 </div>
                 
                 {/* Drag and Drop Zone */}
-                <div className="border border-dashed border-gray-200 rounded-xl p-6 text-center hover:bg-slate-50/50 cursor-pointer transition-all space-y-2">
-                  <div className="h-10 w-10 bg-blue-50 text-primary flex items-center justify-center rounded-xl mx-auto shadow-sm">
+                <div className="border border-dashed border-border rounded-xl p-6 text-center hover:bg-muted/30/50 cursor-pointer transition-all space-y-2">
+                  <div className="h-10 w-10 bg-primary/10 text-primary flex items-center justify-center rounded-xl mx-auto shadow-sm">
                     <UploadCloud className="h-5 w-5" />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs font-bold text-gray-700">Choose File or drag here</p>
+                    <p className="text-xs font-bold text-muted-foreground">Choose File or drag here</p>
                     <p className="text-[10px] text-gray-400">PDF, PNG, JPG up to 10MB</p>
                   </div>
                 </div>
@@ -2360,10 +2360,10 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-left">
           {/* Raise Ticket Form */}
           <div className="lg:col-span-1">
-            <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900">
+            <Card className="border-border/60 dark:border-border shadow-sm bg-card dark:bg-slate-900">
               <CardHeader>
                 <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <LifeBuoy className="h-5 w-5 text-blue-750" />
+                  <LifeBuoy className="h-5 w-5 text-primary" />
                   Raise Support Ticket
                 </CardTitle>
                 <CardDescription className="text-xs">
@@ -2373,11 +2373,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               <CardContent>
                 <form onSubmit={handleSupportTicketSubmit} className="space-y-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Ticket Category</Label>
+                    <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Ticket Category</Label>
                     <select
                       value={ticketCategory}
                       onChange={(e) => setTicketCategory(e.target.value)}
-                      className="w-full h-10 border border-gray-200 dark:border-slate-800 rounded-lg p-2.5 text-xs font-semibold bg-white dark:bg-slate-950 focus:outline-none focus:border-blue-500"
+                      className="w-full h-10 border border-border dark:border-border rounded-lg p-2.5 text-xs font-semibold bg-card dark:bg-slate-950 focus:outline-none focus:border-primary"
                     >
                       <option value="general">General Query / Inquiry</option>
                       <option value="loan">Loan Account & EMIs</option>
@@ -2388,11 +2388,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Urgency Priority</Label>
+                    <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Urgency Priority</Label>
                     <select
                       value={ticketPriority}
                       onChange={(e) => setTicketPriority(e.target.value)}
-                      className="w-full h-10 border border-gray-200 dark:border-slate-800 rounded-lg p-2.5 text-xs font-semibold bg-white dark:bg-slate-950 focus:outline-none focus:border-blue-500"
+                      className="w-full h-10 border border-border dark:border-border rounded-lg p-2.5 text-xs font-semibold bg-card dark:bg-slate-950 focus:outline-none focus:border-primary"
                     >
                       <option value="low">Low - General Feedback</option>
                       <option value="medium">Medium - Normal Queries</option>
@@ -2402,26 +2402,26 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="ticket-subject" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Subject Title</Label>
+                    <Label htmlFor="ticket-subject" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Subject Title</Label>
                     <Input
                       id="ticket-subject"
                       value={ticketSubject}
                       onChange={(e) => setTicketSubject(e.target.value)}
                       placeholder="Brief summary of the issue..."
-                      className="h-10 text-xs rounded-lg border-gray-200 dark:border-slate-800 focus:border-blue-500 bg-white dark:bg-slate-950"
+                      className="h-10 text-xs rounded-lg border-border dark:border-border focus:border-primary bg-card dark:bg-slate-950"
                       required
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <Label htmlFor="ticket-desc" className="text-xs font-bold text-gray-500 uppercase tracking-wider">Detailed Description</Label>
+                    <Label htmlFor="ticket-desc" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Detailed Description</Label>
                     <textarea
                       id="ticket-desc"
                       rows={4}
                       value={ticketDescription}
                       onChange={(e) => setTicketDescription(e.target.value)}
                       placeholder="Please explain the details of the problem..."
-                      className="w-full border border-gray-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-white dark:bg-slate-950 focus:outline-none focus:border-blue-500"
+                      className="w-full border border-border dark:border-border rounded-lg p-2.5 text-xs bg-card dark:bg-slate-950 focus:outline-none focus:border-primary"
                       required
                     />
                   </div>
@@ -2429,7 +2429,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   <Button
                     type="submit"
                     disabled={ticketSubmitting}
-                    className="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold h-10 text-xs rounded-xl flex items-center justify-center gap-2"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-10 text-xs rounded-xl flex items-center justify-center gap-2"
                   >
                     {ticketSubmitting ? (
                       <>
@@ -2450,10 +2450,10 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
           {/* Ticket History */}
           <div className="lg:col-span-2 space-y-4">
-            <Card className="border-slate-200/60 dark:border-slate-800 shadow-sm bg-white dark:bg-slate-900">
+            <Card className="border-border/60 dark:border-border shadow-sm bg-card dark:bg-slate-900">
               <CardHeader>
                 <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-blue-755" />
+                  <MessageSquare className="h-5 w-5 text-primary" />
                   Your Support Tickets
                 </CardTitle>
                 <CardDescription className="text-xs">
@@ -2463,11 +2463,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               <CardContent>
                 {supportTickets.length === 0 ? (
                   <div className="py-12 flex flex-col items-center justify-center gap-3 text-center">
-                    <div className="p-3 bg-slate-50 dark:bg-slate-800/50 text-slate-400 rounded-full">
+                    <div className="p-3 bg-muted/30 dark:bg-slate-800/50 text-muted-foreground rounded-full">
                       <MessageSquare className="h-8 w-8" />
                     </div>
                     <div className="space-y-1">
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">No support tickets found</p>
+                      <p className="font-semibold text-foreground dark:text-slate-200">No support tickets found</p>
                       <p className="text-xs text-muted-foreground max-w-sm">
                         If you have any questions or bugs to file, raise a new ticket on the left and our administration team will attend to it.
                       </p>
@@ -2478,26 +2478,26 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                     {supportTickets.map((t) => (
                       <div 
                         key={t.id} 
-                        className="p-4 rounded-xl border border-slate-200/60 dark:border-slate-800 bg-white dark:bg-slate-900/60 hover:bg-slate-50/20 dark:hover:bg-slate-800/10 transition-colors space-y-3"
+                        className="p-4 rounded-xl border border-border/60 dark:border-border bg-card dark:bg-slate-900/60 hover:bg-muted/30/20 dark:hover:bg-slate-800/10 transition-colors space-y-3"
                       >
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                           <div className="space-y-0.5">
                             <div className="flex items-center gap-2">
-                              <span className="font-mono text-xs font-bold text-blue-700">{t.ticketNumber}</span>
-                              <span className="text-[10px] text-slate-400 font-semibold">• {new Date(t.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
+                              <span className="font-mono text-xs font-bold text-primary">{t.ticketNumber}</span>
+                              <span className="text-[10px] text-muted-foreground font-semibold">• {new Date(t.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
                             </div>
-                            <h4 className="text-sm font-bold text-slate-900 dark:text-white">{t.subject}</h4>
+                            <h4 className="text-sm font-bold text-foreground dark:text-white">{t.subject}</h4>
                           </div>
                           <div className="flex items-center gap-1.5 self-start sm:self-center">
                             <Badge 
                               className={`border-none text-[10px] font-bold py-0.5 px-2 uppercase tracking-wide hover:opacity-90 ${
                                 t.status === "open"
-                                  ? "bg-blue-50 text-blue-700 hover:bg-blue-50"
+                                  ? "bg-primary/10 text-primary hover:bg-primary/10"
                                   : t.status === "in_progress"
                                   ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-50"
                                   : t.status === "resolved"
                                   ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-50"
-                                  : "bg-slate-100 text-slate-700 dark:bg-slate-800"
+                                  : "bg-muted text-muted-foreground dark:bg-slate-800"
                               }`}
                             >
                               {t.status.replace("_", " ")}
@@ -2509,17 +2509,17 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                                   : t.priority === "high"
                                   ? "bg-amber-50 text-amber-700 hover:bg-amber-50"
                                   : t.priority === "medium"
-                                  ? "bg-blue-50 text-blue-600 hover:bg-blue-50"
-                                  : "bg-slate-50 text-slate-600 hover:bg-slate-50"
+                                  ? "bg-primary/10 text-primary hover:bg-primary/10"
+                                  : "bg-muted/30 text-muted-foreground hover:bg-muted/30"
                               }`}
                             >
                               {t.priority}
                             </Badge>
                           </div>
                         </div>
-                        <p className="text-xs text-slate-500 leading-normal">{t.description}</p>
-                        <div className="flex justify-between items-center text-[10px] text-slate-400 font-semibold pt-1 border-t border-slate-100 dark:border-slate-800/60">
-                          <span>Category: <span className="text-slate-600 dark:text-slate-400 capitalize">{t.category.replace("_", " ")}</span></span>
+                        <p className="text-xs text-muted-foreground leading-normal">{t.description}</p>
+                        <div className="flex justify-between items-center text-[10px] text-muted-foreground font-semibold pt-1 border-t border-border dark:border-border/60">
+                          <span>Category: <span className="text-muted-foreground dark:text-muted-foreground capitalize">{t.category.replace("_", " ")}</span></span>
                           {t.status === "resolved" && (
                             <span className="text-green-600">Resolved • Ready to close</span>
                           )}
@@ -2537,10 +2537,10 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
       {/* Dialog for Profile Details Pop-up */}
       <Dialog open={isProfileModalOpen} onOpenChange={setIsProfileModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-card dark:bg-slate-900 border-border dark:border-border">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-              <User className="h-5 w-5 text-blue-700" />
+            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-foreground dark:text-white">
+              <User className="h-5 w-5 text-primary" />
               Complete Profile Details
             </DialogTitle>
             <DialogDescription className="text-xs">
@@ -2579,7 +2579,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   id="modalGender"
                   value={modalGender}
                   onChange={(e) => setModalGender(e.target.value)}
-                  className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                  className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-border"
                   required
                 >
                   <option value="" disabled>Select Gender</option>
@@ -2594,7 +2594,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                   id="modalMarital"
                   value={modalMarital}
                   onChange={(e) => setModalMarital(e.target.value)}
-                  className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                  className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-border"
                   required
                 >
                   <option value="" disabled>Select Marital Status</option>
@@ -2709,8 +2709,8 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
             </div>
 
             <div className="border-t pt-4 mt-2 space-y-4">
-              <h4 className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-1.5">
-                <Building className="h-4 w-4 text-blue-700" />
+              <h4 className="text-xs font-bold text-foreground dark:text-white flex items-center gap-1.5">
+                <Building className="h-4 w-4 text-primary" />
                 Bank Account Details (For Disbursements)
               </h4>
               
@@ -2765,7 +2765,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                     id="modalAccountType"
                     value={modalAccountType}
                     onChange={(e) => setModalAccountType(e.target.value)}
-                    className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-slate-800"
+                    className="w-full h-10 px-3 border border-input rounded-md bg-transparent text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-slate-950 dark:border-border"
                     required
                   >
                     <option value="" disabled>Select Account Type</option>
@@ -2794,7 +2794,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
               <Button
                 type="submit"
                 disabled={isProfileSaving}
-                className="bg-blue-700 hover:bg-blue-800 text-white rounded-full px-6 flex items-center gap-2 border border-transparent shadow-sm"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-6 flex items-center gap-2 border border-transparent shadow-sm"
               >
                 {isProfileSaving ? (
                   <>
@@ -2815,13 +2815,13 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
       {/* Dialog for Loan Type Selection */}
       <Dialog open={isLoanSelectorOpen} onOpenChange={setIsLoanSelectorOpen}>
-        <DialogContent className="max-w-xl bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl">
+        <DialogContent className="max-w-xl bg-card dark:bg-slate-900 border-border dark:border-border rounded-2xl shadow-xl">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-              <FileText className="h-5 w-5 text-blue-700 dark:text-blue-450" />
+            <DialogTitle className="text-xl font-bold flex items-center gap-2 text-foreground dark:text-white">
+              <FileText className="h-5 w-5 text-primary" />
               Select Loan Type
             </DialogTitle>
-            <DialogDescription className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+            <DialogDescription className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
               Choose the category of loan you want to apply for to start the application process
             </DialogDescription>
           </DialogHeader>
@@ -2847,7 +2847,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                 title: "Personal Loan",
                 icon: User,
                 desc: "Get instant cash for personal needs",
-                color: "text-blue-600 bg-blue-50 dark:bg-blue-950/20 border-blue-100 dark:border-blue-900/30 hover:border-blue-300"
+                color: "text-primary bg-primary/10 dark:bg-primary/20 border-primary/20 dark:border-primary/30 hover:border-primary/50"
               },
               {
                 id: "gold",
@@ -2868,13 +2868,13 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
                       onNavigateToPage(`loan-application-${loanOption.id}`);
                     }
                   }}
-                  className={`p-4 rounded-xl border flex items-start gap-3.5 text-left transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] group bg-white dark:bg-slate-900/50 ${loanOption.color}`}
+                  className={`p-4 rounded-xl border flex items-start gap-3.5 text-left transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] group bg-card dark:bg-slate-900/50 ${loanOption.color}`}
                 >
-                  <div className="p-2.5 rounded-lg bg-white dark:bg-slate-900 shadow-sm border border-slate-100/50 dark:border-slate-800 shrink-0">
+                  <div className="p-2.5 rounded-lg bg-card dark:bg-slate-900 shadow-sm border border-border/50 dark:border-border shrink-0">
                     <LoanIcon className="h-5 w-5" />
                   </div>
                   <div className="space-y-1 min-w-0">
-                    <span className="font-bold text-sm text-slate-800 dark:text-slate-200 block group-hover:text-blue-700 dark:group-hover:text-blue-400 transition-colors">
+                    <span className="font-bold text-sm text-foreground dark:text-slate-200 block group-hover:text-primary transition-colors">
                       {loanOption.title}
                     </span>
                     <span className="text-[11px] text-muted-foreground leading-normal block">
@@ -2890,7 +2890,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
             <Button
               variant="outline"
               onClick={() => setIsLoanSelectorOpen(false)}
-              className="w-full text-slate-500 font-semibold border-slate-200 dark:border-slate-800 rounded-full"
+              className="w-full text-muted-foreground font-semibold border-border dark:border-border rounded-full"
             >
               Cancel
             </Button>

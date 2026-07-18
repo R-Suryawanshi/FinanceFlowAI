@@ -55,16 +55,16 @@ export function AdminSidebar({ currentPage, onPageChange, isCollapsed, onToggle 
 
   return (
     <aside
-      className={`h-screen sticky top-0 left-0 shrink-0 bg-white dark:bg-slate-950 border-r border-slate-200/80 dark:border-slate-800/80 flex flex-col transition-all duration-300 ease-in-out z-40 ${
+      className={`h-screen sticky top-0 left-0 shrink-0 bg-card dark:bg-slate-950 border-r border-border/80 dark:border-border/80 flex flex-col transition-all duration-300 ease-in-out z-40 ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
       {/* Sidebar Header branding */}
-      <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 dark:border-slate-800/60">
+      <div className="h-16 flex items-center justify-between px-4 border-b border-border dark:border-border/60">
         {!isCollapsed && (
           <div className="flex items-center gap-2.5 truncate">
             <Building2 className="h-6 w-6 text-blue-700 shrink-0" />
-            <span className="font-bold text-slate-900 dark:text-white text-sm tracking-wide">
+            <span className="font-bold text-foreground dark:text-white text-sm tracking-wide">
               Bhalchandra Admin
             </span>
           </div>
@@ -77,7 +77,7 @@ export function AdminSidebar({ currentPage, onPageChange, isCollapsed, onToggle 
         {!isCollapsed && (
           <button
             onClick={onToggle}
-            className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-muted dark:hover:bg-slate-800 text-muted-foreground hover:text-muted-foreground transition-colors"
             title="Collapse Sidebar"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -86,7 +86,7 @@ export function AdminSidebar({ currentPage, onPageChange, isCollapsed, onToggle 
         {isCollapsed && (
           <button
             onClick={onToggle}
-            className="absolute left-14 top-4 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-850 p-1 rounded-full shadow-md text-slate-400 hover:text-slate-655 hover:scale-105 transition-all z-50"
+            className="absolute left-14 top-4 bg-card dark:bg-slate-950 border border-border dark:border-border p-1 rounded-full shadow-md text-muted-foreground hover:text-muted-foreground hover:scale-105 transition-all z-50"
             title="Expand Sidebar"
           >
             <ChevronRight className="h-3 w-3" />
@@ -109,7 +109,7 @@ export function AdminSidebar({ currentPage, onPageChange, isCollapsed, onToggle 
                     className={`w-full flex items-center justify-center p-3 rounded-xl transition-all duration-200 relative group ${
                       isActive
                         ? "bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 font-bold shadow-sm"
-                        : "text-slate-500 hover:text-blue-700 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-900"
+                        : "text-muted-foreground hover:text-blue-700 hover:bg-muted/30 dark:text-muted-foreground dark:hover:bg-slate-900"
                     }`}
                   >
                     {isActive && (
@@ -120,7 +120,7 @@ export function AdminSidebar({ currentPage, onPageChange, isCollapsed, onToggle 
                 </TooltipTrigger>
                 <TooltipContent side="right" className="bg-slate-900 text-white border-none text-xs rounded-lg px-2.5 py-1.5">
                   <p className="font-bold">{item.name}</p>
-                  <p className="text-[10px] text-slate-400">{item.description}</p>
+                  <p className="text-[10px] text-muted-foreground">{item.description}</p>
                 </TooltipContent>
               </Tooltip>
             );
@@ -133,7 +133,7 @@ export function AdminSidebar({ currentPage, onPageChange, isCollapsed, onToggle 
               className={`w-full flex items-center gap-3.5 p-3 rounded-xl text-left transition-all duration-200 relative group ${
                 isActive
                   ? "bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400 font-bold shadow-sm"
-                  : "text-slate-600 hover:text-blue-700 hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-slate-900"
+                  : "text-muted-foreground hover:text-blue-700 hover:bg-muted/30 dark:text-slate-300 dark:hover:bg-slate-900"
               }`}
             >
               {isActive && (
@@ -141,7 +141,7 @@ export function AdminSidebar({ currentPage, onPageChange, isCollapsed, onToggle 
               )}
               
               <Icon className={`h-5 w-5 shrink-0 transition-transform group-hover:scale-110 duration-200 ${
-                isActive ? "text-blue-700 dark:text-blue-400" : "text-slate-400 group-hover:text-blue-700"
+                isActive ? "text-blue-700 dark:text-blue-400" : "text-muted-foreground group-hover:text-blue-700"
               }`} />
               
               <div className="flex-1 min-w-0">

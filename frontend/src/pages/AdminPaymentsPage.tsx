@@ -129,17 +129,17 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
               size="icon"
               onClick={onBack}
               data-testid="page-back-button"
-              className="h-10 w-10 rounded-lg border border-slate-200/50 dark:border-slate-800 bg-white dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
           )}
           <div className="space-y-1 flex-1 text-left">
-            <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Repayments Ledger</h1>
+            <h1 className="text-3xl font-bold text-foreground dark:text-white">Repayments Ledger</h1>
             <p className="text-muted-foreground">Track historical and incoming customer EMI payment transactions</p>
           </div>
         </div>
-        <Button variant="outline" size="sm" className="w-full sm:w-auto border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-855" onClick={fetchLivePaymentsData} disabled={loading}>
+        <Button variant="outline" size="sm" className="w-full sm:w-auto border-border dark:border-border hover:bg-muted dark:hover:bg-slate-855" onClick={fetchLivePaymentsData} disabled={loading}>
           <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh Data
         </Button>
@@ -148,11 +148,11 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
       {/* KPI Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Metric 1: Total Revenue */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Total Revenue</span>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">{formatCurrency(liveStats.totalRevenue)}</div>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Revenue</span>
+              <div className="text-3xl font-bold text-foreground dark:text-white">{formatCurrency(liveStats.totalRevenue)}</div>
             </div>
             <div className="h-10 w-10 rounded-xl bg-cyan-500 text-white flex items-center justify-center shadow-md shadow-cyan-100 dark:shadow-none">
               <DollarSign className="h-5 w-5" />
@@ -162,11 +162,11 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
         </Card>
 
         {/* Metric 2: Outstanding Portfolio */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Outstanding Portfolio</span>
-              <div className="text-3xl font-bold text-slate-900 dark:text-white">{formatCurrency(totalOutstanding)}</div>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Outstanding Portfolio</span>
+              <div className="text-3xl font-bold text-foreground dark:text-white">{formatCurrency(totalOutstanding)}</div>
             </div>
             <div className="h-10 w-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-100 dark:shadow-none">
               <TrendingUp className="h-5 w-5" />
@@ -176,10 +176,10 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
         </Card>
 
         {/* Metric 3: Recovery Rate */}
-        <Card className="rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-md dark:shadow-none bg-white dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
+        <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
           <div className="flex justify-between items-start">
             <div className="space-y-1.5">
-              <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-wider uppercase">Collection Recovery Rate</span>
+              <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Collection Recovery Rate</span>
               <div className="text-3xl font-bold text-cyan-605 dark:text-cyan-400">86.8%</div>
             </div>
             <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
@@ -191,15 +191,15 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
       </div>
 
       {/* Date Range Selection & Search */}
-      <div className="bg-slate-50 dark:bg-slate-900/30 p-4 rounded-xl border border-slate-200 dark:border-slate-800 flex flex-col gap-4">
+      <div className="bg-muted/30 dark:bg-slate-900/30 p-4 rounded-xl border border-border dark:border-border flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <h2 className="font-semibold text-lg text-slate-850 dark:text-slate-200">Transactions List</h2>
+          <h2 className="font-semibold text-lg text-foreground dark:text-slate-200">Transactions List</h2>
           <div className="flex flex-wrap gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
               size="sm"
               onClick={() => setShowDatePicker(!showDatePicker)}
-              className="bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 flex items-center gap-2 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800"
+              className="bg-card dark:bg-slate-900 text-muted-foreground dark:text-slate-200 flex items-center gap-2 border border-border dark:border-border hover:bg-muted/30 dark:hover:bg-slate-800"
             >
               <Calendar className="h-4 w-4" />
               {dateRange.start.toLocaleDateString("en-IN", { month: "short", day: "numeric" })} - {dateRange.end.toLocaleDateString("en-IN", { month: "short", day: "numeric", year: "numeric" })}
@@ -209,7 +209,7 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
               <input
                 type="text"
                 placeholder="Search transaction, customer or method..."
-                className="border border-slate-200 dark:border-slate-800 pl-8 pr-3 py-2 w-full rounded-md text-sm bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-ring"
+                className="border border-border dark:border-border pl-8 pr-3 py-2 w-full rounded-md text-sm bg-card dark:bg-slate-900 text-foreground dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-ring"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -218,7 +218,7 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
         </div>
 
         {showDatePicker && (
-          <div className="border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 rounded-lg shadow-inner self-start flex flex-col gap-2 z-10">
+          <div className="border border-border dark:border-border bg-card dark:bg-slate-900 p-3 rounded-lg shadow-inner self-start flex flex-col gap-2 z-10">
             <DateRange
               ranges={[{ startDate: dateRange.start, endDate: dateRange.end, key: 'selection' }]}
               onChange={(item: any) => setDateRange({ start: item.selection.startDate, end: item.selection.endDate })}
@@ -232,34 +232,34 @@ export function AdminPaymentsPage({ user, onBack }: AdminPaymentsPageProps) {
       </div>
 
       {/* Payments Ledger Table */}
-      <Card className="rounded-2xl border border-slate-200 dark:border-slate-800 shadow-md overflow-hidden bg-white dark:bg-slate-900">
-        <CardHeader className="bg-slate-50/50 dark:bg-slate-950/20 border-b border-slate-100 dark:border-slate-800/80">
-          <CardTitle className="text-lg text-slate-900 dark:text-white font-bold">Repayment Transactions</CardTitle>
+      <Card className="rounded-2xl border border-border dark:border-border shadow-md overflow-hidden bg-card dark:bg-slate-900">
+        <CardHeader className="bg-muted/30/50 dark:bg-slate-950/20 border-b border-border dark:border-border/80">
+          <CardTitle className="text-lg text-foreground dark:text-white font-bold">Repayment Transactions</CardTitle>
           <CardDescription>Real-time log of customer EMI payments received</CardDescription>
         </CardHeader>
         <CardContent className="p-0 overflow-auto max-h-[500px]">
           {filteredPayments.length === 0 ? (
-            <div className="text-center text-slate-450 dark:text-slate-500 py-12 text-sm font-medium">No payment transactions found in selected range.</div>
+            <div className="text-center text-slate-450 dark:text-muted-foreground py-12 text-sm font-medium">No payment transactions found in selected range.</div>
           ) : (
             <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-800">
-              <thead className="bg-slate-50 dark:bg-slate-950/30">
+              <thead className="bg-muted/30 dark:bg-slate-950/30">
                 <tr>
                   {["TXN ID", "Customer", "Loan Name", "Paid Amount", "Method", "Date", "Status"].map((h) => (
-                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    <th key={h} className="px-6 py-3 text-left text-xs font-bold text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="bg-card dark:bg-slate-900 divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredPayments.map((p) => (
-                  <tr key={p.payment.id} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/40 text-sm">
+                  <tr key={p.payment.id} className="hover:bg-muted/30/40 dark:hover:bg-slate-800/40 text-sm">
                     <td className="px-6 py-4 font-semibold text-primary dark:text-blue-400">{p.payment.transactionId || p.payment.paymentReference}</td>
-                    <td className="px-6 py-4 font-medium text-slate-800 dark:text-slate-200">{p.user.name}</td>
-                    <td className="px-6 py-4 text-slate-700 dark:text-slate-300 capitalize">{p.serviceType.displayName || p.serviceType.name}</td>
+                    <td className="px-6 py-4 font-medium text-foreground dark:text-slate-200">{p.user.name}</td>
+                    <td className="px-6 py-4 text-muted-foreground dark:text-slate-300 capitalize">{p.serviceType.displayName || p.serviceType.name}</td>
                     <td className="px-6 py-4 font-bold text-green-600 dark:text-green-400">{formatCurrency(Number(p.payment.amount))}</td>
-                    <td className="px-6 py-4 font-semibold text-slate-650 dark:text-slate-450 uppercase">{p.payment.paymentMethod}</td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">{new Date(p.payment.paymentDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</td>
+                    <td className="px-6 py-4 font-semibold text-muted-foreground dark:text-slate-450 uppercase">{p.payment.paymentMethod}</td>
+                    <td className="px-6 py-4 text-muted-foreground dark:text-muted-foreground">{new Date(p.payment.paymentDate).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</td>
                     <td className="px-6 py-4">
                       <Badge className={
                         p.payment.status === "success" 
