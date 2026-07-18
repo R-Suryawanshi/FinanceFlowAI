@@ -166,7 +166,7 @@ export function Header({
 
           {/* Desktop Navigation */}
           {!isAdminPage && (
-            <nav className="hidden md:flex space-x-2">
+            <nav className="hidden md:flex space-x-6">
               {navigation.map((item) => {
                  const Icon = item.icon;
                  return (
