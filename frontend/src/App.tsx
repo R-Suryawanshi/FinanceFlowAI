@@ -196,8 +196,8 @@ function App() {
   };
 
   const navigatePage = (page: string) => {
-    if (page === "home") {
-      setCurrentPage("home");
+    if (page === "home" || page === "services" || page === "about" || page === "contact") {
+      setCurrentPage(page);
       return;
     }
 
@@ -224,11 +224,21 @@ function App() {
       case "services":
         return (
           <ServicesPage
-            onNavigateToCalculator={(t) =>
-              setCurrentPage(t === "emi" ? "emi-calculator" : t === "gold" ? "gold-calculator" : "fd-calculator")
-            }
+            onNavigateToCalculator={(t) => {
+              if (!user) {
+                setAuthModalOpen(true);
+              } else {
+                setCurrentPage(t === "emi" ? "emi-calculator" : t === "gold" ? "gold-calculator" : "fd-calculator");
+              }
+            }}
             onGetStarted={handleGetStarted}
-            onPageChange={setCurrentPage}
+            onPageChange={(page) => {
+              if (!user) {
+                setAuthModalOpen(true);
+              } else {
+                setCurrentPage(page);
+              }
+            }}
             onBack={handleBack}
           />
         );
