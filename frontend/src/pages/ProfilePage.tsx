@@ -332,7 +332,7 @@ export default function ProfilePage({ user, onBack }: ProfilePageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background pb-16 px-4 md:px-8 pt-8 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-background pb-16 px-4 md:px-8 pt-8 max-w-[1600px] mx-auto">
       {/* Header section */}
       <div className="mb-8 flex items-start gap-5">
         <Button

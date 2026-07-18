@@ -71,6 +71,7 @@ interface UserDashboardProps {
     role: string;
     createdAt?: string;
   };
+  defaultTab?: string;
 }
 
 interface UserService {
@@ -134,13 +135,20 @@ const formatJoinDate = (dateString?: string) => {
   return date.toLocaleDateString("en-US", { year: "numeric", month: "long" });
 };
 
-export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }: UserDashboardProps) {
+export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, defaultTab }: UserDashboardProps) {
   const { toast } = useToast();
   const [userServices, setUserServices] = useState<UserService[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState(defaultTab || "overview");
+
+  useEffect(() => {
+    if (defaultTab) {
+      setActiveTab(defaultTab);
+    }
+  }, [defaultTab]);
   
   // Profile popup state
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -973,7 +981,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto p-6">
+      <div className="max-w-[1600px] mx-auto p-6">
         <div className="text-center py-12">
           <div className="text-lg">Loading your dashboard...</div>
         </div>
@@ -1020,7 +1028,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
   });
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-8">
+    <div className="max-w-[1600px] mx-auto p-6 space-y-8">
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-foreground">Welcome back, {user.name}!</h1>
         <div className="text-muted-foreground space-y-1">
@@ -1029,7 +1037,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
         </div>
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-xl flex gap-1 w-fit border border-border">
           <TabsTrigger value="overview" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
             <LayoutDashboard className="h-4 w-4" />
@@ -1042,10 +1050,6 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user }
           <TabsTrigger value="investments" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
             <PiggyBank className="h-4 w-4" />
             FDs & Investments
-          </TabsTrigger>
-          <TabsTrigger value="support" className="rounded-lg font-semibold text-xs px-4 py-2 flex items-center gap-1.5 data-[state=active]:bg-card data-[state=active]:text-primary data-[state=active]:shadow-sm">
-            <HelpCircle className="h-4 w-4" />
-            Support Desk
           </TabsTrigger>
         </TabsList>
 

@@ -146,9 +146,9 @@ export function ServicesPage({ onNavigateToCalculator, onGetStarted, onPageChang
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 space-y-16">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 space-y-16">
       {/* Header */}
-      <div className="flex items-start gap-5 border-b border-slate-100 dark:border-slate-800 pb-8">
+      <div className="flex items-start gap-5 pb-8">
         {onBack && (
           <Button
             variant="outline"
