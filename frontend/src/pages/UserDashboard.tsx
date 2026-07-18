@@ -2023,37 +2023,37 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
             <div className="space-y-6">
               {/* Stats Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-primary/5 dark:from-slate-900 dark:to-slate-950/10">
+                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-card to-primary/5">
                   <CardHeader className="pb-2">
                     <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Invested Principal</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-black text-foreground dark:text-white">
+                    <div className="text-2xl font-black text-foreground">
                       ₹{totalInvested.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-1">Active FD principal balances sum</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-green-50/10 dark:from-slate-900 dark:to-slate-950/10">
+                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-card to-green-500/10">
                   <CardHeader className="pb-2">
                     <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Accrued Interest (Live)</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-black text-green-700 dark:text-green-400 flex items-center gap-1">
-                      <TrendingUp className="h-5 w-5 animate-pulse text-green-600" />
+                    <div className="text-2xl font-black text-green-600 dark:text-green-400 flex items-center gap-1">
+                      <TrendingUp className="h-5 w-5 animate-pulse text-green-500" />
                       ₹{totalAccrued.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-1">Interest earned elapsed to date</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-purple-50/10 dark:from-slate-900 dark:to-slate-950/10">
+                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-card to-purple-500/10">
                   <CardHeader className="pb-2">
                     <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Est. Maturity Value</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-black text-purple-700 dark:text-purple-400">
+                    <div className="text-2xl font-black text-purple-650 dark:text-purple-400">
                       ₹{totalMaturity.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-1">Total principal + maturity interest</p>
@@ -2102,7 +2102,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
                             </div>
                             <div className="space-y-0.5">
                               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Accrued Interest</span>
-                              <span className="text-sm font-black text-green-700 dark:text-green-450">₹{fd.accrued.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                              <span className="text-sm font-black text-green-600 dark:text-green-400">₹{fd.accrued.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             </div>
                             <div className="space-y-0.5">
                               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Booking Date</span>
@@ -2128,7 +2128,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
                           <div className="pt-2 border-t border-border dark:border-border flex items-center justify-between gap-4">
                             <div className="space-y-0.5 text-left">
                               <span className="text-[9px] font-bold text-muted-foreground uppercase block">Est. Maturity Payout</span>
-                              <span className="text-sm font-black text-purple-700 dark:text-purple-400">₹{fd.maturityValue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                              <span className="text-sm font-black text-purple-650 dark:text-purple-400">₹{fd.maturityValue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             </div>
                             <Button 
                               type="button"
