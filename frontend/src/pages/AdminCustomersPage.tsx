@@ -134,7 +134,7 @@ export function AdminCustomersPage({ user, onBack }: AdminCustomersPageProps) {
               size="icon"
               onClick={onBack}
               data-testid="page-back-button"
-              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-primary hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -160,11 +160,11 @@ export function AdminCustomersPage({ user, onBack }: AdminCustomersPageProps) {
                 {liveUsers.length}
               </div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
+            <div className="h-10 w-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
               <Users className="h-5 w-5" />
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary" />
         </Card>
 
         <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
@@ -259,7 +259,7 @@ export function AdminCustomersPage({ user, onBack }: AdminCustomersPageProps) {
                           variant="outline"
                           size="sm"
                           onClick={() => handleVerifyKyc(cust.id, cust.name)}
-                          className="text-xs border border-blue-200 text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-950/20"
+                          className="text-xs border border-primary/20 text-primary hover:bg-primary/5"
                         >
                           Verify KYC
                         </Button>

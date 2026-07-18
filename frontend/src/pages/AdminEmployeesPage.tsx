@@ -131,7 +131,7 @@ export function AdminEmployeesPage({ user, onPageChange, onBack }: AdminEmployee
               size="icon"
               onClick={onBack}
               data-testid="page-back-button"
-              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-primary hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -146,12 +146,12 @@ export function AdminEmployeesPage({ user, onPageChange, onBack }: AdminEmployee
             <RefreshCcw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Refresh Directory
           </Button>
-          <Button size="sm" className="flex-1 sm:flex-initial bg-blue-700 hover:bg-blue-800 text-white font-bold flex items-center gap-1.5" onClick={() => onPageChange && onPageChange("admin-add-employee")}>
+          <Button size="sm" className="flex-1 sm:flex-initial bg-primary hover:bg-primary/90 text-white font-bold flex items-center gap-1.5" onClick={() => onPageChange && onPageChange("admin-add-employee")}>
             <Plus className="h-4 w-4" /> Add Employee
           </Button>
         </div>
       </div>
-
+ 
       {/* KPI Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">
@@ -162,11 +162,11 @@ export function AdminEmployeesPage({ user, onPageChange, onBack }: AdminEmployee
                 {allEmployees.filter(e => e.isActive).length}
               </div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
+            <div className="h-10 w-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md">
               <Users className="h-5 w-5" />
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary" />
         </Card>
 
         <Card className="rounded-2xl border border-border/80 dark:border-border/80 shadow-md dark:shadow-none bg-card dark:bg-slate-900 relative overflow-hidden p-5 flex flex-col justify-between min-h-[140px]">

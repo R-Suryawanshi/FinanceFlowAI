@@ -179,6 +179,12 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("UPI");
   const [isPaying, setIsPaying] = useState(false);
+
+  // Document Vault manual upload states
+  const [manualVaultDocs, setManualVaultDocs] = useState<any[]>([]);
+  const [selectedVaultFile, setSelectedVaultFile] = useState<File | null>(null);
+  const [vaultDocCategory, setVaultDocCategory] = useState("Aadhaar / Photo Identity Proof");
+  const [isVaultUploading, setIsVaultUploading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [emiSchedule, setEmiSchedule] = useState<any[]>([]);
   const [paymentStage, setPaymentStage] = useState<"input" | "details" | "otp" | "processing" | "success">("input");
@@ -1025,6 +1031,11 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
         }
       });
     }
+  });
+
+  // Append manual uploads
+  manualVaultDocs.forEach((doc: any) => {
+    vaultDocs.push(doc);
   });
 
   return (
@@ -2012,37 +2023,37 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
             <div className="space-y-6">
               {/* Stats Grid */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-primary/5 dark:from-slate-900 dark:to-slate-950/10">
+                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-card to-primary/5">
                   <CardHeader className="pb-2">
                     <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Total Invested Principal</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-black text-foreground dark:text-white">
+                    <div className="text-2xl font-black text-foreground">
                       ₹{totalInvested.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-1">Active FD principal balances sum</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-green-50/10 dark:from-slate-900 dark:to-slate-950/10">
+                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-card to-green-500/10">
                   <CardHeader className="pb-2">
                     <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Accrued Interest (Live)</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-black text-green-700 dark:text-green-400 flex items-center gap-1">
-                      <TrendingUp className="h-5 w-5 animate-pulse text-green-600" />
+                    <div className="text-2xl font-black text-green-600 dark:text-green-400 flex items-center gap-1">
+                      <TrendingUp className="h-5 w-5 animate-pulse text-green-500" />
                       ₹{totalAccrued.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-1">Interest earned elapsed to date</p>
                   </CardContent>
                 </Card>
 
-                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-purple-50/10 dark:from-slate-900 dark:to-slate-950/10">
+                <Card className="border-border/60 dark:border-border shadow-sm relative overflow-hidden bg-gradient-to-br from-card to-purple-500/10">
                   <CardHeader className="pb-2">
                     <CardDescription className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Est. Maturity Value</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-black text-purple-700 dark:text-purple-400">
+                    <div className="text-2xl font-black text-purple-650 dark:text-purple-400">
                       ₹{totalMaturity.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-1">Total principal + maturity interest</p>
@@ -2091,7 +2102,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
                             </div>
                             <div className="space-y-0.5">
                               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Accrued Interest</span>
-                              <span className="text-sm font-black text-green-700 dark:text-green-450">₹{fd.accrued.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                              <span className="text-sm font-black text-green-600 dark:text-green-400">₹{fd.accrued.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             </div>
                             <div className="space-y-0.5">
                               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Booking Date</span>
@@ -2117,7 +2128,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
                           <div className="pt-2 border-t border-border dark:border-border flex items-center justify-between gap-4">
                             <div className="space-y-0.5 text-left">
                               <span className="text-[9px] font-bold text-muted-foreground uppercase block">Est. Maturity Payout</span>
-                              <span className="text-sm font-black text-purple-700 dark:text-purple-400">₹{fd.maturityValue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                              <span className="text-sm font-black text-purple-650 dark:text-purple-400">₹{fd.maturityValue.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                             </div>
                             <Button 
                               type="button"
@@ -2326,212 +2337,84 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
               <CardContent className="space-y-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Document Category</Label>
-                  <select className="w-full h-10 border border-border rounded-lg p-2.5 text-xs font-semibold bg-card focus:outline-none">
-                    <option>Aadhaar / Photo Identity Proof</option>
-                    <option>PAN Verification Card</option>
-                    <option>Recent Salary Slip</option>
-                    <option>3-Month Bank Statement Ledger</option>
+                  <select 
+                    value={vaultDocCategory}
+                    onChange={(e) => setVaultDocCategory(e.target.value)}
+                    className="w-full h-10 border border-border rounded-lg p-2.5 text-xs font-semibold bg-card focus:outline-none"
+                  >
+                    <option value="Aadhaar / Photo Identity Proof">Aadhaar / Photo Identity Proof</option>
+                    <option value="PAN Verification Card">PAN Verification Card</option>
+                    <option value="Recent Salary Slip">Recent Salary Slip</option>
+                    <option value="3-Month Bank Statement Ledger">3-Month Bank Statement Ledger</option>
                   </select>
                 </div>
                 
                 {/* Drag and Drop Zone */}
-                <div className="border border-dashed border-border rounded-xl p-6 text-center hover:bg-muted/30/50 cursor-pointer transition-all space-y-2">
+                <div 
+                  onClick={() => document.getElementById("vault-file-input")?.click()}
+                  className="border border-dashed border-border rounded-xl p-6 text-center hover:bg-muted/30/50 cursor-pointer transition-all space-y-2"
+                >
+                  <input
+                    id="vault-file-input"
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSelectedVaultFile(e.target.files[0]);
+                      }
+                    }}
+                  />
                   <div className="h-10 w-10 bg-primary/10 text-primary flex items-center justify-center rounded-xl mx-auto shadow-sm">
                     <UploadCloud className="h-5 w-5" />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs font-bold text-muted-foreground">Choose File or drag here</p>
-                    <p className="text-[10px] text-gray-400">PDF, PNG, JPG up to 10MB</p>
+                    <p className="text-xs font-bold text-muted-foreground">
+                      {selectedVaultFile ? selectedVaultFile.name : "Choose File or drag here"}
+                    </p>
+                    <p className="text-[10px] text-gray-400">
+                      {selectedVaultFile ? `${(selectedVaultFile.size / 1024 / 1024).toFixed(2)} MB` : "PDF, PNG, JPG up to 10MB"}
+                    </p>
                   </div>
                 </div>
 
                 <Button 
                   className="w-full bg-primary text-primary-foreground font-bold h-10 text-xs shadow-md"
-                  onClick={() => {
-                    alert("Simulated KYC File submission received! Our systems will verify this upload within 2 hours.");
+                  disabled={!selectedVaultFile || isVaultUploading}
+                  onClick={async () => {
+                    if (!selectedVaultFile) return;
+                    setIsVaultUploading(true);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    const docTypeKey = vaultDocCategory.toLowerCase().replace(/[^a-z]/g, "");
+                    const newDoc = {
+                      name: selectedVaultFile.name,
+                      size: selectedVaultFile.size,
+                      type: selectedVaultFile.type || "application/pdf",
+                      uploadedAt: new Date().toISOString(),
+                      docTypeKey: docTypeKey,
+                      applicationNumber: "MANUAL-UPLOAD",
+                      status: "Under Review" as const
+                    };
+                    
+                    setManualVaultDocs(prev => [...prev, newDoc]);
+                    setSelectedVaultFile(null);
+                    setIsVaultUploading(false);
+                    
+                    toast({
+                      title: "Document Uploaded",
+                      description: `${selectedVaultFile.name} has been added to your secure KYC ledger.`,
+                    });
                   }}
                 >
-                  Submit File to Vault
+                  {isVaultUploading ? (
+                    <span className="flex items-center gap-1.5 justify-center">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Uploading File...
+                    </span>
+                  ) : (
+                    "Submit File to Vault"
+                  )}
                 </Button>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </TabsContent>
-
-      {/* Tab 4: Support Desk */}
-      <TabsContent value="support" className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 text-left">
-          {/* Raise Ticket Form */}
-          <div className="lg:col-span-1">
-            <Card className="border-border/60 dark:border-border shadow-sm bg-card dark:bg-slate-900">
-              <CardHeader>
-                <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <LifeBuoy className="h-5 w-5 text-primary" />
-                  Raise Support Ticket
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Create a direct service request with our support desk if you couldn't resolve your issue.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSupportTicketSubmit} className="space-y-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Ticket Category</Label>
-                    <select
-                      value={ticketCategory}
-                      onChange={(e) => setTicketCategory(e.target.value)}
-                      className="w-full h-10 border border-border dark:border-border rounded-lg p-2.5 text-xs font-semibold bg-card dark:bg-slate-950 focus:outline-none focus:border-primary"
-                    >
-                      <option value="general">General Query / Inquiry</option>
-                      <option value="loan">Loan Account & EMIs</option>
-                      <option value="fixed_deposit">Fixed Deposit Investments</option>
-                      <option value="kyc">KYC & Document Verification</option>
-                      <option value="payment">EMI Repayment & Transfers</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Urgency Priority</Label>
-                    <select
-                      value={ticketPriority}
-                      onChange={(e) => setTicketPriority(e.target.value)}
-                      className="w-full h-10 border border-border dark:border-border rounded-lg p-2.5 text-xs font-semibold bg-card dark:bg-slate-950 focus:outline-none focus:border-primary"
-                    >
-                      <option value="low">Low - General Feedback</option>
-                      <option value="medium">Medium - Normal Queries</option>
-                      <option value="high">High - Transaction Issues</option>
-                      <option value="urgent">Urgent - Profile Security / Errors</option>
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="ticket-subject" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Subject Title</Label>
-                    <Input
-                      id="ticket-subject"
-                      value={ticketSubject}
-                      onChange={(e) => setTicketSubject(e.target.value)}
-                      placeholder="Brief summary of the issue..."
-                      className="h-10 text-xs rounded-lg border-border dark:border-border focus:border-primary bg-card dark:bg-slate-950"
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label htmlFor="ticket-desc" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Detailed Description</Label>
-                    <textarea
-                      id="ticket-desc"
-                      rows={4}
-                      value={ticketDescription}
-                      onChange={(e) => setTicketDescription(e.target.value)}
-                      placeholder="Please explain the details of the problem..."
-                      className="w-full border border-border dark:border-border rounded-lg p-2.5 text-xs bg-card dark:bg-slate-950 focus:outline-none focus:border-primary"
-                      required
-                    />
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={ticketSubmitting}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-10 text-xs rounded-xl flex items-center justify-center gap-2"
-                  >
-                    {ticketSubmitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Raising Ticket...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4" />
-                        Submit Support Ticket
-                      </>
-                    )}
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Ticket History */}
-          <div className="lg:col-span-2 space-y-4">
-            <Card className="border-border/60 dark:border-border shadow-sm bg-card dark:bg-slate-900">
-              <CardHeader>
-                <CardTitle className="text-base font-bold flex items-center gap-2">
-                  <MessageSquare className="h-5 w-5 text-primary" />
-                  Your Support Tickets
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Track the progress and updates for your raised service requests.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {supportTickets.length === 0 ? (
-                  <div className="py-12 flex flex-col items-center justify-center gap-3 text-center">
-                    <div className="p-3 bg-muted/30 dark:bg-slate-800/50 text-muted-foreground rounded-full">
-                      <MessageSquare className="h-8 w-8" />
-                    </div>
-                    <div className="space-y-1">
-                      <p className="font-semibold text-foreground dark:text-slate-200">No support tickets found</p>
-                      <p className="text-xs text-muted-foreground max-w-sm">
-                        If you have any questions or bugs to file, raise a new ticket on the left and our administration team will attend to it.
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {supportTickets.map((t) => (
-                      <div 
-                        key={t.id} 
-                        className="p-4 rounded-xl border border-border/60 dark:border-border bg-card dark:bg-slate-900/60 hover:bg-muted/30/20 dark:hover:bg-slate-800/10 transition-colors space-y-3"
-                      >
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                          <div className="space-y-0.5">
-                            <div className="flex items-center gap-2">
-                              <span className="font-mono text-xs font-bold text-primary">{t.ticketNumber}</span>
-                              <span className="text-[10px] text-muted-foreground font-semibold">• {new Date(t.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })}</span>
-                            </div>
-                            <h4 className="text-sm font-bold text-foreground dark:text-white">{t.subject}</h4>
-                          </div>
-                          <div className="flex items-center gap-1.5 self-start sm:self-center">
-                            <Badge 
-                              className={`border-none text-[10px] font-bold py-0.5 px-2 uppercase tracking-wide hover:opacity-90 ${
-                                t.status === "open"
-                                  ? "bg-primary/10 text-primary hover:bg-primary/10"
-                                  : t.status === "in_progress"
-                                  ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-50"
-                                  : t.status === "resolved"
-                                  ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-50"
-                                  : "bg-muted text-muted-foreground dark:bg-slate-800"
-                              }`}
-                            >
-                              {t.status.replace("_", " ")}
-                            </Badge>
-                            <Badge 
-                              className={`border-none text-[10px] font-bold py-0.5 px-2 uppercase tracking-wide hover:opacity-90 ${
-                                t.priority === "urgent"
-                                  ? "bg-rose-50 text-rose-700 hover:bg-rose-50"
-                                  : t.priority === "high"
-                                  ? "bg-amber-50 text-amber-700 hover:bg-amber-50"
-                                  : t.priority === "medium"
-                                  ? "bg-primary/10 text-primary hover:bg-primary/10"
-                                  : "bg-muted/30 text-muted-foreground hover:bg-muted/30"
-                              }`}
-                            >
-                              {t.priority}
-                            </Badge>
-                          </div>
-                        </div>
-                        <p className="text-xs text-muted-foreground leading-normal">{t.description}</p>
-                        <div className="flex justify-between items-center text-[10px] text-muted-foreground font-semibold pt-1 border-t border-border dark:border-border/60">
-                          <span>Category: <span className="text-muted-foreground dark:text-muted-foreground capitalize">{t.category.replace("_", " ")}</span></span>
-                          {t.status === "resolved" && (
-                            <span className="text-green-600">Resolved • Ready to close</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </CardContent>
             </Card>
           </div>
@@ -2837,28 +2720,28 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
                 title: "Home Loan",
                 icon: Home,
                 desc: "Buy your dream home with low rates",
-                color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30 hover:border-emerald-300"
+                color: "text-emerald-500 bg-emerald-500/10 border-emerald-500/25 hover:border-emerald-500/50"
               },
               {
                 id: "car",
                 title: "Car Loan",
                 icon: Car,
                 desc: "Finance new or pre-owned vehicles",
-                color: "text-amber-600 bg-amber-50 dark:bg-amber-950/20 border-amber-100 dark:border-amber-900/30 hover:border-amber-300"
+                color: "text-amber-500 bg-amber-500/10 border-amber-500/25 hover:border-amber-500/50"
               },
               {
                 id: "personal",
                 title: "Personal Loan",
                 icon: User,
                 desc: "Get instant cash for personal needs",
-                color: "text-primary bg-primary/10 dark:bg-primary/20 border-primary/20 dark:border-primary/30 hover:border-primary/50"
+                color: "text-primary bg-primary/10 border-primary/20 hover:border-primary/50"
               },
               {
                 id: "gold",
                 title: "Gold Loan",
                 icon: Coins,
                 desc: "Unlock the value of your gold items",
-                color: "text-yellow-600 bg-yellow-50 dark:bg-yellow-950/20 border-yellow-100 dark:border-yellow-900/30 hover:border-yellow-300"
+                color: "text-yellow-500 bg-yellow-500/10 border-yellow-500/25 hover:border-yellow-500/50"
               }
             ].map((loanOption) => {
               const LoanIcon = loanOption.icon;
@@ -2872,7 +2755,7 @@ export function UserDashboard({ onNavigateToCalculator, onNavigateToPage, user, 
                       onNavigateToPage(`loan-application-${loanOption.id}`);
                     }
                   }}
-                  className={`p-4 rounded-xl border flex items-start gap-3.5 text-left transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] group bg-card dark:bg-slate-900/50 ${loanOption.color}`}
+                  className={`p-4 rounded-xl border flex items-start gap-3.5 text-left transition-all duration-200 hover:shadow-md hover:scale-[1.02] active:scale-[0.98] group ${loanOption.color}`}
                 >
                   <div className="p-2.5 rounded-lg bg-card dark:bg-slate-900 shadow-sm border border-border/50 dark:border-border shrink-0">
                     <LoanIcon className="h-5 w-5" />

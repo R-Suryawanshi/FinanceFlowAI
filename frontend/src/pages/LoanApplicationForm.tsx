@@ -1049,13 +1049,13 @@ export function LoanApplicationForm({ loanType, onSubmit, onPageChange, defaultA
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center space-x-2 border-b border-slate-100 dark:border-slate-800 pb-4">
+        <div className="flex items-center space-x-2 border-b border-border/40 pb-4">
           <Checkbox
             id="updateProfileOnSubmit"
             checked={updateProfileOnSubmit}
             onCheckedChange={(checked) => setUpdateProfileOnSubmit(!!checked)}
           />
-          <Label htmlFor="updateProfileOnSubmit" className="font-semibold text-slate-800 dark:text-slate-200 cursor-pointer">
+          <Label htmlFor="updateProfileOnSubmit" className="font-semibold text-foreground cursor-pointer">
             Save and update my account profile with this information
           </Label>
         </div>
@@ -1106,24 +1106,24 @@ export function LoanApplicationForm({ loanType, onSubmit, onPageChange, defaultA
   if (isSubmitted) {
     return (
       <div className="max-w-md mx-auto p-6 text-center space-y-8 my-12">
-        <Card className="border-green-200 bg-green-50/50">
+        <Card className="border-emerald-500/20 bg-emerald-500/10 dark:bg-emerald-950/20">
           <CardHeader className="space-y-4">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-              <CheckCircle className="h-10 w-10 text-green-600" />
+            <div className="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle className="h-10 w-10 text-emerald-400" />
             </div>
-            <CardTitle className="text-2xl font-bold text-green-800">
+            <CardTitle className="text-2xl font-bold text-foreground">
               Application Submitted!
             </CardTitle>
-            <CardDescription className="text-green-700">
+            <CardDescription className="text-muted-foreground">
               Your {loanTypes[loanType]} application has been successfully received and is under review.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4 text-left border-t border-green-100 pt-6">
+          <CardContent className="space-y-4 text-left border-t border-border/40 pt-6">
             <div>
               <span className="text-xs text-muted-foreground block uppercase font-semibold">
                 Application Number
               </span>
-              <span className="text-lg font-bold font-mono text-foreground text-green-700">
+              <span className="text-lg font-bold font-mono text-emerald-400">
                 {applicationNumber}
               </span>
             </div>
@@ -1165,7 +1165,7 @@ export function LoanApplicationForm({ loanType, onSubmit, onPageChange, defaultA
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
+    <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-12 space-y-16 relative">
       <div className="flex items-start gap-5">
         {onBack && (
           <Button
@@ -1173,14 +1173,14 @@ export function LoanApplicationForm({ loanType, onSubmit, onPageChange, defaultA
             size="icon"
             onClick={onBack}
             data-testid="page-back-button"
-            className="h-10 w-10 rounded-lg border border-border bg-card text-primary hover:bg-muted transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+            className="h-10 w-10 rounded-lg border border-border bg-card text-primary hover:bg-muted transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1.5"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
         )}
-        <div className="space-y-1 flex-1 text-left">
-          <h1 className="text-3xl font-bold text-foreground">{loanTypes[loanType]} Application</h1>
-          <p className="text-muted-foreground">Complete your loan application in simple steps</p>
+        <div className="space-y-3 flex-1 text-left">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground">{loanTypes[loanType]} Application</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl">Complete your loan application in simple steps.</p>
         </div>
       </div>
 
@@ -1229,7 +1229,7 @@ export function LoanApplicationForm({ loanType, onSubmit, onPageChange, defaultA
                     index + 1 === currentStep 
                       ? 'bg-primary text-primary-foreground' 
                       : index + 1 < currentStep 
-                      ? 'bg-green-100 text-green-800' 
+                      ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20' 
                       : 'bg-muted text-muted-foreground'
                   }`}
                 >

@@ -102,7 +102,7 @@ export function AdminUsersPage({ user, onBack }: AdminUsersPageProps) {
               size="icon"
               onClick={onBack}
               data-testid="page-back-button"
-              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-blue-700 dark:text-blue-400 hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
+              className="h-10 w-10 rounded-lg border border-border/50 dark:border-border bg-card dark:bg-slate-900 text-primary hover:bg-muted/30 dark:hover:bg-slate-955 transition-colors shadow-sm flex items-center justify-center shrink-0 mt-1"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -117,7 +117,7 @@ export function AdminUsersPage({ user, onBack }: AdminUsersPageProps) {
           Refresh Data
         </Button>
       </div>
-
+ 
       {/* KPI Stats Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Metric 1: Total Active Users */}
@@ -127,11 +127,11 @@ export function AdminUsersPage({ user, onBack }: AdminUsersPageProps) {
               <span className="text-[10px] font-bold text-muted-foreground dark:text-muted-foreground tracking-wider uppercase">Total Active Users</span>
               <div className="text-3xl font-bold text-foreground dark:text-white">{liveStats.totalUsers}</div>
             </div>
-            <div className="h-10 w-10 rounded-xl bg-blue-500 text-white flex items-center justify-center shadow-md shadow-blue-100 dark:shadow-none">
+            <div className="h-10 w-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md">
               <Users className="h-5 w-5" />
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-primary" />
         </Card>
 
         {/* Metric 2: New Signups Today */}
